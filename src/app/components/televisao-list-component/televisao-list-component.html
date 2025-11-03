@@ -1,0 +1,24 @@
+<main class="content">
+  <h1>Catálogo de Televisores</h1>
+
+  <div *ngIf="listaDeTelevisoes$ | async as televisoes; else loading">
+
+    <div class="product-grid">
+
+      <app-televisao-card *ngFor="let tv of televisoes" [televisao]="tv">
+      </app-televisao-card>
+
+    </div>
+    <div *ngIf="televisoes.length === 0" class="empty-state">
+      <p>Nenhum produto encontrado no momento.</p>
+    </div>
+
+  </div>
+
+  <ng-template #loading>
+    <div class="loading-spinner">
+      <p>Carregando produtos...</p>
+    </div>
+  </ng-template>
+
+</main>

@@ -1,0 +1,28 @@
+/* Define uma largura máxima para o card não ocupar a tela inteira */
+.product-card {
+  max-width: 350px;
+  
+  /* Adiciona uma margem para separar os cards */
+  margin: 16px; 
+}
+
+/* Regras para a imagem do card */
+img[mat-card-image] {
+  /* Garante que a imagem cubra a área sem distorcer */
+  object-fit: cover;
+  
+  /* Define uma altura fixa para todas as imagens ficarem uniformes */
+  height: 250px; 
+}
+
+/* Estilo para o preço que adicionamos */
+.product-price {
+  font-size: 1.4rem;
+  font-weight: bold;
+  
+  /* Exemplo usando a cor primária do Angular Material */
+  color: #3f51b5; 
+  
+  margin-top: 10px;
+  margin-bottom: 0;
+}

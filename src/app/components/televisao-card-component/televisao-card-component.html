@@ -1,0 +1,35 @@
+<mat-card class="product-card" *ngIf="televisao">
+  
+  <mat-card-header>
+    <mat-card-title>{{ televisao.marca }}</mat-card-title>
+    <mat-card-subtitle>{{ televisao.modelo }}</mat-card-subtitle>
+  </mat-card-header>
+
+  <img mat-card-image 
+       [src]="defaultImageUrl" 
+       [alt]="'Foto da ' + televisao.marca + ' ' + televisao.modelo">
+
+  <mat-card-content>
+    <p>
+      {{ televisao.descricao }}
+    </p>
+
+    <h3 class="product-price">
+      {{ televisao.valor | currency:'BRL' }}
+    </h3>
+  </mat-card-content>
+
+  <mat-card-actions align="end">
+    <button mat-icon-button 
+            aria-label="Adicionar ao carrinho" 
+            (click)="onAddToCart()">
+      <mat-icon>shopping_cart</mat-icon>
+    </button>
+    
+    <button mat-icon-button 
+            aria-label="Comprar agora" 
+            (click)="onBuyNow()">
+      <mat-icon>payment</mat-icon> </button>
+  </mat-card-actions>
+  
+</mat-card>
