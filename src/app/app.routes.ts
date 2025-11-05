@@ -5,6 +5,8 @@ import {FabricanteListComponent } from './components/fabricante-list/fabricante-
 import { FabricanteForm } from './components/fabricante-form/fabricante-form';
 import { TelevisaoListComponent } from './components/televisao-list-component/televisao-list-component';
 import { TelevisaoFormComponent } from './components/televisao-form-component/televisao-form-component';
+import { FornecedorListComponent } from './components/fornecedor-list/fornecedor-list';
+import { FornecedorFormComponent } from './components/fornecedor-form/fornecedor-form';
 
 export const routes: Routes = [
     {
@@ -18,6 +20,18 @@ export const routes: Routes = [
     {
         path: 'fabricantes/edit/:id',
         component: FabricanteForm
+    },
+    {
+      path: 'fornecedores',
+      component: FornecedorListComponent
+    },
+    {
+      path: 'fornecedores/new',
+      component: FornecedorFormComponent // Rota para o formulário de criação
+    },
+    {
+      path: 'fornecedores/edit/:id',
+      component: FornecedorFormComponent // Rota para o formulário de edição
     },
     // Rotas de Televisão
     {
