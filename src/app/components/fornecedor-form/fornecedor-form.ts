@@ -8,39 +8,38 @@ import { Telefone } from '../../model/telefone.model';
 import { FornecedorService } from '../../services/fornecedor-service.service';
 
 @Component({
-  selector: 'app-fornecedor-form', // MUDANÇA
+  selector: 'app-fornecedor-form',
   standalone: true,
   imports: [
     CommonModule,
     RouterModule,
     ReactiveFormsModule
   ],
-  templateUrl: './fornecedor-form.html', // (Você precisará criar este HTML)
-  styleUrl: './fornecedor-form.css' // (Você pode reusar o CSS do fabricante)
+  templateUrl: './fornecedor-form.html',
+  styleUrl: './fornecedor-form.css'
 })
-export class FornecedorFormComponent implements OnInit { // MUDANÇA: Nome da classe
+export class FornecedorFormComponent implements OnInit {
 
-  fornecedorForm: FormGroup; // MUDANÇA
-  novoTelefoneControl = new FormControl('', [Validators.required, Validators.minLength(10)]); 
-  
-  formTitle: string = 'Novo Fornecedor'; // MUDANÇA
+  fornecedorForm: FormGroup;
+  novoTelefoneControl = new FormControl('', [Validators.required, Validators.minLength(10)]);
+
+  formTitle: string = 'Novo Fornecedor';
 
   isEditMode: boolean = false;
-  fornecedorId: number | null = null; // MUDANÇA
+  fornecedorId: number | null = null;
 
   constructor(
     private fb: FormBuilder,
-    private fornecedorService: FornecedorService, // MUDANÇA
+    private fornecedorService: FornecedorService,
     private router: Router,
     private route: ActivatedRoute
   ) {
-    this.fornecedorForm = this.fb.group({ // MUDANÇA
+    this.fornecedorForm = this.fb.group({
       razaoSocial: ['', Validators.required],
       cnpj: ['', Validators.required],
       status: [true, Validators.required],
-      // 2. MUDANÇA: Campos específicos do Fornecedor
-      email: ['', [Validators.required, Validators.email]], 
-      telefones: this.fb.array([]) 
+      email: ['', [Validators.required, Validators.email]],
+      telefones: this.fb.array([])
     });
   }
 
@@ -48,37 +47,30 @@ export class FornecedorFormComponent implements OnInit { // MUDANÇA: Nome da cl
     const idParam = this.route.snapshot.paramMap.get('id');
 
     if (idParam) {
-      // --- MODO DE EDIÇÃO ---
       this.isEditMode = true;
-      this.fornecedorId = +idParam; // MUDANÇA
-      this.formTitle = 'Editar Fornecedor'; // MUDANÇA
+      this.fornecedorId = +idParam;
+      this.formTitle = 'Editar Fornecedor';
 
-      // MUDANÇA: Chamar o service de fornecedor
       this.fornecedorService.getFornecedorById(this.fornecedorId).subscribe(fornecedor => {
-        this.preencherFormulario(fornecedor); // MUDANÇA
+        this.preencherFormulario(fornecedor);
       });
 
     } else {
-      // --- MODO DE CRIAÇÃO ---
       this.isEditMode = false;
-      this.formTitle = 'Novo Fornecedor'; // MUDANÇA
+      this.formTitle = 'Novo Fornecedor';
     }
   }
 
-  // 3. MUDANÇA: Método adaptado para o model Fornecedor
   preencherFormulario(fornecedor: Fornecedor): void {
-    // 1. Preencha os campos simples
-    this.fornecedorForm.patchValue({ // MUDANÇA
+    this.fornecedorForm.patchValue({
       razaoSocial: fornecedor.razaoSocial,
       cnpj: fornecedor.cnpj,
       status: fornecedor.status,
-      email: fornecedor.email // Campo específico
+      email: fornecedor.email
     });
 
-    // 2. Limpe o FormArray
     this.telefones.clear();
 
-    // 3. Preencha a lista de telefones
     if (fornecedor.telefones) {
       fornecedor.telefones.forEach(tel => {
         this.telefones.push(
@@ -92,12 +84,10 @@ export class FornecedorFormComponent implements OnInit { // MUDANÇA: Nome da cl
     }
   }
 
-  // Getter para o FormArray
   get telefones(): FormArray {
-    return this.fornecedorForm.get('telefones') as FormArray; // MUDANÇA
+    return this.fornecedorForm.get('telefones') as FormArray;
   }
 
-  // Método para adicionar telefone (Idêntico)
   adicionarTelefone(): void {
     if (this.novoTelefoneControl.invalid) {
       this.novoTelefoneControl.markAsTouched();
@@ -115,7 +105,7 @@ export class FornecedorFormComponent implements OnInit { // MUDANÇA: Nome da cl
 
     this.telefones.push(
       this.fb.group({
-        id: [null], 
+        id: [null],
         ddd: [ddd, Validators.required],
         numero: [numero, Validators.required]
       })
@@ -124,50 +114,45 @@ export class FornecedorFormComponent implements OnInit { // MUDANÇA: Nome da cl
     this.novoTelefoneControl.reset();
   }
 
-  // Método para remover telefone (Idêntico)
   removerTelefone(index: number): void {
     this.telefones.removeAt(index);
   }
 
-  // 4. MUDANÇA: Método 'salvar()' adaptado
   salvar(): void {
-    if (this.fornecedorForm.invalid) { // MUDANÇA
-      this.fornecedorForm.markAllAsTouched(); // MUDANÇA
+    if (this.fornecedorForm.invalid) {
+      this.fornecedorForm.markAllAsTouched();
       return;
     }
-    
+
     if (this.telefones.length === 0) {
       this.novoTelefoneControl.setErrors({ 'required': true });
       return;
     }
 
-    const fornecedorData: Fornecedor = this.fornecedorForm.value; // MUDANÇA
+    const fornecedorData: Fornecedor = this.fornecedorForm.value;
 
     if (this.isEditMode && this.fornecedorId) {
-      // --- LÓGICA DE ATUALIZAÇÃO ---
-      this.fornecedorService.atualizar(this.fornecedorId, fornecedorData).subscribe({ // MUDANÇA
+      this.fornecedorService.atualizar(this.fornecedorId, fornecedorData).subscribe({
         next: () => {
-          this.router.navigate(['/fornecedores']); // MUDANÇA
+          this.router.navigate(['/fornecedores']);
         },
         error: (err: any) => {
-          console.error('Erro ao ATUALIZAR fornecedor', err); // MUDANÇA
+          console.error('Erro ao ATUALIZAR fornecedor', err);
         }
       });
     } else {
-      // --- LÓGICA DE CRIAÇÃO ---
-      this.fornecedorService.incluir(fornecedorData).subscribe({ // MUDANÇA
+      this.fornecedorService.incluir(fornecedorData).subscribe({
         next: () => {
-          this.router.navigate(['/fornecedores']); // MUDANÇA
+          this.router.navigate(['/fornecedores']);
         },
         error: (err: any) => {
-          console.error('Erro ao CRIAR fornecedor', err); // MUDANÇA
+          console.error('Erro ao CRIAR fornecedor', err);
         }
       });
     }
   }
 
-  // 5. MUDANÇA: Método cancelar
   cancelar(): void {
-    this.router.navigate(['/fornecedores']); // MUDANÇA
+    this.router.navigate(['/fornecedores']);
   }
 }

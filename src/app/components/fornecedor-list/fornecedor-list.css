@@ -351,28 +351,38 @@ body {
 
 /* Search Bar */
 .search-container {
-  margin-bottom: 2rem; /* Adiciona um espaço antes da tabela, igual ao header */
+  margin-bottom: 2rem;
+  /* Adiciona um espaço antes da tabela, igual ao header */
 }
 
 .search-input {
   width: 100%;
-  padding: 0.75rem 1rem; /* Um pouco mais de padding lateral para um visual de busca */
-  background-color: #0a0a0a; /* Fundo escuro igual ao do form */
-  border: 1px solid #2d2d2d; /* Borda sutil igual ao do form */
-  border-radius: 6px; /* Borda arredondada igual ao do form */
-  color: #e5e5e5; /* Cor do texto */
-  font-size: 0.95rem; /* Tamanho da fonte igual ao do form */
+  padding: 0.75rem 1rem;
+  /* Um pouco mais de padding lateral para um visual de busca */
+  background-color: #0a0a0a;
+  /* Fundo escuro igual ao do form */
+  border: 1px solid #2d2d2d;
+  /* Borda sutil igual ao do form */
+  border-radius: 6px;
+  /* Borda arredondada igual ao do form */
+  color: #e5e5e5;
+  /* Cor do texto */
+  font-size: 0.95rem;
+  /* Tamanho da fonte igual ao do form */
   transition: border-color 0.2s;
-  box-sizing: border-box; /* Garante que padding não afete o width 100% */
+  box-sizing: border-box;
+  /* Garante que padding não afete o width 100% */
 }
 
 .search-input:focus {
   outline: none;
-  border-color: #3b82f6; /* Destaque azul ao focar, igual ao do form */
+  border-color: #3b82f6;
+  /* Destaque azul ao focar, igual ao do form */
 }
 
 .search-input::placeholder {
-  color: #6b7280; /* Cor do placeholder igual ao do form */
+  color: #6b7280;
+  /* Cor do placeholder igual ao do form */
 }
 
 /* Pagination */
@@ -380,9 +390,12 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 1.5rem; /* Espaço acima dos controles */
-  padding: 0 0.5rem; /* Alinhamento leve com a tabela */
-  color: #9ca3af; /* Cor sutil para o texto */
+  margin-top: 1.5rem;
+  /* Espaço acima dos controles */
+  padding: 0 0.5rem;
+  /* Alinhamento leve com a tabela */
+  color: #9ca3af;
+  /* Cor sutil para o texto */
 }
 
 .page-info {
@@ -399,23 +412,28 @@ body {
   display: inline-flex;
   align-items: center;
   padding: 0.6rem 1.2rem;
-  border: 1px solid #374151; /* Borda sutil */
+  border: 1px solid #374151;
+  /* Borda sutil */
   border-radius: 6px;
   font-size: 0.95rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
-  background-color: #1a1a1a; /* Fundo do card */
-  color: #e5e5e5; /* Texto principal */
+  background-color: #1a1a1a;
+  /* Fundo do card */
+  color: #e5e5e5;
+  /* Texto principal */
 }
 
 .page-button:hover:not(:disabled) {
-  background-color: #2d2d2d; /* Hover sutil */
+  background-color: #2d2d2d;
+  /* Hover sutil */
   border-color: #4b5563;
 }
 
 .page-button:disabled {
-  color: #4b5563; /* Cor de texto desabilitado */
+  color: #4b5563;
+  /* Cor de texto desabilitado */
   border-color: #2d2d2d;
   background-color: #1a1a1a;
   cursor: not-allowed;
@@ -434,7 +452,8 @@ body {
 
 .page-size-selector select {
   /* Reutilizando estilos do form-group */
-  padding: 0.5rem; /* Um pouco menor para se alinhar */
+  padding: 0.5rem;
+  /* Um pouco menor para se alinhar */
   background-color: #0a0a0a;
   border: 1px solid #2d2d2d;
   border-radius: 6px;
@@ -445,4 +464,40 @@ body {
 .page-size-selector select:focus {
   outline: none;
   border-color: #3b82f6;
+}
+
+/* Search Bar */
+.search-container {
+  margin-bottom: 2rem;
+  /* Adiciona um espaço antes da tabela, igual ao header */
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  /* Um pouco mais de padding lateral para um visual de busca */
+  background-color: #0a0a0a;
+  /* Fundo escuro igual ao do form */
+  border: 1px solid #2d2d2d;
+  /* Borda sutil igual ao do form */
+  border-radius: 6px;
+  /* Borda arredondada igual ao do form */
+  color: #e5e5e5;
+  /* Cor do texto */
+  font-size: 0.95rem;
+  /* Tamanho da fonte igual ao do form */
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+  /* Garante que padding não afete o width 100% */
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  /* Destaque azul ao focar, igual ao do form */
+}
+
+.search-input::placeholder {
+  color: #6b7280;
+  /* Cor do placeholder igual ao do form */
 }
