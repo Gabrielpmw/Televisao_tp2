@@ -3,8 +3,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
-import { Marca } from '../../model/marca.model';
-import { MarcaRequest } from '../../model/marca-request.model';
+import { Marca, MarcaRequest } from '../../model/marca.model';
 import { MarcaService } from '../../services/marca-service.service';
 import { Fabricante } from '../../model/fabricante.model';
 import { FabricanteService } from '../../services/fabricante-service';

@@ -8,3 +8,9 @@ export class Marca {
     fabricante?: string | null; // <-- Espelha a string 'fabricante' do seu DTO
     fornecedores?: Fornecedor[] | null;
 }
+
+export class MarcaRequest {
+    nomeMarca?: string;
+    descricao?: string;
+    idFabricante?: number;
+}

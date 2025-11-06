@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
-
-import { Marca } from '../model/marca.model';
-import { MarcaRequest } from '../model/marca-request.model';
+// 1. IMPORTAR O 'map'
+import { Observable, map } from 'rxjs';
+import { Marca, MarcaRequest } from '../model/marca.model';
 
 @Injectable({
   providedIn: 'root'
@@ -14,36 +13,20 @@ export class MarcaService {
 
   constructor(private http: HttpClient) { }
 
-  /**
-   * POST /marcas
-   * (Envia um 'MarcaRequest')
-   * (Recebe um 'Marca' como resposta do back-end)
-   */
   create(request: MarcaRequest): Observable<Marca> {
     return this.http.post<Marca>(this.baseUrl, request);
   }
 
-  /**
-   * PUT /marcas/{id}/atualizar
-   * (Envia um 'MarcaRequest')
-   */
   update(id: number, request: MarcaRequest): Observable<void> {
     const url = `${this.baseUrl}/${id}/atualizar`;
     return this.http.put<void>(url, request);
   }
 
-  /**
-   * DELETE /marcas/{id}/apagar
-   */
   delete(id: number): Observable<void> {
     const url = `${this.baseUrl}/${id}/apagar`;
     return this.http.delete<void>(url);
   }
 
-  /**
-   * GET (Todos)
-   * (Recebe um array de 'Marca')
-   */
   getAll(page: number, pageSize: number): Observable<HttpResponse<Marca[]>> {
     const params = new HttpParams()
       .set('page', page.toString())
@@ -52,10 +35,15 @@ export class MarcaService {
     return this.http.get<Marca[]>(this.baseUrl, { params, observe: 'response' });
   }
 
-  /**
-   * GET (Por Nome)
-   * (Recebe um array de 'Marca')
-   */
+  // 2. MÉTODO ADICIONADO (para o dropdown do Modelo Form)
+  // Este método estava faltando no arquivo que você colou.
+  getAllForDropdown(): Observable<Marca[]> {
+    // Pede página 0 com 1000 itens (workaround)
+    return this.getAll(0, 1000).pipe(
+      map(response => response.body || []) // Extrai apenas o 'body'
+    );
+  }
+
   findByNome(nome: string, page: number, pageSize: number): Observable<HttpResponse<Marca[]>> {
     const url = `${this.baseUrl}/nome/${nome}`;
     const params = new HttpParams()
@@ -65,14 +53,11 @@ export class MarcaService {
     return this.http.get<Marca[]>(url, { params, observe: 'response' });
   }
 
-  /**
-   * GET (Por ID)
-   * (Recebe um 'Marca')
-   */
   getById(id: number): Observable<Marca> {
     const url = `${this.baseUrl}/${id}/buscar-marca-por-id`;
     return this.http.get<Marca>(url);
   }
+}
   
 
   /**
@@ -82,4 +67,3 @@ export class MarcaService {
     const url = `${this.baseUrl}/${idMarca}/buscar-modelo-por-marca`;
     return this.http.get<Modelo[]>(url);
   } */
-}
