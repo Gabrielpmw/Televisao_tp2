@@ -12,13 +12,8 @@
     </button>
   </div>
 
-  <!-- 
-    2. Atualizado: id="modeloForm", [formGroup]="modeloForm"
-    3. MANTIDO: class="fabricante-form" (para usar o seu CSS de tema escuro)
-  -->
   <form id="modeloForm" class="fabricante-form" [formGroup]="modeloForm" (ngSubmit)="salvar()">
     
-    <!-- Campo: Nome do Modelo -->
     <div class="form-group">
       <label for="modelo">Nome do Modelo *</label>
       <input type="text" id="modelo" formControlName="modelo" required>
