@@ -7,6 +7,8 @@ import { TelevisaoListComponent } from './components/televisao-list-component/te
 import { TelevisaoFormComponent } from './components/televisao-form-component/televisao-form-component';
 import { FornecedorListComponent } from './components/fornecedor-list/fornecedor-list';
 import { FornecedorFormComponent } from './components/fornecedor-form/fornecedor-form';
+import { MarcaListComponent } from './components/marca-list/marca-list';
+import { MarcaFormComponent } from './components/marca-form/marca-form';
 
 export const routes: Routes = [
     {
@@ -49,5 +51,21 @@ export const routes: Routes = [
         // Rota para editar uma televisão existente (passando o ID)
         path: 'televisoes/edit/:id',
         component: TelevisaoFormComponent
-    }
+    },
+    { 
+        path: 'marcas', 
+        component: MarcaListComponent 
+    },
+
+    // 2. CORRIJA ESTA ROTA
+    { 
+        path: 'marcas/new', 
+        component: MarcaFormComponent
+    },
+
+    // 3. CORRIJA ESTA ROTA
+    { 
+        path: 'marcas/edit/:id', 
+        component: MarcaFormComponent 
+    },
 ];

@@ -66,4 +66,9 @@ export class FabricanteService {
     const url = `${this.baseUrl}/${idFabricante}/buscar-marca-por-fabricante`;
     return this.http.get(url);
   }
+
+  getAllFabricantes(): Observable<Fabricante[]> {
+    const url = `${this.baseUrl}/todos`;
+    return this.http.get<Fabricante[]>(url);
+  }
 }
