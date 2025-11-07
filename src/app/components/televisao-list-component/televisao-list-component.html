@@ -1,24 +1,49 @@
 <main class="content">
   <h1>Catálogo de Televisores</h1>
 
-  <div *ngIf="listaDeTelevisoes$ | async as televisoes; else loading">
+  <!-- 
+    1. Usamos a variável 'listaPaginada$'
+    2. O resultado do async vai para a variável 'paginacao'
+  -->
+  <div *ngIf="listaPaginada$ | async as paginacao; else loading">
 
-    <div class="product-grid">
-
-      <app-televisao-card *ngFor="let tv of televisoes" [televisao]="tv">
+    <!-- 
+      O *ngFor agora itera sobre 'paginacao.televisoes'
+    -->
+    <div class="product-grid" *ngIf="paginacao.televisoes.length > 0; else emptyState">
+      <!-- 
+        Aqui é onde o 'filho' (app-televisao-card) é chamado 
+        para cada item da lista 'paginacao.televisoes'
+      -->
+      <app-televisao-card *ngFor="let tv of paginacao.televisoes" [televisao]="tv">
       </app-televisao-card>
+    </div>
 
-    </div>
-    <div *ngIf="televisoes.length === 0" class="empty-state">
-      <p>Nenhum produto encontrado no momento.</p>
-    </div>
+    <!-- Estado de vazio, caso paginacao.televisoes.length seja 0 -->
+    <ng-template #emptyState>
+      <div class="empty-state">
+        <p>Nenhum produto encontrado no momento.</p>
+      </div>
+    </ng-template>
 
   </div>
 
+  <!-- Template de Loading (Spinner) -->
   <ng-template #loading>
     <div class="loading-spinner">
+      <mat-spinner diameter="50"></mat-spinner> 
       <p>Carregando produtos...</p>
     </div>
   </ng-template>
+
+  <!-- Paginador -->
+  <mat-paginator 
+      [length]="totalRegistros"
+      [pageSize]="pageSize"
+      [pageIndex]="pageIndex"
+      [pageSizeOptions]="[5, 10, 20, 50]"
+      (page)="onPageChange($event)"
+      aria-label="Selecionar página">
+  </mat-paginator>
 
 </main>

@@ -5,22 +5,21 @@ import { Televisao } from '../../model/televisao.model'; // Ajuste o caminho se 
 import { CommonModule } from '@angular/common'; // Para *ngIf, | currency
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
+// O MatIconModule foi REMOVIDO
 
 @Component({
   selector: 'app-televisao-card', // <-- Verifique se este é o seletor correto
   standalone: true,
-  // ADICIONE ESTA LINHA 'imports'
+  // MatIconModule FOI REMOVIDO DAQUI
   imports: [
     CommonModule,
     MatCardModule,
-    MatButtonModule,
-    MatIconModule
+    MatButtonModule
   ],
   templateUrl: './televisao-card-component.html',
   styleUrls: ['./televisao-card-component.css']
 })
-export class TelevisaoCardComponent { // O nome da sua classe deve ser este
+export class TelevisaoCardComponent { 
 
   @Input() televisao!: Televisao;
 
@@ -28,12 +27,13 @@ export class TelevisaoCardComponent { // O nome da sua classe deve ser este
 
   constructor() { }
 
-  // ADICIONE AS FUNÇÕES QUE FALTAVAM (o HTML estava chamando elas)
   onAddToCart() {
-    console.log(`Produto ID ${this.televisao.id} adicionado ao carrinho.`);
+    // Corrigido para usar o 'idTelevisao' que definimos no modelo
+    console.log(`Produto ID ${this.televisao.idTelevisao} adicionado ao carrinho.`);
   }
 
   onBuyNow() {
-    console.log(`Iniciando compra do produto ID ${this.televisao.id}.`);
+    // Corrigido para usar o 'idTelevisao' que definimos no modelo
+    console.log(`Iniciando compra do produto ID ${this.televisao.idTelevisao}.`);
   }
 }

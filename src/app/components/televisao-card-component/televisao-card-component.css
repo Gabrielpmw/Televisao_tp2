@@ -1,12 +1,27 @@
-/* Define uma largura máxima para o card não ocupar a tela inteira */
+/* Container principal do card 
+*/
 .product-card {
+  /* Define uma largura máxima para o card não ocupar a tela inteira em desktops */
   max-width: 350px;
   
   /* Adiciona uma margem para separar os cards */
   margin: 16px; 
+
+  /* Adiciona uma transição suave para o efeito de "hover" (passar o mouse) */
+  transition: box-shadow 0.3s ease-in-out;
+
+  /* Garante que o card seja flexível se estiver dentro de um container flex */
+  display: flex;
+  flex-direction: column;
 }
 
-/* Regras para a imagem do card */
+/* Efeito de "levantar" o card ao passar o mouse */
+.product-card:hover {
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+/* Regras para a imagem do card 
+*/
 img[mat-card-image] {
   /* Garante que a imagem cubra a área sem distorcer */
   object-fit: cover;
@@ -15,14 +30,55 @@ img[mat-card-image] {
   height: 250px; 
 }
 
-/* Estilo para o preço que adicionamos */
+/* Conteúdo do Card 
+*/
+mat-card-content {
+  /* Garante que o conteúdo ocupe o espaço restante */
+  flex-grow: 1; 
+  padding-bottom: 8px; /* Reduz o padding inferior para acomodar o preço */
+}
+
+/* Descrição do Produto 
+*/
+mat-card-content p {
+  min-height: 60px; /* Dá uma altura mínima para alinhar os cards */
+  color: rgba(0,0,0,0.7);
+}
+
+/* Estilo para o preço 
+*/
 .product-price {
-  font-size: 1.4rem;
-  font-weight: bold;
+  font-size: 1.5rem; /* Um pouco maior */
+  font-weight: 500;  /* Peso "medium" é mais elegante que "bold" */
   
-  /* Exemplo usando a cor primária do Angular Material */
+  /* Cor primária do Angular Material (indigo) */
   color: #3f51b5; 
   
-  margin-top: 10px;
-  margin-bottom: 0;
+  margin-top: 16px;
+  margin-bottom: 8px;
+  padding-left: 16px; /* Alinha com o título */
+  padding-right: 16px;
+}
+
+/* Ações do Card (Botões)
+*/
+mat-card-actions {
+  /* Garante que as ações fiquem sempre no final */
+  margin-top: auto; 
+  padding-left: 8px; /* Ajusta o padding para alinhar os botões de ícone */
+  padding-right: 8px;
+}
+
+/* Especificações (Sugestão do HTML) 
+*/
+.product-specs {
+  font-size: 0.9rem;
+  color: rgba(0,0,0,0.6);
+  margin-top: 8px;
+  margin-bottom: 12px;
+}
+
+.product-specs span {
+  display: block; /* Um item por linha */
+  margin-bottom: 4px;
 }

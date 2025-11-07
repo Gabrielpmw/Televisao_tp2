@@ -1,30 +1,41 @@
-    export class Televisao {
-        id !: number | null;
-        marca !: string | null;
-        modelo !: string | null;
-        descricao !: string | null;
-        resolucao !: TipoResolucao | null;
-        tamanhoTela !: TipoTela | null;
-        dimensao !: Dimensao | null;
-        valor !: number | null;
-        estoque !: number | null;
-        imageUrl !: string | null;
-    }
+export interface Dimensao {
+    id: number;
+    comprimento: number; 
+    altura: number;      
+    polegada: number;    
+}
 
-    type TipoResolucao = {
-            id : number|null,
-            nome : string | null,
-            pixels : string | null;
-    }
+export interface TipoResolucao {
+    id: number;
+    nome: string;
+    pixels: string;
+}
 
-    type TipoTela = {
-            id : number|null,
-            nome : string | null,
-    }
+export interface TipoTela {
+    id: number;
+    nome: string;
+}
 
-    type Dimensao = {
-        id : number|null,
-        comprimento : number | null,
-        altura : number | null,
-        polegada : number | null,
-    }
+export class Televisao {
+    idTelevisao !: number;   
+    marca !: string;
+    modelo !: string;
+    descricao !: string;
+    resolucao !: TipoResolucao; 
+    tipoTela !: TipoTela;    
+    dimensao !: Dimensao;   
+    valor !: number;
+    estoque !: number;
+}
+
+export interface TelevisaoRequest {
+  valor: number;
+  idTipoResolucao: number;
+  idTipoTela: number;
+  descricao: string;
+  estoque: number;
+  altura: number;
+  largura: number; 
+  polegada: number;
+  idModelo: number;
+}

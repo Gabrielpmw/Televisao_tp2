@@ -43,7 +43,7 @@ export const routes: Routes = [
     {
         // Esta é a rota que você pediu:
         // Mostra seu TelevisaoListComponent quando a URL for /televisoes
-        path: 'televisoes',
+        path: '',
         component: TelevisaoListComponent
     },
     {
@@ -83,5 +83,4 @@ export const routes: Routes = [
         path: 'modelos/edit/:id',
         component: ModeloFormComponent
     }
-    // ------------------------------------
 ];
