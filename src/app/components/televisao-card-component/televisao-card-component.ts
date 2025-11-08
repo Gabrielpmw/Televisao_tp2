@@ -25,7 +25,7 @@ export class TelevisaoCardComponent {
   @Output() edit = new EventEmitter<Televisao>();
   @Output() delete = new EventEmitter<Televisao>();
 
-  public defaultImageUrl: string = './lula.jpg';
+  public defaultImageUrl: string = '.\\tv.jpg';
 
   constructor() { }
 
