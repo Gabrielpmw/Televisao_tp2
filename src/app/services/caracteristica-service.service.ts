@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, map } from 'rxjs'; // Importar 'map'
+import { Observable, map } from 'rxjs'; 
 import { CaracteristicasGerais, CaracteristicasGeraisRequest } from '../model/caracteristicas-gerais.model';
 
 
@@ -32,9 +32,8 @@ export class CaracteristicasGeraisService {
   }
 
   getAllForDropdown(): Observable<CaracteristicasGerais[]> {
-    // Pede página 0 com 1000 itens (workaround para endpoint paginado)
     return this.getAll(0, 1000).pipe(
-      map(response => response.body || []) // Extrai apenas o 'body' da resposta
+      map(response => response.body || []) 
     );
   }
 
@@ -44,27 +43,18 @@ export class CaracteristicasGeraisService {
     return this.http.get<CaracteristicasGerais>(url);
   }
 
-  /**
-   * Cria uma nova característica.
-   * Corresponde ao: POST /caracteristicas [cite: CaracteristicaResource.java]
-   */
+
   create(dto: CaracteristicasGeraisRequest): Observable<CaracteristicasGerais> {
     return this.http.post<CaracteristicasGerais>(this.apiUrl, dto);
   }
 
-  /**
-   * Atualiza uma característica existente.
-   * Corresponde ao: PUT /caracteristicas/{id}/atualizar [cite: CaracteristicaResource.java]
-   */
+  
   update(id: number, dto: CaracteristicasGeraisRequest): Observable<void> {
     const url = `${this.apiUrl}/${id}/atualizar`;
     return this.http.put<void>(url, dto);
   }
 
-  /**
-   * Exclui uma característica.
-   * Corresponde ao: DELETE /caracteristicas/{id}/apagar [cite: CaracteristicaResource.java]
-   */
+  
   delete(id: number): Observable<void> {
     const url = `${this.apiUrl}/${id}/apagar`;
     return this.http.delete<void>(url);

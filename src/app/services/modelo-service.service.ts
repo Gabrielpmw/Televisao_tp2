@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+// 1. Verifique se 'map' está importado de 'rxjs'
+import { Observable, map } from 'rxjs';
 import { Modelo, ModeloResponse } from '../model/modelo.model';
 
 @Injectable({
@@ -8,24 +9,28 @@ import { Modelo, ModeloResponse } from '../model/modelo.model';
 })
 export class ModeloService {
 
-
   private readonly apiUrl = 'http://localhost:8080/modelos';
 
   constructor(private http: HttpClient) { }
 
   getAll(page: number, pageSize: number): Observable<HttpResponse<ModeloResponse[]>> {
-    
-    // Cria os parâmetros de URL (ex: ?page=0&pageSize=10)
+
     let params = new HttpParams()
       .set('page', page.toString())
       .set('pageSize', pageSize.toString());
 
-    // { observe: 'response' } pede ao Angular para nos dar a resposta HTTP completa
     return this.http.get<ModeloResponse[]>(this.apiUrl, { params: params, observe: 'response' });
   }
 
+ 
+  getAllForDropdown(): Observable<ModeloResponse[]> {
+    return this.getAll(0, 1000).pipe(
+      map(response => response.body || []) 
+    );
+  }
+
   findByNome(nome: string, page: number, pageSize: number): Observable<HttpResponse<ModeloResponse[]>> {
-    
+
     let params = new HttpParams()
       .set('page', page.toString())
       .set('pageSize', pageSize.toString());
@@ -37,6 +42,12 @@ export class ModeloService {
   getById(id: number): Observable<ModeloResponse> {
     const url = `${this.apiUrl}/${id}/buscar-modelo-por-id`;
     return this.http.get<ModeloResponse>(url);
+
+  }
+
+  findByMarca(idMarca: number): Observable<ModeloResponse[]> {
+    const url = `${this.apiUrl}/marca/${idMarca}`;
+    return this.http.get<ModeloResponse[]>(url);
   }
 
   create(dto: Modelo): Observable<ModeloResponse> {
@@ -47,7 +58,6 @@ export class ModeloService {
     const url = `${this.apiUrl}/${id}/atualizar`;
     return this.http.put<void>(url, dto);
   }
-
 
   delete(id: number): Observable<void> {
     const url = `${this.apiUrl}/${id}/apagar`;

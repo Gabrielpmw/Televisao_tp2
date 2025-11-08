@@ -1,5 +1,4 @@
 <div class="container">
-  <!-- Cabeçalho -->
   <div class="header">
     <h1>Fornecedores</h1>
     <button class="btn-add" [routerLink]="['/fornecedores/new']">
@@ -7,7 +6,6 @@
     </button>
   </div>
 
-  <!-- Barra de Busca -->
   <div class="search-container">
     <input 
       type="text" 
@@ -17,26 +15,23 @@
       (keydown.enter)="aplicarBusca()">
   </div>
   
-  <!-- Tabela de Dados -->
   <div class="table-container">
-    <table class="fabricante-table"> <!-- Você pode querer renomear esta classe CSS -->
+    <table class="fabricante-table"> 
       <thead>
         <tr>
           <th>No.</th>
           <th>Razão Social</th>
           <th>CNPJ</th>
           <th>Status</th>
-          <th>Email</th> <!-- Coluna adaptada para Fornecedor -->
+          <th>Email</th> 
           <th>Telefone</th>
           <th>Ações</th>
         </tr>
       </thead>
 
-      <!-- Corpo da Tabela (com dados) -->
       <tbody *ngIf="fornecedores.length > 0; else emptyState">
         <tr *ngFor="let forn of fornecedores; let i = index">
           
-          <!-- Index (calculado pela paginação) -->
           <td>{{ (paginaAtual - 1) * itensPorPagina + i + 1 }}</td>
 
           <td>{{ forn.razaoSocial }}</td>
@@ -47,12 +42,11 @@
               {{ forn.status ? 'Ativo' : 'Inativo' }}
             </span>
           </td>
-          <td>{{ forn.email }}</td> <!-- Campo adaptado -->
+          <td>{{ forn.email }}</td> 
           <td>{{ getPrimeiroTelefone(forn) }}</td>
           <td>
             <div class="action-buttons">
               
-              <!-- Botão Editar -->
               <button class="btn-icon btn-edit" (click)="editarFornecedor(forn.id!)">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
@@ -60,7 +54,6 @@
                 </svg>
               </button>
               
-              <!-- Botão Deletar (Abre o modal) -->
               <button class="btn-icon btn-delete-icon" (click)="abrirModalExclusao(forn.id!)">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <polyline points="3 6 5 6 21 6"></polyline>
@@ -75,11 +68,9 @@
         </tr>
       </tbody>
 
-      <!-- Template para Estado Vazio (sem dados) -->
       <ng-template #emptyState>
         <tbody>
           <tr>
-            <!-- Colspan atualizado para 7 colunas -->
             <td colspan="7" class="empty-state">
               <p *ngIf="totalRegistros === 0 && !termoBusca; else noResults">
                 Nenhum fornecedor cadastrado.
@@ -94,10 +85,8 @@
     </table>
   </div>
   
-  <!-- Controles de Paginação -->
   <div class="pagination-controls" *ngIf="totalRegistros > 0">
     
-    <!-- Seletor de Itens por Página -->
     <div class="page-size-selector">
       <label for="itensPorPagina">Itens por pág:</label>
       <select id="itensPorPagina" 
@@ -111,7 +100,6 @@
       </select>
     </div>
 
-    <!-- Informação da Página Atual -->
     <span class="page-info">
       <ng-container *ngIf="totalPaginas > 1">
         Página {{ paginaAtual }} de {{ totalPaginas }} 
@@ -119,7 +107,6 @@
       ({{ totalRegistros }} {{ totalRegistros === 1 ? 'item' : 'itens' }})
     </span>
     
-    <!-- Botões de Navegação de Página -->
     <div class="page-buttons" *ngIf="totalPaginas > 1">
       <button class="page-button" 
               (click)="paginaAnterior()" 
@@ -137,7 +124,6 @@
 
 </div>
 
-<!-- Modal de Exclusão -->
 <div id="deleteModal" class="modal" [class.active]="modalVisivel">
   <div class="modal-content">
     <h2>Confirmar Exclusão</h2>

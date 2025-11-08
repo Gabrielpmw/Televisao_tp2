@@ -1,39 +1,47 @@
-import { Component, Input } from '@angular/core';
-import { Televisao } from '../../model/televisao.model'; // Ajuste o caminho se necessário
+import { Component, Input, Output, EventEmitter } from '@angular/core'; // 1. Importa Output e EventEmitter
+import { Televisao } from '../../model/televisao.model';
 
-// IMPORTS NECESSÁRIOS
-import { CommonModule } from '@angular/common'; // Para *ngIf, | currency
+import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
-// O MatIconModule foi REMOVIDO
+import { MatTooltipModule } from '@angular/material/tooltip'; 
 
 @Component({
-  selector: 'app-televisao-card', // <-- Verifique se este é o seletor correto
+  selector: 'app-televisao-card',
   standalone: true,
-  // MatIconModule FOI REMOVIDO DAQUI
   imports: [
     CommonModule,
     MatCardModule,
-    MatButtonModule
+    MatButtonModule,
+    MatTooltipModule 
   ],
   templateUrl: './televisao-card-component.html',
   styleUrls: ['./televisao-card-component.css']
 })
-export class TelevisaoCardComponent { 
+export class TelevisaoCardComponent {
 
   @Input() televisao!: Televisao;
+
+  @Output() edit = new EventEmitter<Televisao>();
+  @Output() delete = new EventEmitter<Televisao>();
 
   public defaultImageUrl: string = './lula.jpg';
 
   constructor() { }
 
   onAddToCart() {
-    // Corrigido para usar o 'idTelevisao' que definimos no modelo
     console.log(`Produto ID ${this.televisao.idTelevisao} adicionado ao carrinho.`);
   }
 
   onBuyNow() {
-    // Corrigido para usar o 'idTelevisao' que definimos no modelo
     console.log(`Iniciando compra do produto ID ${this.televisao.idTelevisao}.`);
+  }
+
+  onEdit() {
+    this.edit.emit(this.televisao);
+  }
+
+  onDelete() {
+    this.delete.emit(this.televisao);
   }
 }

@@ -2,10 +2,10 @@ import { Fornecedor } from "./fornecedor.model";
 
 export class Marca {
     id?: number | null;
-    marca?: string | null;       // <-- Espelha a string 'marca' do seu DTO
+    marca?: string | null;       
     descricao?: string | null;
-    idFabricante?: number | null; // <-- ADICIONE ESTA LINHA
-    fabricante?: string | null; // <-- Espelha a string 'fabricante' do seu DTO
+    idFabricante?: number | null; 
+    fabricante?: string | null; 
     fornecedores?: Fornecedor[] | null;
 }
 

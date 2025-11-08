@@ -1,49 +1,77 @@
 <main class="content">
-  <h1>Catálogo de Televisores</h1>
+   
+    <div class="list-header">
+        <h1>Catálogo de Televisores</h1>
+       
+        <button class="btn-add" [routerLink]="['/televisoes/new']">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            Adicionar Televisão
+          </button>
+      </div>
+    <div class="search-container">
+        <input type="text" class="search-input"            placeholder="Buscar por Nome do Modelo... (Pressione Enter)"
+                 [(ngModel)]="termoBusca"            (keydown.enter)="aplicarBusca()">
+       
+        <button class="btn-clear" (click)="limparBusca()" *ngIf="termoBusca.trim()">
+            Limpar
+          </button>
+      </div>
 
-  <!-- 
-    1. Usamos a variável 'listaPaginada$'
-    2. O resultado do async vai para a variável 'paginacao'
-  -->
-  <div *ngIf="listaPaginada$ | async as paginacao; else loading">
-
-    <!-- 
-      O *ngFor agora itera sobre 'paginacao.televisoes'
-    -->
-    <div class="product-grid" *ngIf="paginacao.televisoes.length > 0; else emptyState">
-      <!-- 
-        Aqui é onde o 'filho' (app-televisao-card) é chamado 
-        para cada item da lista 'paginacao.televisoes'
-      -->
-      <app-televisao-card *ngFor="let tv of paginacao.televisoes" [televisao]="tv">
-      </app-televisao-card>
+    <div *ngIf="listaPaginada$ | async as paginacao; else loadingOrEmpty">
+        <div class="product-grid" *ngIf="paginacao.televisoes.length > 0">
+           
+ 
+      <app-televisao-card *ngFor="let tv of paginacao.televisoes" [televisao]="tv" (edit)="handleEdit($event)"
+        (delete)="handleDelete($event)">
+              </app-televisao-card>
+         
     </div>
+      </div>
 
-    <!-- Estado de vazio, caso paginacao.televisoes.length seja 0 -->
-    <ng-template #emptyState>
-      <div class="empty-state">
-        <p>Nenhum produto encontrado no momento.</p>
+    <ng-template #loadingOrEmpty>
+        <div *ngIf="!(listaPaginada$ | async); else emptyState" class="loading-spinner">
+            <mat-spinner diameter="50"></mat-spinner>
+            <p>Carregando produtos...</p>
+          </div>
+      </ng-template>
+
+    <ng-template #emptyState>
+        <div class="empty-state">
+            <p *ngIf="termoBusca.trim(); else noProducts">
+                Nenhum modelo encontrado para "{{ termoBusca }}".
+              </p>
+            <ng-template #noProducts>
+                <p>Nenhum produto cadastrado no momento.</p>
+              </ng-template>
+          </div>
+      </ng-template>
+   
+    <mat-paginator       *ngIf="totalRegistros > 0"       [length]="totalRegistros"       [pageSize]="pageSize"      
+    [pageIndex]="pageIndex"       [pageSizeOptions]="[5, 10, 20, 50]"       (page)="onPageChange($event)"      
+    aria-label="Selecionar página">
+      </mat-paginator>
+
+
+  <div class="modal-overlay" *ngIf="showDeleteModal">
+    <div class="modal-content">
+      <h2>Confirmar Exclusão</h2>
+      <p>Você tem certeza que deseja excluir a TV
+        <strong>{{ tvToDelete?.marca }} {{ tvToDelete?.modelo }}</strong>?
+      </p>
+      <p>Esta ação não pode ser desfeita.</p>
+      <div class="modal-actions">
+        <button class="btn-cancel" (click)="cancelDelete()">
+          Cancelar
+        </button>
+        <button class="btn-delete" (click)="confirmDelete()">
+          Excluir
+        </button>
       </div>
-    </ng-template>
-
-  </div>
-
-  <!-- Template de Loading (Spinner) -->
-  <ng-template #loading>
-    <div class="loading-spinner">
-      <mat-spinner diameter="50"></mat-spinner> 
-      <p>Carregando produtos...</p>
     </div>
-  </ng-template>
-
-  <!-- Paginador -->
-  <mat-paginator 
-      [length]="totalRegistros"
-      [pageSize]="pageSize"
-      [pageIndex]="pageIndex"
-      [pageSizeOptions]="[5, 10, 20, 50]"
-      (page)="onPageChange($event)"
-      aria-label="Selecionar página">
-  </mat-paginator>
+  </div>
 
 </main>

@@ -1,7 +1,4 @@
-// Este arquivo espelha seus DTOs CaracteristicasRequestDTO e CaracteristicasResponseDTO
 
-// Esta classe é importada pelo seu 'modelo-form.component.ts'
-// (através do ModeloResponse)
 export class CaracteristicasGerais {
   constructor(
     public id: number,
@@ -13,7 +10,6 @@ export class CaracteristicasGerais {
   ) {}
 }
 
-// Esta classe será usada se você fizer um form para Características
 export class CaracteristicasGeraisRequest {
   constructor(
     public nome: string,

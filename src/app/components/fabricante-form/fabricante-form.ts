@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormArray, FormControl } from '@angular/forms';
-import { Router, RouterModule, ActivatedRoute } from '@angular/router'; // NOVO: Importe ActivatedRoute
+import { Router, RouterModule, ActivatedRoute } from '@angular/router'; 
 import { CommonModule } from '@angular/common';
 
 import { Fabricante } from '../../model/fabricante.model';
-import { Telefone } from '../../model/telefone.model'; // NOVO: Precisamos do model Telefone
+import { Telefone } from '../../model/telefone.model'; 
 import { FabricanteService } from '../../services/fabricante-service';
 
 
@@ -16,17 +16,16 @@ import { FabricanteService } from '../../services/fabricante-service';
     RouterModule,
     ReactiveFormsModule
   ],
-  templateUrl: './fabricante-form.html', // (Ajuste o nome se necessário)
-  styleUrl: './fabricante-form.css' // (Ajuste o nome se necessário)
+  templateUrl: './fabricante-form.html', 
+  styleUrl: './fabricante-form.css' 
 })
 export class FabricanteForm implements OnInit {
 
   fabricanteForm: FormGroup;
   novoTelefoneControl = new FormControl('', [Validators.required, Validators.minLength(10)]); 
   
-  formTitle: string = 'Novo Fabricante'; // O título agora é dinâmico
+  formTitle: string = 'Novo Fabricante'; 
 
-  // NOVO: Variáveis para controlar o modo (Criar vs Editar)
   isEditMode: boolean = false;
   fabricanteId: number | null = null;
 
@@ -34,47 +33,37 @@ export class FabricanteForm implements OnInit {
     private fb: FormBuilder,
     private fabricanteService: FabricanteService,
     private router: Router,
-    private route: ActivatedRoute // NOVO: Injete o ActivatedRoute
+    private route: ActivatedRoute 
   ) {
-    // A inicialização do formulário permanece a mesma
     this.fabricanteForm = this.fb.group({
       razaoSocial: ['', Validators.required],
       cnpj: ['', Validators.required],
       status: [true, Validators.required],
-      // NOVO: Use o nome 'dataAbertura' que já corrigimos
       dataAbertura: ['', Validators.required], 
       paisSede: ['', Validators.required],
       telefones: this.fb.array([]) 
     });
   }
 
-  // NOVO: A lógica principal de inicialização foi movida para ngOnInit
   ngOnInit(): void {
-    // Verifique se existe um 'id' na URL
     const idParam = this.route.snapshot.paramMap.get('id');
 
     if (idParam) {
-      // --- MODO DE EDIÇÃO ---
       this.isEditMode = true;
-      this.fabricanteId = +idParam; // O '+' converte a string da URL para number
-      this.formTitle = 'Editar Fabricante'; // Muda o título
+      this.fabricanteId = +idParam; 
+      this.formTitle = 'Editar Fabricante'; 
 
-      // Chame o service para buscar o fabricante
       this.fabricanteService.getFabricanteById(this.fabricanteId).subscribe(fabricante => {
-        // Preencha o formulário com os dados recebidos
         this.preencherFormulario(fabricante);
       });
 
     } else {
-      // --- MODO DE CRIAÇÃO ---
       this.isEditMode = false;
       this.formTitle = 'Novo Fabricante';
     }
   }
 
-  // NOVO: Método para preencher o formulário com dados existentes
   preencherFormulario(fabricante: Fabricante): void {
-    // 1. Preencha os campos simples
     this.fabricanteForm.patchValue({
       razaoSocial: fabricante.razaoSocial,
       cnpj: fabricante.cnpj,
@@ -83,10 +72,8 @@ export class FabricanteForm implements OnInit {
       paisSede: fabricante.paisSede
     });
 
-    // 2. Limpe o FormArray (caso tenha algo)
     this.telefones.clear();
 
-    // 3. Preencha a lista de telefones (o FormArray)
     if (fabricante.telefones) {
       fabricante.telefones.forEach(tel => {
         this.telefones.push(
@@ -105,7 +92,6 @@ export class FabricanteForm implements OnInit {
     return this.fabricanteForm.get('telefones') as FormArray;
   }
 
-  // Método para adicionar telefone (sem mudanças)
   adicionarTelefone(): void {
     if (this.novoTelefoneControl.invalid) {
       this.novoTelefoneControl.markAsTouched();
@@ -132,12 +118,10 @@ export class FabricanteForm implements OnInit {
     this.novoTelefoneControl.reset();
   }
 
-  // Método para remover telefone (sem mudanças)
   removerTelefone(index: number): void {
     this.telefones.removeAt(index);
   }
 
-  // NOVO: Método 'salvar()' atualizado para decidir entre Criar ou Atualizar
   salvar(): void {
     if (this.fabricanteForm.invalid) {
       this.fabricanteForm.markAllAsTouched();
@@ -149,12 +133,9 @@ export class FabricanteForm implements OnInit {
       return;
     }
 
-    // O objeto de dados é o mesmo
     const fabricanteData: Fabricante = this.fabricanteForm.value;
 
     if (this.isEditMode && this.fabricanteId) {
-      // --- LÓGICA DE ATUALIZAÇÃO ---
-      // Use o service 'updateFabricante' que já criamos
       this.fabricanteService.atualizar(this.fabricanteId, fabricanteData).subscribe({
         next: () => {
           this.router.navigate(['/fabricantes']);
@@ -164,7 +145,6 @@ export class FabricanteForm implements OnInit {
         }
       });
     } else {
-      // --- LÓGICA DE CRIAÇÃO (existente) ---
       this.fabricanteService.incluir(fabricanteData).subscribe({
         next: () => {
           this.router.navigate(['/fabricantes']);
@@ -176,7 +156,6 @@ export class FabricanteForm implements OnInit {
     }
   }
 
-  // Método cancelar (sem mudanças)
   cancelar(): void {
     this.router.navigate(['/fabricantes']);
   }

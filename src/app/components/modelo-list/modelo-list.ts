@@ -9,27 +9,26 @@ import { ModeloResponse } from '../../model/modelo.model';
 import { ModeloService } from '../../services/modelo-service.service';
 
 @Component({
-  selector: 'app-modelo-list', // 3. Selector atualizado
+  selector: 'app-modelo-list', 
   standalone: true,
   imports: [
     CommonModule,
     RouterModule,
     FormsModule,
-    DatePipe // Adicionar DatePipe
+    DatePipe 
   ],
-  templateUrl: './modelo-list.html', // 4. HTML atualizado
+  templateUrl: './modelo-list.html', 
   styleUrl: './modelo-list.css'
 })
 export class ModeloListComponent implements OnInit {
 
-  modelos: ModeloResponse[] = []; // 5. Lista de Modelos
+  modelos: ModeloResponse[] = []; 
 
   termoBusca: string = '';
 
   modalVisivel: boolean = false;
-  modeloParaExcluir: number | null = null; // 6. Para exclusão
+  modeloParaExcluir: number | null = null; 
 
-  // (Controles de paginação idênticos)
   paginaAtual: number = 1;
   itensPorPagina: number = 10;
   totalRegistros: number = 0;
@@ -37,12 +36,12 @@ export class ModeloListComponent implements OnInit {
   opcoesItensPorPagina: number[] = [10, 25, 50, 100];
 
   constructor(
-    private modeloService: ModeloService, // 7. Service injetado
+    private modeloService: ModeloService, 
     private router: Router
   ) { }
 
   ngOnInit(): void {
-    this.carregarModelos(); // 8. Método principal
+    this.carregarModelos(); 
   }
 
   carregarModelos(): void {
@@ -52,7 +51,6 @@ export class ModeloListComponent implements OnInit {
     let observable: Observable<HttpResponse<ModeloResponse[]>>;
 
     if (this.termoBusca.trim()) {
-      // 9. Usando os métodos do ModeloService
       observable = this.modeloService.findByNome(this.termoBusca, page, pageSize);
     } else {
       observable = this.modeloService.getAll(page, pageSize);
@@ -60,7 +58,7 @@ export class ModeloListComponent implements OnInit {
 
     observable.subscribe({
       next: (response: HttpResponse<ModeloResponse[]>) => {
-        this.modelos = response.body || []; // 10. Preenche a lista de modelos
+        this.modelos = response.body || []; 
 
         const totalCountHeader = response.headers.get('X-Total-Count');
         this.totalRegistros = totalCountHeader ? +totalCountHeader : 0;
@@ -68,13 +66,10 @@ export class ModeloListComponent implements OnInit {
         this.totalPaginas = Math.ceil(this.totalRegistros / this.itensPorPagina);
       },
       error: (err: any) => {
-        console.error('Erro ao carregar modelos:', err); // 11. Log de erro
+        console.error('Erro ao carregar modelos:', err); 
       }
     });
   }
-
-
-  // (Métodos de busca e paginação idênticos, apenas chamam carregarModelos)
 
   aplicarBusca(): void {
     this.paginaAtual = 1;
@@ -107,12 +102,10 @@ export class ModeloListComponent implements OnInit {
     this.irParaPagina(this.paginaAtual + 1);
   }
 
-  // 12. Ação de Editar adaptada
   editarModelo(id: number): void {
-    this.router.navigate(['/modelos/edit', id]); // Rota atualizada
+    this.router.navigate(['/modelos/edit', id]); 
   }
 
-  // (Lógica do Modal idêntica)
 
   abrirModalExclusao(id: number): void {
     this.modeloParaExcluir = id;
@@ -126,7 +119,6 @@ export class ModeloListComponent implements OnInit {
 
   confirmarExclusao(): void {
     if (this.modeloParaExcluir) {
-      // 13. Usando modeloService.delete
       this.modeloService.delete(this.modeloParaExcluir).subscribe({
         next: () => {
           this.fecharModal();

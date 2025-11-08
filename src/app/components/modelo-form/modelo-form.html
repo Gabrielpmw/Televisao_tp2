@@ -48,13 +48,11 @@
       </div>
     </div>
 
-    <!-- Dropdown: Marca -->
     <div class="form-group">
       <label for="idMarca">Marca *</label>
       <select id="idMarca" formControlName="idMarca" required>
         <option [ngValue]="null" disabled>Selecione uma marca</option>
         
-        <!-- 4. COMO VOCÊ PEDIU: Mostra o nome (marca.marca) -->
         <option *ngFor="let marca of marcas" [ngValue]="marca.id">
           {{ marca.marca }}
         </option>
@@ -66,13 +64,11 @@
       </div>
     </div>
 
-    <!-- Dropdown: Característica -->
     <div class="form-group">
       <label for="idCaracteristicas">Característica *</label>
       <select id="idCaracteristicas" formControlName="idCaracteristicas" required>
         <option [ngValue]="null" disabled>Selecione uma característica</option>
         
-        <!-- 5. COMO VOCÊ PEDIU: Mostra o nome (carac.nome) -->
         <option *ngFor="let carac of caracteristicas" [ngValue]="carac.id">
           {{ carac.nome }}
         </option>
@@ -84,12 +80,10 @@
       </div>
     </div>
 
-    <!-- Botões de Ação -->
     <div class="form-actions">
       <button type="button" class="btn-cancel" (click)="cancelar()">
         Cancelar
       </button>
-      <!-- 6. Atualizado: [disabled]="modeloForm.invalid" -->
       <button type="submit" class="btn-submit" [disabled]="modeloForm.invalid">
         Salvar
       </button>

@@ -17,18 +17,17 @@ import { MarcaService } from '../../services/marca-service.service';
     FormsModule
   ],
   templateUrl: './marca-list.html',
-  styleUrl: './marca-list.css' // (Usando o seu CSS)
+  styleUrl: './marca-list.css' 
 })
 export class MarcaListComponent implements OnInit {
 
-  marcas: Marca[] = []; // 3. Lista de Marcas
+  marcas: Marca[] = []; 
 
   termoBusca: string = '';
 
   modalVisivel: boolean = false;
-  marcaParaExcluir: number | null = null; // 4. Para exclusão
+  marcaParaExcluir: number | null = null; 
 
-  // (Controles de paginação idênticos)
   paginaAtual: number = 1;
   itensPorPagina: number = 10;
   totalRegistros: number = 0;
@@ -36,12 +35,12 @@ export class MarcaListComponent implements OnInit {
   opcoesItensPorPagina: number[] = [10, 25, 50, 100];
 
   constructor(
-    private marcaService: MarcaService, // 5. Service injetado
+    private marcaService: MarcaService, 
     private router: Router
   ) { }
 
   ngOnInit(): void {
-    this.carregarMarcas(); // 6. Método principal
+    this.carregarMarcas(); 
   }
 
   carregarMarcas(): void {
@@ -51,7 +50,6 @@ export class MarcaListComponent implements OnInit {
     let observable: Observable<HttpResponse<Marca[]>>;
 
     if (this.termoBusca.trim()) {
-      // 7. Usando os métodos do MarcaService
       observable = this.marcaService.findByNome(this.termoBusca, page, pageSize);
     } else {
       observable = this.marcaService.getAll(page, pageSize);
@@ -59,7 +57,7 @@ export class MarcaListComponent implements OnInit {
 
     observable.subscribe({
       next: (response: HttpResponse<Marca[]>) => {
-        this.marcas = response.body || []; // 8. Preenche a lista de marcas
+        this.marcas = response.body || []; 
 
         const totalCountHeader = response.headers.get('X-Total-Count');
         this.totalRegistros = totalCountHeader ? +totalCountHeader : 0;
@@ -71,13 +69,12 @@ export class MarcaListComponent implements OnInit {
         }
       },
       error: (err: any) => {
-        console.error('Erro ao carregar marcas:', err); // 9. Log de erro
+        console.error('Erro ao carregar marcas:', err); 
       }
     });
   }
 
 
-  // (Métodos de busca e paginação idênticos, apenas chamam carregarMarcas)
 
   aplicarBusca(): void {
     this.paginaAtual = 1;
@@ -110,14 +107,10 @@ export class MarcaListComponent implements OnInit {
     this.irParaPagina(this.paginaAtual + 1);
   }
 
-  // 10. A função 'getFabricanteNome' FOI REMOVIDA, não é mais necessária.
-
-  // 11. Ação de Editar adaptada
   editarMarca(id: number): void {
     this.router.navigate(['/marcas/edit', id]);
   }
 
-  // (Lógica do Modal idêntica)
 
   abrirModalExclusao(id: number): void {
     this.marcaParaExcluir = id;
@@ -131,11 +124,10 @@ export class MarcaListComponent implements OnInit {
 
   confirmarExclusao(): void {
     if (this.marcaParaExcluir) {
-      // 12. Usando marcaService.delete
       this.marcaService.delete(this.marcaParaExcluir).subscribe({
         next: () => {
           this.fecharModal();
-          this.carregarMarcas(); // Recarrega a lista
+          this.carregarMarcas(); 
         },
         error: (err: any) => {
           console.error('Erro ao excluir marca:', err);

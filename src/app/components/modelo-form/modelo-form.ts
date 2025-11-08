@@ -9,14 +9,6 @@ import { Marca } from '../../model/marca.model';
 import { MarcaService } from '../../services/marca-service.service';
 import { CaracteristicasGerais } from '../../model/caracteristicas-gerais.model';
 import { CaracteristicasGeraisService } from '../../services/caracteristica-service.service';
-/* 
-import { Modelo, ModeloResponse } from '../../models/modelo.model';
-import { ModeloService } from '../../services/modelo.service';
-
-import { Marca } from '../../models/marca.model';
-import { MarcaService } from '../../services/marca.service';
-import { CaracteristicasGerais } from '../../models/caracteristicas-gerais.model';
-import { CaracteristicasGeraisService } from '../../services/caracteristicas-gerais.service'; */
 
 @Component({
   selector: 'app-modelo-form',
@@ -36,7 +28,6 @@ export class ModeloFormComponent implements OnInit {
   isEditMode: boolean = false;
   modeloId: number | null = null;
 
-  // Arrays para os dropdowns (Tipos Corretos)
   marcas: Marca[] = [];
   caracteristicas: CaracteristicasGerais[] = [];
 
@@ -48,7 +39,6 @@ export class ModeloFormComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute
   ) {
-    // O formulário DEVE espelhar o Modelo (Request)
     this.modeloForm = this.fb.group({
       modelo: ['', Validators.required],
       mesesGarantia: [null, [Validators.required, Validators.min(0)]],
@@ -92,7 +82,6 @@ export class ModeloFormComponent implements OnInit {
   }
 
   preencherFormulario(modelo: ModeloResponse): void {
-    // Esta função já estava correta
     this.modeloForm.patchValue({
       modelo: modelo.modelo,
       mesesGarantia: modelo.mesesGarantia,
@@ -108,13 +97,9 @@ export class ModeloFormComponent implements OnInit {
       return;
     }
 
-    // 3. --- CORREÇÃO AQUI ---
-    // O valor do formulário é do tipo 'Modelo' (o Request)
-    // e não 'ModeloRequest' (que não existe mais nos imports).
     const request: Modelo = this.modeloForm.value;
 
     if (this.isEditMode && this.modeloId) {
-      // O 'modeloService.update' espera 'Modelo' (Request)
       this.modeloService.update(this.modeloId, request).subscribe({
         next: () => {
           this.router.navigate(['/modelos']);
@@ -124,7 +109,6 @@ export class ModeloFormComponent implements OnInit {
         }
       });
     } else {
-      // O 'modeloService.create' espera 'Modelo' (Request)
       this.modeloService.create(request).subscribe({
         next: () => {
           this.router.navigate(['/modelos']);

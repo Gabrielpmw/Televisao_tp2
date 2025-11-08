@@ -3,9 +3,9 @@
 .product-card {
   /* Define uma largura máxima para o card não ocupar a tela inteira em desktops */
   max-width: 350px;
-  
+
   /* Adiciona uma margem para separar os cards */
-  margin: 16px; 
+  margin: 16px;
 
   /* Adiciona uma transição suave para o efeito de "hover" (passar o mouse) */
   transition: box-shadow 0.3s ease-in-out;
@@ -17,7 +17,7 @@
 
 /* Efeito de "levantar" o card ao passar o mouse */
 .product-card:hover {
-  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 /* Regras para a imagem do card 
@@ -25,60 +25,119 @@
 img[mat-card-image] {
   /* Garante que a imagem cubra a área sem distorcer */
   object-fit: cover;
-  
+
   /* Define uma altura fixa para todas as imagens ficarem uniformes */
-  height: 250px; 
+  height: 250px;
 }
 
 /* Conteúdo do Card 
 */
 mat-card-content {
   /* Garante que o conteúdo ocupe o espaço restante */
-  flex-grow: 1; 
-  padding-bottom: 8px; /* Reduz o padding inferior para acomodar o preço */
+  flex-grow: 1;
+  padding-bottom: 8px;
+  /* Reduz o padding inferior para acomodar o preço */
 }
 
 /* Descrição do Produto 
 */
 mat-card-content p {
-  min-height: 60px; /* Dá uma altura mínima para alinhar os cards */
-  color: rgba(0,0,0,0.7);
+  min-height: 60px;
+  /* Dá uma altura mínima para alinhar os cards */
+  color: rgba(0, 0, 0, 0.7);
 }
 
 /* Estilo para o preço 
 */
 .product-price {
-  font-size: 1.5rem; /* Um pouco maior */
-  font-weight: 500;  /* Peso "medium" é mais elegante que "bold" */
-  
+  font-size: 1.5rem;
+  /* Um pouco maior */
+  font-weight: 500;
+  /* Peso "medium" é mais elegante que "bold" */
+
   /* Cor primária do Angular Material (indigo) */
-  color: #3f51b5; 
-  
+  color: #3f51b5;
+
   margin-top: 16px;
   margin-bottom: 8px;
-  padding-left: 16px; /* Alinha com o título */
+  padding-left: 16px;
+  /* Alinha com o título */
   padding-right: 16px;
 }
 
-/* Ações do Card (Botões)
-*/
+/* ============================================= */
+/*                   CSS CORRIGIDO                 */
+/* ============================================= */
+
+/* Ações do Card (Botões) */
 mat-card-actions {
   /* Garante que as ações fiquem sempre no final */
-  margin-top: auto; 
-  padding-left: 8px; /* Ajusta o padding para alinhar os botões de ícone */
-  padding-right: 8px;
+  margin-top: auto;
+
+  /* 1. Transforma o container em flex */
+  display: flex;
+
+  /* 2. Alinha os filhos (admin e user) nas pontas opostas */
+  justify-content: space-between;
+
+  /* 3. Centraliza os ícones verticalmente */
+  align-items: center;
+
+  /* 4. Padding corrigido (o seu estava com 'id: 8px') */
+  /* Ajusta o padding para alinhar com o conteúdo do card */
+  padding: 0px 16px 8px 16px;
 }
+
+/* Garante que os botões dentro de CADA grupo fiquem em linha */
+.admin-actions,
+.user-actions {
+  display: flex;
+  align-items: center;
+}
+
+/* ============================================= */
+/*               FIM DAS CORREÇÕES                 */
+/* ============================================= */
+
+
+/* ============================================= */
+/* NOVOS ESTILOS ADICIONADOS         */
+/* ============================================= */
+
+/* Define o tamanho e a cor dos ícones SVG */
+.custom-icon {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
+  /* Herda a cor do botão */
+}
+
+/* Cor ao passar o mouse (hover) */
+.admin-edit-icon:hover {
+  color: #3b82f6;
+  /* Azul */
+}
+
+.admin-delete-icon:hover {
+  color: #ef4444;
+  /* Vermelho */
+}
+
+/* ============================================= */
+
 
 /* Especificações (Sugestão do HTML) 
 */
 .product-specs {
   font-size: 0.9rem;
-  color: rgba(0,0,0,0.6);
+  color: rgba(0, 0, 0, 0.6);
   margin-top: 8px;
   margin-bottom: 12px;
 }
 
 .product-specs span {
-  display: block; /* Um item por linha */
+  display: block;
+  /* Um item por linha */
   margin-bottom: 4px;
 }
+

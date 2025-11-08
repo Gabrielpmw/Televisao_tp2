@@ -1,66 +1,63 @@
 <mat-card class="product-card" *ngIf="televisao">
-  
-  <mat-card-header>
-    <mat-card-title>{{ televisao.marca }}</mat-card-title>
-    <mat-card-subtitle>{{ televisao.modelo }}</mat-card-subtitle>
-  </mat-card-header>
+   
+    <mat-card-header>
+        <mat-card-title>{{ televisao.marca }}</mat-card-title>
+        <mat-card-subtitle>{{ televisao.modelo }}</mat-card-subtitle>
+      </mat-card-header>
 
-  <img mat-card-image 
-       [src]="defaultImageUrl" 
-       [alt]="'Foto da ' + televisao.marca + ' ' + televisao.modelo">
+    <img mat-card-image        [src]="defaultImageUrl"      
+     [alt]="'Foto da ' + televisao.marca + ' ' + televisao.modelo">
 
-  <mat-card-content>
-    <p>
-      {{ televisao.descricao }}
-    </p>
+    <mat-card-content>
+        <p>
+            {{ televisao.descricao }}
+          </p>
+      </mat-card-content>
 
-    <!-- 
-      (Sugestão) Você pode descomentar este bloco 
-      para mostrar mais detalhes da sua API 
-    -->
-    <!-- 
-    <div class="product-specs">
-      <span>Tela: {{ televisao.tipoTela.nome }}</span>
-      <span>Resolução: {{ televisao.resolucao.nome }} ({{ televisao.resolucao.pixels }})</span>
-      <span>Tamanho: {{ televisao.dimensao.polegada }}"</span>
-    </div> 
-    -->
-    
-  </mat-card-content>
+    <h3 class="product-price">
+        {{ televisao.valor | currency:'BRL' }}
+      </h3>
 
-  <!-- O preço foi movido para fora do content para melhor alinhamento -->
-  <h3 class="product-price">
-    {{ televisao.valor | currency:'BRL' }}
-  </h3>
+    <mat-card-actions>
 
-  <mat-card-actions align="end">
-    
-    <!-- 
-      BOTÃO 1: ÍCONE SVG DO CARRINHO
-      Removido o <mat-icon> e substituído por <svg>
-    -->
-    <button mat-icon-button 
-            aria-label="Adicionar ao carrinho" 
-            (click)="onAddToCart()">
-      <!-- Ícone SVG do Carrinho -->
-      <svg class="custom-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-        <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
-      </svg>
-    </button>
-    
-    <!-- 
-      BOTÃO 2: ÍCONE SVG DE COMPRAR (CARTÃO)
-      Removido o <mat-icon> e substituído por <svg>
-    -->
-    <button mat-icon-button 
-            aria-label="Comprar agora" 
-            (click)="onBuyNow()">
-      <!-- Ícone SVG de Pagamento (Cartão) -->
-      <svg class="custom-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-        <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/>
-      </svg>
-    </button>
+    <div class="admin-actions">
+      <button mat-icon-button aria-label="Editar televisão" matTooltip="Editar" class="admin-edit-icon"
+        (click)="onEdit()">
+        <svg class="custom-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path
+            d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+        </svg>
+      </button>
 
+      <button mat-icon-button aria-label="Deletar televisão" matTooltip="Deletar" class="admin-delete-icon"
+        (click)="onDelete()">
+        <svg class="custom-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="user-actions">
+          <button mat-icon-button             aria-label="Adicionar ao carrinho"             (click)="onAddToCart()">
+              <svg class="custom-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                 
+          <path
+            d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z" />
+               
+        </svg>
+            </button>
+         
+          <button mat-icon-button             aria-label="Comprar agora"             (click)="onBuyNow()">
+              <svg class="custom-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                 
+          <path
+            d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" />
+               
+        </svg>
+            </button>
+    </div>
+
+     
   </mat-card-actions>
-  
+   
 </mat-card>

@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
-// 1. IMPORTAR O 'map'
 import { Observable, map } from 'rxjs';
 import { Marca, MarcaRequest } from '../model/marca.model';
 
@@ -35,12 +34,9 @@ export class MarcaService {
     return this.http.get<Marca[]>(this.baseUrl, { params, observe: 'response' });
   }
 
-  // 2. MÉTODO ADICIONADO (para o dropdown do Modelo Form)
-  // Este método estava faltando no arquivo que você colou.
   getAllForDropdown(): Observable<Marca[]> {
-    // Pede página 0 com 1000 itens (workaround)
     return this.getAll(0, 1000).pipe(
-      map(response => response.body || []) // Extrai apenas o 'body'
+      map(response => response.body || []) 
     );
   }
 
@@ -60,10 +56,4 @@ export class MarcaService {
 }
   
 
-  /**
-   * GET (Modelos)
-   */
-  /* getModelosByMarcaId(idMarca: number): Observable<Modelo[]> {
-    const url = `${this.baseUrl}/${idMarca}/buscar-modelo-por-marca`;
-    return this.http.get<Modelo[]>(url);
-  } */
+ 

@@ -1,9 +1,7 @@
 <div class="container">
   <div class="form-header">
-    <!-- 1. MUDANÇA: O título é dinâmico, vindo do component -->
     <h1 id="formTitle">{{ formTitle }}</h1>
     
-    <!-- 2. MUDANÇA: Link "Voltar" aponta para /fornecedores -->
     <button class="btn-back" [routerLink]="['/fornecedores']">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <line x1="19" y1="12" x2="5" y2="12"></line>
@@ -13,13 +11,11 @@
     </button>
   </div>
 
-  <!-- 3. MUDANÇA: Binding do formulário e nome da classe (opcional, mas bom para consistência) -->
   <form id="fornecedorForm" class="fabricante-form" [formGroup]="fornecedorForm" (ngSubmit)="salvar()">
     
     <div class="form-group">
       <label for="razaoSocial">Razão Social *</label>
       <input type="text" id="razaoSocial" formControlName="razaoSocial" required>
-      <!-- TODO: Adicionar mensagens de validação (se desejar) -->
     </div>
 
     <div class="form-group">
@@ -35,14 +31,11 @@
       </select>
     </div>
 
-    <!-- 4. MUDANÇA: Campos removidos (dataAbertura, paisSede) e adicionado Email -->
     <div class="form-group">
       <label for="email">Email *</label>
       <input type="email" id="email" formControlName="email" placeholder="contato@empresa.com" required>
-      <!-- TODO: Adicionar mensagens de validação para 'email' (se desejar) -->
     </div>
 
-    <!-- Seção de Telefone (Permanece idêntica, pois a lógica no component é a mesma) -->
     <div class="form-group">
       <label for="telefone">Telefones *</label>
       <div style="display: flex; gap: 1rem;">
@@ -54,13 +47,11 @@
           + Adicionar Telefone
         </button>
       </div>
-      <!-- Mensagem de erro se o array de telefones estiver vazio no submit -->
       <div *ngIf="novoTelefoneControl.touched && novoTelefoneControl.hasError('required')" style="color: #ef4444; font-size: 0.875rem; margin-top: 0.5rem;">
         Pelo menos um telefone é obrigatório.
       </div>
     </div>
 
-    <!-- Lista de Telefones (Permanece idêntica) -->
     <div class="telefones-list" formArrayName="telefones">
       <div *ngFor="let tel of telefones.controls; let i = index" 
            class="telefone-item" 
@@ -77,7 +68,6 @@
     </div>
 
 
-    <!-- Ações do Formulário (Permanece idêntico, pois os métodos 'cancelar()' e 'salvar()' existem) -->
     <div class="form-actions">
       <button type="button" class="btn-cancel" (click)="cancelar()">
         Cancelar

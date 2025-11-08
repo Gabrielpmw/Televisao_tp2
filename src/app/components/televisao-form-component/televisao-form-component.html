@@ -1,1 +1,137 @@
-<p>televisao-form-component works!</p>
+
+<div class="container">
+  <div class="form-header">
+    <h1>{{ formTitle }}</h1>
+    <button class="btn-back" (click)="cancelar()">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+      Voltar
+    </button>
+  </div>
+
+  <form class="fabricante-form" [formGroup]="televisaoForm" (ngSubmit)="salvar()">
+    
+    <div class="form-row">
+      <div class="form-group">
+        <label for="idMarca">Marca *</label>
+        <select id="idMarca" formControlName="idMarca" required>
+          <option [ngValue]="null" disabled>Selecione uma marca</option>
+          <option *ngFor="let marca of marcas" [ngValue]="marca.id">
+            {{ marca.marca }} 
+          </option>
+        </select>
+        <div *ngIf="isFieldInvalid('idMarca')" class="error-message">
+          Selecionar uma marca é obrigatório.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="idModelo">Modelo *</label>
+        <select id="idModelo" formControlName="idModelo" required>
+          <option [ngValue]="null" disabled>Selecione um modelo</option>
+          <option *ngFor="let modelo of modelosFiltrados" [ngValue]="modelo.id">
+            {{ modelo.modelo }} 
+          </option>
+        </select>
+        <div *ngIf="isFieldInvalid('idModelo')" class="error-message">
+          Selecionar um modelo é obrigatório.
+        </div>
+        <div *ngIf="!televisaoForm.get('idMarca')?.value && !isEditMode" class="error-message" style="color: #6b7280;">
+          (Selecione uma marca primeiro)
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="idTipoResolucao">Resolução *</label>
+        <select id="idTipoResolucao" formControlName="idTipoResolucao" required>
+          <option [ngValue]="null" disabled>Selecione a resolução</option>
+          <option *ngFor="let res of tiposResolucao" [ngValue]="res.id">
+            {{ res.nome }}
+          </option>
+        </select>
+        <div *ngIf="isFieldInvalid('idTipoResolucao')" class="error-message">
+          Campo obrigatório.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="idTipoTela">Tipo de Tela *</label>
+        <select id="idTipoTela" formControlName="idTipoTela" required>
+          <option [ngValue]="null" disabled>Selecione o tipo de tela</option>
+          <option *ngFor="let tela of tiposTela" [ngValue]="tela.id">
+            {{ tela.nome }}
+          </option>
+        </select>
+        <div *ngIf="isFieldInvalid('idTipoTela')" class="error-message">
+          Campo obrigatório.
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="valor">Valor (R$) *</label>
+        <input type="number" id="valor" formControlName="valor" required min="0.01" step="0.01">
+        <div *ngIf="isFieldInvalid('valor')" class="error-message">
+          Valor obrigatório (mín. R$ 0,01).
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="estoque">Estoque *</label>
+        <input type="number" id="estoque" formControlName="estoque" required min="0">
+        <div *ngIf="isFieldInvalid('estoque')" class="error-message">
+          Estoque obrigatório (mín. 0).
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="descricao">Descrição *</label>
+      <input type="text" id="descricao" formControlName="descricao" required>
+      <div *ngIf="isFieldInvalid('descricao')" class="error-message">
+        Descrição é obrigatória.
+      </div>
+    </div>
+
+    <div class="form-row">
+      <!-- ALTURA (cm) -->
+      <div class="form-group">
+        <label for="altura">Altura (cm) *</label>
+        <input type="number" id="altura" formControlName="altura" required min="1">
+        <div *ngIf="isFieldInvalid('altura')" class="error-message">
+          Obrigatório (mín. 1).
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="largura">Largura (cm) *</label>
+        <input type="number" id="largura" formControlName="largura" required min="1">
+        <div *ngIf="isFieldInvalid('largura')" class="error-message">
+          Obrigatório (mín. 1).
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="polegada">Polegadas (") *</label>
+        <input type="number" id="polegada" formControlName="polegada" required min="1">
+        <div *ngIf="isFieldInvalid('polegada')" class="error-message">
+          Obrigatório (mín. 1).
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="btn-cancel" (click)="cancelar()">
+        Cancelar
+      </button>
+      <button type="submit" class="btn-submit" [disabled]="televisaoForm.invalid">
+        Salvar
+      </button>
+    </div>
+  </form>
+</div>

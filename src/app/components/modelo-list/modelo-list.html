@@ -30,12 +30,7 @@
           <td>{{ (paginaAtual - 1) * itensPorPagina + i + 1 }}</td>
 
           <td>{{ modelo.modelo }}</td>
-          
-          <!-- 
-            *** A CORREÇÃO ESTÁ AQUI ***
-            Mudei de 'modelo.nomeMarca' para 'modelo.marca', 
-            para bater com seu ModeloResponseDTO.java 
-          -->
+
           <td>{{ modelo.marca }}</td>
           
           <td>{{ modelo.caracteristicasResponseDTO.nome }}</td>
@@ -80,7 +75,6 @@
     </table>
   </div>
 
-  <!-- Controles de Paginação (Idênticos) -->
   <div class="pagination-controls" *ngIf="totalRegistros > 0">
     <div class="page-size-selector">
       <label for="itensPorPagina">Itens por pág:</label>
@@ -108,7 +102,6 @@
 
 </div>
 
-<!-- Modal de Exclusão (Idêntico) -->
 <div id="deleteModal" class="modal" [class.active]="modalVisivel">
   <div class="modal-content">
     <h2>Confirmar Exclusão</h2>

@@ -5,23 +5,114 @@
   margin: 0 auto;
 }
 
-h1 {
-  font-size: 2rem;
-  font-weight: 500;
+/* ==================================================================
+  NOVOS ESTILOS: Header e Botão Adicionar
+  ==================================================================
+*/
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  /* Título na esquerda, botão na direita */
+  align-items: center;
   margin-bottom: 20px;
-  color: #3f51b5; /* Cor primária */
+  flex-wrap: wrap;
+  /* Permite quebrar linha em telas pequenas */
+  gap: 1rem;
 }
 
-/* Grid responsivo para os cards */
+.list-header h1 {
+  font-size: 2rem;
+  font-weight: 500;
+  color: #3f51b5;
+  /* Cor primária (do seu h1 anterior) */
+  margin: 0;
+  /* Remove margem padrão */
+}
+
+/* Botão Adicionar (baseado no seu tema escuro) */
+.btn-add {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  color: 6px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  background-color: #3b82f6;
+  /* Azul */
+  color: white;
+  text-decoration: none;
+  /* Remove sublinhado (caso use <a>) */
+}
+
+.btn-add:hover {
+  background-color: #2563eb;
+}
+
+/* ==================================================================
+  Estilos da Barra de Pesquisa (já existiam)
+  ==================================================================
+*/
+.search-container {
+  margin-bottom: 2rem;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.search-input {
+  flex: 1;
+  width: auto;
+  padding: 0.75rem 1rem;
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  color: #333;
+  font-size: 0.95rem;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+.search-input::placeholder {
+  color: #999;
+}
+
+.btn-clear {
+  padding: 0.75rem 1.2rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  background-color: #777;
+  color: white;
+}
+
+.btn-clear:hover {
+  background-color: #555;
+}
+
+/* ==================================================================
+  Estilos antigos (grid, paginador, etc.)
+  ==================================================================
+*/
 .product-grid {
   display: flex;
-  flex-wrap: wrap; /* Permite que os cards quebrem a linha */
-  justify-content: center; /* Centraliza os cards */
-  gap: 16px; /* Espaço entre os cards (alternativa moderna ao margin) */
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
   margin-bottom: 24px;
 }
 
-/* Centraliza os estados de loading e vazio */
 .loading-spinner,
 .empty-state {
   display: flex;
@@ -29,7 +120,7 @@ h1 {
   align-items: center;
   justify-content: center;
   padding: 60px;
-  color: #757575; /* Cinza */
+  color: #757575;
   font-size: 1.1rem;
 }
 
@@ -37,9 +128,111 @@ h1 {
   margin-top: 16px;
 }
 
-/* Estiliza o paginador */
 mat-paginator {
   margin-top: 24px;
-  background-color: #f5f5f5; /* Um fundo leve */
+  background-color: #f5f5f5;
   border-radius: 8px;
+}
+
+/* ==================================================================
+  NOVOS ESTILOS: Modal de Confirmação (Delete)
+  ==================================================================
+*/
+.modal-overlay {
+  position: fixed;
+  /* Cobre a tela inteira */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  /* Fundo escuro semi-transparente */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  /* Garante que fique na frente de tudo */
+}
+
+.modal-content {
+  background-color: #ffffff;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  width: 90%;
+  max-width: 450px;
+  /* Limite de largura */
+  text-align: center;
+  animation: modal-fade-in 0.2s ease-out;
+}
+
+@keyframes modal-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.modal-content h2 {
+  margin-top: 0;
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.modal-content p {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 24px;
+}
+
+.modal-content p strong {
+  color: #3f51b5;
+  /* Cor primária para destacar */
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+/* Botões do Modal (baseados nos seus estilos .btn-add, .btn-clear) */
+.modal-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-cancel {
+  background-color: #777;
+  /* Cinza (como o .btn-clear) */
+  color: white;
+}
+
+.btn-cancel:hover {
+  background-color: #555;
+}
+
+.btn-delete {
+  background-color: #ef4444;
+  /* Vermelho (perigoso) */
+  color: white;
+}
+
+.btn-delete:hover {
+  background-color: #dc2626;
+  /* Vermelho mais escuro */
 }

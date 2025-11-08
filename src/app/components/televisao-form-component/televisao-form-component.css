@@ -1,0 +1,177 @@
+/* --- CLASSES ADICIONADAS PARA O FORMULÁRIO DE TV --- */
+/* Organiza os campos em linhas com 2 ou 3 colunas */
+.form-row {
+  display: flex;
+  flex-wrap: wrap; 
+  /* Usa 'gap' para espaçamento, mas você pode usar margin se preferir */
+  gap: 1.5rem; 
+  /* O margin-bottom foi movido para o .form-group individual */
+}
+
+/* Container para cada campo de formulário.
+  No HTML, alguns <div class="form-group"> estão dentro do .form-row.
+  O 'flex: 1' faz com que eles dividam o espaço.
+*/
+.form-row .form-group {
+  flex: 1; /* Faz os campos dividirem o espaço na linha */
+  min-width: 250px; /* Largura mínima antes de quebrar a linha */
+  margin-bottom: 0; /* Remove a margem de baixo, já que o .form-row controla */
+}
+
+/* Mensagem de erro padrão */
+.error-message {
+  color: #ef4444; /* Vermelho do seu tema */
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
+/* --- FIM DAS CLASSES ADICIONADAS --- */
+
+
+/* --- SEU CSS ORIGINAL (copiado do seu modelo-form) --- */
+.fabricante-form {
+  background-color: #1a1a1a;
+  padding: 2rem;
+  border-radius: 8px;
+  max-width: 900px; /* Aumentei um pouco para caber os 3 campos de dimensão */
+  margin: 0 auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.form-group {
+  margin-bottom: 1.5rem; /* Espaçamento padrão para campos de linha inteira */
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #d1d5db;
+  font-size: 0.95rem;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #0a0a0a;
+  border: 1px solid #2d2d2d;
+  border-radius: 6px;
+  color: #e5e5e5;
+  font-size: 0.95rem;
+  transition: border-color 0.2s;
+  box-sizing: border-box; 
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+.form-group input::placeholder {
+  color: #6b7280;
+}
+
+/* Remove as setas do input[type=number] */
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+input[type=number] {
+  -moz-appearance: textfield; 
+}
+
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 2rem;
+  border-top: 1px solid #2d2d2d; 
+  padding-top: 1.5rem;
+}
+
+
+/* --- ESTILOS GLOBAIS (do seu CSS) --- */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.form-header h1 {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #ffffff; 
+}
+
+.btn-back,
+.btn-submit,
+.btn-cancel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-back {
+  background-color: #374151;
+  color: white;
+}
+.btn-back:hover { background-color: #4b5563; }
+
+.btn-submit {
+  background-color: #10b981;
+  color: white;
+}
+.btn-submit:hover:not(:disabled) { background-color: #059669; }
+
+.btn-cancel {
+  background-color: #374151;
+  color: white;
+}
+.btn-cancel:hover { background-color: #4b5563; }
+
+.btn-submit:disabled {
+  background-color: #2d2d2d;
+  color: #6b7280;
+  cursor: not-allowed;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+  .form-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  .fabricante-form {
+    padding: 1.5rem;
+  }
+  .form-row {
+    gap: 0; 
+    margin-bottom: 0; 
+  }
+  /* Faz com que todos os campos em uma linha virem colunas */
+  .form-row .form-group {
+    min-width: 100%;
+    margin-bottom: 1.5rem; 
+  }
+}
