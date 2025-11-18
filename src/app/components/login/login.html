@@ -1,0 +1,46 @@
+<div class="container">
+  <div class="card">
+    <div class="card-header">
+      <h1>Bem-vindo</h1> 
+      <p>Entre com suas credenciais para acessar sua conta</p>
+    </div>
+    
+    <form id="loginForm" class="form" (ngSubmit)="onSubmit(loginForm)" #loginForm="ngForm">
+      
+      <div class="form-group">
+        <label for="username">Nome de usuário</label>
+        <input 
+          type="text" 
+          id="username" 
+          name="username" 
+          placeholder="Digite seu username" 
+          required
+          [(ngModel)]="loginDTO.username">
+      </div>
+      
+      <div class="form-group">
+        <label for="password">Senha</label>
+        <input 
+          type="password" 
+          id="password" 
+          name="password" 
+          placeholder="Digite sua senha" 
+          required
+          [(ngModel)]="loginDTO.senha">
+      </div>
+      
+      <button 
+        type="submit" 
+        class="btn btn-primary" 
+        [disabled]="loginForm.invalid">
+        Entrar
+      </button>
+      
+      <div class="form-footer">
+        <a routerLink="/recuperar-senha" class="link">Esqueci a senha</a>
+        <span class="separator">•</span>
+        <a routerLink="/cadastro" class="link">Cadastrar agora</a>
+      </div>
+    </form>
+  </div>
+</div>

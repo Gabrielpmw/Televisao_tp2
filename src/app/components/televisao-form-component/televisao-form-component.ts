@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
+// A importação do modelo Televisao é necessária para pegar o ID de retorno
 import { Televisao, TelevisaoRequest } from '../../model/televisao.model';
 import { Marca } from '../../model/marca.model';
 import { ModeloResponse } from '../../model/modelo.model';
@@ -39,6 +40,12 @@ export class TelevisaoFormComponent implements OnInit {
   tiposResolucao: EnumOption[] = [];
   tiposTela: EnumOption[] = [];
 
+  // ===================================
+  // NOVAS VARIÁVEIS PARA IMAGEM
+  // ===================================
+  selectedFile: File | null = null;
+  imagePreview: string | ArrayBuffer | null = null;
+  // ===================================
 
   constructor(
     private fb: FormBuilder,
@@ -94,7 +101,6 @@ export class TelevisaoFormComponent implements OnInit {
     ];
   }
 
-
   carregarDropdowns(callback?: () => void): void {
     this.marcaService.getAllForDropdown().subscribe(marcas => {
       this.marcas = marcas;
@@ -108,6 +114,14 @@ export class TelevisaoFormComponent implements OnInit {
   carregarDadosParaEdicao(): void {
     this.televisaoService.findById(this.televisaoId!).subscribe(televisao => {
       console.log('TV para editar:', televisao);
+
+      // ===================================
+      // CARREGA O PREVIEW DA IMAGEM ATUAL
+      // ===================================
+      if (televisao.nomeImagem) {
+        this.imagePreview = this.televisaoService.getUrlImagem(televisao.nomeImagem);
+      }
+      // ===================================
 
       this.carregarDropdowns(() => {
         console.log('Buscando modelos para a marca da TV (ID):', televisao.idMarca);
@@ -144,7 +158,7 @@ export class TelevisaoFormComponent implements OnInit {
     }
 
     marcaControl?.valueChanges.subscribe((idMarcaSelecionada: any) => {
-      modeloControl?.reset(); // Limpa o valor do modelo
+      modeloControl?.reset();
       const idNum = Number(idMarcaSelecionada);
 
       if (idNum) {
@@ -163,6 +177,27 @@ export class TelevisaoFormComponent implements OnInit {
     });
   }
 
+  // ===================================
+  // MÉTODO PARA CAPTURAR O ARQUIVO
+  // ===================================
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedFile = file;
+
+      // Gerar preview
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.imagePreview = reader.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+  // ===================================
+
+  // ===================================
+  // MÉTODO SALVAR (MODIFICADO)
+  // ===================================
   salvar(): void {
     if (this.televisaoForm.invalid) {
       this.televisaoForm.markAllAsTouched();
@@ -184,18 +219,31 @@ export class TelevisaoFormComponent implements OnInit {
     };
 
     if (this.isEditMode && this.televisaoId) {
+      // MODO EDIÇÃO
       this.televisaoService.update(this.televisaoId, request).subscribe({
         next: () => {
-          this.router.navigate(['/']); 
+          // Se salvou os dados, verifica se tem imagem para enviar
+          if (this.selectedFile) {
+            this.uploadImagem(this.televisaoId!);
+          } else {
+            this.router.navigate(['/']); // Navega se não houver imagem
+          }
         },
         error: (err: any) => {
           console.error('Erro ao ATUALIZAR televisão', err);
         }
       });
     } else {
+      // MODO CRIAÇÃO
+      // (Observe que agora capturamos 'novaTv' no next)
       this.televisaoService.create(request).subscribe({
-        next: () => {
-          this.router.navigate(['/']); 
+        next: (novaTv: Televisao) => { // Captura a TV criada
+          // Se criou a TV, verifica se tem imagem para enviar
+          if (this.selectedFile) {
+            this.uploadImagem(novaTv.idTelevisao); // Usa o ID da TV recém-criada
+          } else {
+            this.router.navigate(['/']); // Navega se não houver imagem
+          }
         },
         error: (err: any) => {
           console.error('Erro ao CRIAR televisão', err);
@@ -203,6 +251,29 @@ export class TelevisaoFormComponent implements OnInit {
       });
     }
   }
+  // ===================================
+
+  // ===================================
+  // MÉTODO AUXILIAR PARA UPLOAD
+  // ===================================
+  private uploadImagem(id: number): void {
+    if (!this.selectedFile) {
+      return; // Segurança, embora 'salvar' já verifique
+    }
+
+    this.televisaoService.uploadImagem(id, this.selectedFile).subscribe({
+      next: () => {
+        console.log('Imagem enviada com sucesso!');
+        this.router.navigate(['/']); // Navega APÓS enviar a imagem
+      },
+      error: (err) => {
+        console.error('Erro ao enviar imagem (dados da TV foram salvos):', err);
+        // Mesmo se a imagem falhar, os dados foram salvos.
+        this.router.navigate(['/']);
+      }
+    });
+  }
+  // ===================================
 
   cancelar(): void {
     this.router.navigate(['/']); 

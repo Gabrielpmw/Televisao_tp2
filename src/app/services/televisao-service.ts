@@ -73,4 +73,19 @@ export class TelevisaoService {
   findModeloByTelevisaoId(idTelevisao: number): Observable<ModeloResponse> {
     return this.http.get<ModeloResponse>(`${this.apiUrl}/${idTelevisao}/modelo`);
   }
+
+  uploadImagem(id: number, imagem: File): Observable<any> {
+    const formData = new FormData();
+    
+    formData.append('idTelevisao', id.toString());
+    formData.append('file', imagem);
+
+    return this.http.patch(`${this.apiUrl}/imagem/upload`, formData, {
+      responseType: 'text'
+    });
+  }
+
+  getUrlImagem(nomeImagem: string): string {
+    return `${this.apiUrl}/imagem/download/${nomeImagem}`;
+  }
 }
