@@ -1,5 +1,5 @@
 export class Telefone {
-    id !: number|null;
+  id !: number|null;
   ddd !: string|null;
   numero !: string|null;
 }
