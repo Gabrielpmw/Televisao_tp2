@@ -1,0 +1,12 @@
+.main-content {
+    padding-top: 112px; 
+    
+    /* Garante que o fundo cinza ocupe a tela toda */
+    min-height: 100vh; 
+    
+    /* Cor de fundo padrão (opcional) */
+    background-color: #f9fafb;
+    
+    /* Garante que o padding não aumente a largura total */
+    box-sizing: border-box;
+}

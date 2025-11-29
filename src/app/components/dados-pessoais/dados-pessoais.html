@@ -1,0 +1,64 @@
+<div class="dados-container">
+  
+  <h2>Dados pessoais</h2>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    
+    <!-- Linha 1: Nome e Sobrenome -->
+    <div class="row">
+      <div class="form-group half">
+        <label for="nome">Nome</label>
+        <input type="text" id="nome" formControlName="nome" placeholder="Digite seu nome">
+        <span *ngIf="form.get('nome')?.invalid && form.get('nome')?.touched" class="error-msg">Mínimo 2 caracteres</span>
+      </div>
+      
+      <div class="form-group half">
+        <label for="sobrenome">Sobrenome</label>
+        <input type="text" id="sobrenome" formControlName="sobrenome" placeholder="Digite seu sobrenome">
+      </div>
+    </div>
+
+    <!-- Linha 2: Telefone (Ocupa metade ou linha inteira dependendo do CSS) -->
+    <div class="row">
+        <div class="form-group half">
+            <label for="telefone">Telefone</label>
+            <input 
+                type="text" 
+                id="telefone" 
+                formControlName="telefone" 
+                placeholder="(00) 00000-0000"
+                maxlength="15"
+                (input)="formatarTelefone($event)">
+        </div>
+    </div>
+
+    <!-- Linha 3: E-mail e Data -->
+    <div class="row">
+      <div class="form-group half">
+        <label for="email">E-mail</label>
+        <input type="email" id="email" formControlName="email" placeholder="seu@email.com">
+        <span *ngIf="form.get('email')?.invalid && form.get('email')?.touched" class="error-msg">E-mail inválido</span>
+      </div>
+      
+      <div class="form-group half">
+        <label for="dataNascimento">Data de nascimento</label>
+        <input type="date" id="dataNascimento" formControlName="dataNascimento">
+      </div>
+    </div>
+
+    <!-- Linha 4: CPF (Campo único nesta linha agora) -->
+    <div class="row">
+      <div class="form-group half">
+        <label for="cpf">CPF</label>
+        <input type="text" id="cpf" formControlName="cpf" class="disabled-input">
+      </div>
+    </div>
+
+    <!-- Botões de Ação -->
+    <div class="actions">
+        <button type="submit" class="btn-editar" [disabled]="form.invalid">EDITAR</button>
+        <button type="button" class="btn-excluir">Excluir meus dados*</button>
+    </div>
+
+  </form>
+</div>

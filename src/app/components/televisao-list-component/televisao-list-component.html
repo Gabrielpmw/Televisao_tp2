@@ -1,0 +1,171 @@
+<header class="header">
+  <div class="container header-content">
+      <h1 class="header-title">Catálogo de Televisores</h1>
+      
+      <button class="btn-add" [routerLink]="['/televisoes/new']">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        Adicionar Televisão
+      </button>
+  </div>
+</header>
+
+<main class="content">
+
+  <div class="filters-section">
+    <div class="container">
+      <div class="filters-wrapper">
+        
+        <div class="filters-label">
+          Filtros <span class="count">{{ totalRegistros }} resultado(s)</span>
+        </div>
+
+        <div class="filters-controls">
+          
+          <div class="filter-dropdown">
+            <button class="filter-btn" [class.active]="activeDropdown === 'tamanho'" (click)="toggleDropdown('tamanho', $event)">
+              Tamanho da tela
+              <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <div class="dropdown-menu" *ngIf="activeDropdown === 'tamanho'" (click)="$event.stopPropagation()">
+              <label class="checkbox-item" *ngFor="let tam of opcoesTamanho">
+                
+                <input type="checkbox" 
+                       (change)="toggleTamanho(tam, $event)"
+                       [checked]="isTamanhoSelecionado(tam)">
+                       
+                <span>{{ tam }}</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="filter-dropdown">
+            <button class="filter-btn" [class.active]="activeDropdown === 'tipo'" (click)="toggleDropdown('tipo', $event)">
+              Tipo da tela
+              <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <div class="dropdown-menu" *ngIf="activeDropdown === 'tipo'" (click)="$event.stopPropagation()">
+              <label class="checkbox-item" *ngFor="let tipo of opcoesTipo">
+                <input type="checkbox" 
+                       (change)="toggleTipo(tipo, $event)"
+                       [checked]="selectedTipos.includes(tipo)">
+                <span>{{ tipo }}</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="filter-dropdown">
+            <button class="filter-btn" (click)="openMarcaModal()">
+              Marca
+              <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+          </div>
+
+          <div class="filter-dropdown">
+            <button class="filter-btn" [class.active]="activeDropdown === 'ordenar'" (click)="toggleDropdown('ordenar', $event)">
+              Ordenar
+              <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <div class="dropdown-menu" *ngIf="activeDropdown === 'ordenar'" (click)="$event.stopPropagation()">
+              
+              <label class="radio-item">
+                <input type="radio" name="ordem" (change)="ordenarProdutos('')" checked>
+                <span>Recomendado</span>
+              </label>
+
+              <label class="radio-item">
+                <input type="radio" name="ordem" (change)="ordenarProdutos('menorPreco')">
+                <span>Preço: menor > maior</span>
+              </label>
+
+              <label class="radio-item">
+                <input type="radio" name="ordem" (change)="ordenarProdutos('maiorPreco')">
+                <span>Preço: maior > menor</span>
+              </label>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="products-section">
+    <div class="container">
+      
+      <div *ngIf="!(listaPaginada$ | async)" class="loading-state">
+         <mat-spinner diameter="40"></mat-spinner>
+         <p>Carregando catálogo...</p>
+      </div>
+
+      <ng-container *ngIf="listaPaginada$ | async as paginacao">
+        <div class="products-grid" *ngIf="paginacao.televisoes.length > 0; else emptyState">
+          <app-televisao-card 
+            *ngFor="let tv of paginacao.televisoes" 
+            [televisao]="tv">
+          </app-televisao-card>
+        </div>
+
+        <ng-template #emptyState>
+          <div class="empty-state">
+            <p>Nenhum produto encontrado com estes filtros.</p>
+          </div>
+        </ng-template>
+      </ng-container>
+
+      <mat-paginator 
+        *ngIf="totalRegistros > 0" 
+        [length]="totalRegistros" 
+        [pageSize]="pageSize" 
+        [pageIndex]="pageIndex" 
+        [pageSizeOptions]="[8, 12, 24]" 
+        (page)="onPageChange($event)"
+        class="custom-paginator">
+      </mat-paginator>
+
+    </div>
+  </div>
+
+  <div class="modal-overlay" *ngIf="showMarcaModal">
+    <div class="modal-content modal-brands">
+      <div class="modal-header">
+        <h2>Selecione as Marcas</h2>
+        <button class="close-btn" (click)="closeMarcaModal()">&times;</button>
+      </div>
+      
+      <div class="modal-body">
+        <ng-container *ngIf="marcasDisponiveis$ | async as marcas; else loadingMarcas">
+            <label class="checkbox-item large" *ngFor="let marca of marcas">
+              <input type="checkbox" 
+                     [checked]="tempSelectedMarcas.includes(marca)"
+                     (change)="toggleMarcaTemp(marca, $event)">
+              <span>{{ marca }}</span>
+            </label>
+            
+            <div *ngIf="marcas.length === 0">Nenhuma marca encontrada.</div>
+        </ng-container>
+
+        <ng-template #loadingMarcas>
+            <p>Carregando marcas...</p>
+        </ng-template>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-secondary" (click)="limparFiltroMarca()">Limpar</button>
+        <button class="btn-primary" (click)="aplicarFiltroMarca()">Aplicar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" *ngIf="showDeleteModal">
+    <div class="modal-content">
+      <h2>Confirmar Exclusão</h2>
+      <p>Você tem certeza que deseja excluir a TV <strong>{{ tvToDelete?.marca }} {{ tvToDelete?.modelo }}</strong>?</p>
+      <div class="modal-actions">
+        <button class="btn-secondary" (click)="cancelDelete()">Cancelar</button>
+        <button class="btn-danger" (click)="confirmDelete()">Excluir</button>
+      </div>
+    </div>
+  </div>
+
+</main>

@@ -1,0 +1,304 @@
+/* =========================================
+   ESTRUTURA GERAL
+   ========================================= */
+.home-container {
+    padding-bottom: 80px;
+    font-family: 'SamsungOne', arial, sans-serif;
+    background-color: #fff;
+}
+
+.section-title {
+    font-size: 2rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 48px;
+    color: #000;
+}
+
+/* =========================================
+   1. BANNER PRINCIPAL (HERO)
+   ========================================= */
+.hero-banner {
+    background-color: #f7f7f7;
+    height: 250px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.hero-content h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0;
+    color: #000;
+}
+
+/* =========================================
+   2. GRADE DE CATEGORIAS
+   ========================================= */
+.categories-section {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 24px 80px 24px;
+}
+
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 30px;
+}
+
+@media (max-width: 1024px) { .categories-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 767px) { .categories-grid { grid-template-columns: 1fr; } }
+
+.category-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform 0.2s ease;
+}
+
+.category-card:hover { transform: translateY(-5px); }
+
+/* Card Retangular (Estilo Samsung) */
+.image-container {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background-color: #f7f7f7;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    overflow: hidden;
+    transition: background-color 0.3s ease;
+}
+
+.category-card:hover .image-container { background-color: #ececec; }
+
+.category-image {
+    max-width: 85%;
+    max-height: 85%;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+}
+
+.category-card:hover .category-image { transform: scale(1.05); }
+
+.category-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 8px;
+}
+
+.category-desc {
+    font-size: 0.875rem;
+    color: #555;
+    font-weight: 400;
+    max-width: 90%;
+    line-height: 1.4;
+}
+
+/* =========================================
+   NOVO: BOTÃO EXPLORAR
+   ========================================= */
+.explore-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 60px; /* Espaço generoso entre o grid e o botão */
+}
+
+.btn-explore {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #000; /* Preto Sólido */
+    color: #fff;
+    padding: 16px 48px; /* Botão grande e largo */
+    border-radius: 999px; /* Formato de pílula */
+    font-size: 1rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.btn-explore:hover {
+    background-color: #333;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15); /* Sombra mais forte no hover */
+}
+
+.btn-explore:active {
+    transform: translateY(-1px);
+}
+
+/* =========================================
+   3. SEÇÃO TECH SHOWCASE (DETALHES)
+   ========================================= */
+.tech-showcase-section {
+    background-color: #fff;
+    padding: 80px 24px;
+    max-width: 1280px;
+    margin: 0 auto;
+    border-top: 1px solid #eee;
+}
+
+.tech-list {
+    display: flex;
+    flex-direction: column;
+    gap: 80px;
+}
+
+.tech-card {
+    border-radius: 24px;
+    overflow: hidden;
+    background-color: #fff;
+    border: 1px solid #f0f0f0;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+}
+
+.tech-banner-container {
+    width: 100%;
+    background-color: #f7f7f7;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-height: 600px;
+    overflow: hidden;
+}
+
+.tech-banner-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+}
+
+.tech-action-bar {
+    padding: 32px 40px;
+    background-color: #fff;
+}
+
+.tech-info-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.tech-info-header h4 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin: 0;
+    color: #000;
+}
+
+.btn-saiba-mais {
+    background: transparent;
+    border: 2px solid #000;
+    border-radius: 999px;
+    padding: 10px 24px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    color: #000;
+}
+
+.btn-saiba-mais:hover { background-color: #000; color: #fff; }
+.btn-saiba-mais svg { transition: transform 0.3s ease; }
+.rotate-180 { transform: rotate(180deg); }
+
+/* --- Layout dos Detalhes (Texto + Lista de Features) --- */
+.tech-details-wrapper {
+    margin-top: 32px;
+    padding-top: 32px;
+    border-top: 1px solid #eee;
+    animation: slideDown 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+    
+    /* Grid de duas colunas: Texto (2 partes) | Features (1 parte) */
+    display: grid;
+    grid-template-columns: 2fr 1fr; 
+    gap: 60px;
+}
+
+.tech-text p {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: #444;
+    margin: 0;
+}
+
+/* Coluna de Features (Vantagens) */
+.tech-features {
+    background-color: #fafafa;
+    padding: 24px;
+    border-radius: 16px;
+}
+
+.tech-features h5 {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #666;
+    margin: 0 0 20px 0;
+    font-weight: 800;
+}
+
+.tech-features ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.tech-features li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 1rem;
+    color: #111;
+    font-weight: 600;
+    margin-bottom: 16px;
+    line-height: 1.4;
+}
+
+.check-icon {
+    color: #000;
+    min-width: 20px; /* Garante que o ícone não amasse se o texto quebrar linha */
+}
+
+/* Animação suave de entrada */
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsividade Mobile */
+@media (max-width: 900px) {
+    .tech-details-wrapper {
+        grid-template-columns: 1fr; /* Vira coluna única */
+        gap: 30px;
+    }
+    
+    .tech-features {
+        padding: 20px;
+        background-color: #f5f5f5;
+    }
+}
+
+@media (max-width: 768px) {
+    .tech-action-bar { padding: 24px; }
+    .tech-info-header { flex-direction: column; align-items: flex-start; }
+    .btn-saiba-mais { width: 100%; justify-content: center; }
+}

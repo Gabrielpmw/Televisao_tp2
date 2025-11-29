@@ -1,0 +1,159 @@
+/* ==========================
+   ESTILOS GERAIS DO CABEÇALHO
+   ========================== */
+
+/* O cabeçalho em si, fixo no topo */
+.app-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 72px; /* Altura fixa */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px; /* Espaçamento lateral */
+    background-color: #ffffff;
+    border-bottom: 1px solid #e5e7eb; /* Linha cinza suave */
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1); /* Sombra leve */
+    z-index: 50; /* Garante que fique acima de outros elementos */
+    box-sizing: border-box;
+}
+
+/* Nome da empresa */
+.header-brand h1 {
+    font-family: sans-serif;
+    font-size: 1.5rem; /* 24px */
+    font-weight: 700; /* Negrito */
+    color: #000000;
+    margin: 0;
+    cursor: pointer;
+    user-select: none;
+    letter-spacing: -0.025em;
+}
+
+/* Container dos ícones à direita */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 24px; /* Espaço entre o carrinho e o perfil */
+}
+
+/* ==========================
+   ESTILOS DOS BOTÕES DE ÍCONE
+   ========================== */
+
+/* Botão base para ícones (carrinho e perfil) */
+.icon-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    border-radius: 9999px; /* Círculo completo */
+    border: none;
+    background: transparent;
+    color: #000000;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+/* Efeito de hover nos botões de ícone */
+.icon-button:hover {
+    background-color: #f3f4f6; /* Cinza claro */
+}
+
+/* Estilo para o SVG dentro do botão */
+.icon-button svg {
+    width: 24px;
+    height: 24px;
+    stroke: currentColor;
+    stroke-width: 2;
+}
+
+/* Container relativo para o perfil (para posicionar o dropdown) */
+.profile-container {
+    position: relative;
+}
+
+/* Estilo específico quando o menu de perfil está aberto */
+.profile-button.active {
+    background-color: #f3f4f6;
+}
+
+/* ==========================
+   ESTILOS DO DROPDOWN DE PERFIL
+   ========================== */
+
+/* O container do menu suspenso */
+.profile-dropdown {
+    position: absolute;
+    top: 100%; /* Logo abaixo do botão de perfil */
+    right: 0; /* Alinhado à direita */
+    margin-top: 12px;
+    width: 240px; /* Largura fixa */
+    background-color: #ffffff;
+    border-radius: 12px; /* Bordas arredondadas */
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); /* Sombra mais forte */
+    padding: 16px; /* Espaçamento interno */
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* Espaço entre os itens */
+    box-sizing: border-box;
+    /* Animação de entrada */
+    animation: dropdown-fade-in 0.2s ease-out;
+    transform-origin: top right;
+}
+
+@keyframes dropdown-fade-in {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Item genérico do dropdown */
+.dropdown-item {
+    text-decoration: none;
+    font-family: sans-serif;
+    font-size: 0.875rem; /* 14px */
+    font-weight: 500;
+    text-align: center;
+    transition: background-color 0.2s;
+    display: block;
+}
+
+/* Botão "Entrar/Registrar" (Estilo de botão sólido) */
+.login-register-button {
+    background-color: #000000; /* Fundo preto */
+    color: #ffffff; /* Texto branco */
+    padding: 10px 16px;
+    border-radius: 8px;
+}
+
+.login-register-button:hover {
+    background-color: #333333; /* Preto um pouco mais claro no hover */
+}
+
+/* Divisor */
+.dropdown-divider {
+    height: 1px;
+    background-color: #e5e7eb;
+    margin: 4px 0;
+}
+
+/* Link "Meus pedidos" (Estilo de link simples) */
+.my-orders-link {
+    color: #374151; /* Cinza escuro */
+    padding: 8px 16px;
+    border-radius: 8px;
+}
+
+.my-orders-link:hover {
+    background-color: #f3f4f6; /* Fundo cinza claro no hover */
+    color: #000000;
+}

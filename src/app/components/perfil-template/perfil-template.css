@@ -1,0 +1,126 @@
+/* --- Layout Geral --- */
+.perfil-container {
+    display: flex;
+    min-height: 80vh; /* Garante uma altura boa na tela */
+    background-color: #fff;
+    max-width: 1200px;
+    margin: 40px auto; /* Centraliza o bloco na página */
+    padding: 0 20px;
+    gap: 40px; /* Espaço entre o menu e o conteúdo */
+  }
+  
+  /* --- Sidebar (Barra Lateral) --- */
+  .sidebar {
+    width: 260px; /* Largura fixa do menu */
+    flex-shrink: 0;
+    border-right: 1px solid #f0f0f0; /* Linha divisória fina */
+    padding-right: 20px;
+  }
+  
+  /* --- Info do Usuário (Topo do Menu) --- */
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  
+  .avatar {
+    width: 50px;
+    height: 50px;
+    background-color: #e2e8f0; /* Cinza claro */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #64748b; /* Cinza escuro */
+  }
+  
+  .welcome {
+    display: flex;
+    flex-direction: column;
+    font-size: 1rem;
+    color: #333;
+  }
+  .welcome strong {
+    font-size: 1.1rem;
+  }
+  
+  /* --- Menu de Navegação --- */
+  .menu {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .menu a {
+    padding: 16px 10px;
+    text-decoration: none;
+    color: #666;
+    font-size: 0.95rem;
+    border-bottom: 1px solid #f9f9f9;
+    transition: all 0.2s ease-in-out;
+    display: block;
+  }
+  
+  .menu a:first-child {
+    border-top: 1px solid #f9f9f9;
+  }
+  
+  .menu a:hover {
+    background-color: #fafafa;
+    color: #000;
+    padding-left: 15px; /* Pequeno efeito de movimento ao passar o mouse */
+  }
+  
+  /* Estado Ativo (Quando o link é clicado) */
+  .menu a.active {
+    color: #2563eb; /* Azul Royal */
+    font-weight: 700;
+    border-left: 3px solid #2563eb; /* Barrinha azul na esquerda */
+    padding-left: 12px; /* Ajuste para alinhar o texto */
+    background-color: #eff6ff; /* Fundo azul bem clarinho opcional */
+  }
+  
+  /* --- Botão de Sair --- */
+  .logout-btn {
+    margin-top: 20px;
+    padding: 16px 10px;
+    background: none;
+    border: none;
+    border-bottom: 1px solid #f9f9f9;
+    color: #666;
+    font-size: 0.95rem;
+    cursor: pointer;
+    text-align: left;
+    width: 100%;
+    font-family: inherit;
+    transition: color 0.2s;
+  }
+  
+  .logout-btn:hover {
+    color: #ef4444; /* Vermelho */
+    background-color: #fff5f5;
+  }
+  
+  /* --- Área de Conteúdo (Direita) --- */
+  .content-area {
+    flex: 1; /* Ocupa todo o resto da tela */
+    padding-top: 10px;
+  }
+  
+  /* --- Responsividade (Celular) --- */
+  @media (max-width: 768px) {
+    .perfil-container {
+      flex-direction: column; /* Um embaixo do outro */
+    }
+    .sidebar {
+      width: 100%;
+      border-right: none;
+      border-bottom: 1px solid #f0f0f0;
+      padding-bottom: 20px;
+    }
+  }

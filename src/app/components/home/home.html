@@ -1,0 +1,100 @@
+<div class="home-container">
+  
+  <!-- Banner Principal -->
+  <section class="hero-banner">
+    <div class="hero-content">
+      <h2>Descubra a TV certa para você*</h2>
+    </div>
+  </section>
+
+  <!-- Seção de Categorias (Grade Superior) -->
+  <section class="categories-section">
+    
+    <!-- A Grade de Produtos -->
+    <div class="categories-grid">
+      @for (categoria of categorias; track categoria.nome) {
+        <div class="category-card" (click)="toggleDetalhes(categoria)">
+          <div class="image-container">
+            <img 
+              [src]="'/Imagens_TV/' + categoria.imagem + '.jpg'" 
+              [alt]="categoria.nome" 
+              class="category-image"
+              onerror="this.src='/favicon.ico'"
+            >
+          </div>
+          <span class="category-name">{{ categoria.nome }}</span>
+          <p class="category-desc">{{ categoria.descricao }}</p>
+        </div>
+      }
+    </div>
+
+    <!-- NOVO: Botão Explorar (Logo abaixo da grade) -->
+    <div class="explore-container">
+      <a routerLink="/televisoes" class="btn-explore">Explorar Todos os Modelos</a>
+    </div>
+
+  </section>
+
+  <!-- Seção Inferior: Detalhes das Tecnologias -->
+  <section class="tech-showcase-section">
+    <h3 class="section-title">Conheça as Tecnologias</h3>
+
+    <div class="tech-list">
+      @for (categoria of categorias; track categoria.nome) {
+        <div class="tech-card">
+          
+          <!-- Imagem Grande (Banner) -->
+          <div class="tech-banner-container">
+            <img 
+              [src]="'/Imagens_TV/' + categoria.imagemInfo" 
+              [alt]="'Detalhes sobre ' + categoria.nome"
+              class="tech-banner-img"
+              onerror="this.style.display='none'"
+            >
+          </div>
+
+          <!-- Barra de Ação e Conteúdo -->
+          <div class="tech-action-bar">
+            <div class="tech-info-header">
+              <h4>{{ categoria.nome }}</h4>
+              
+              <button class="btn-saiba-mais" (click)="toggleDetalhes(categoria)">
+                {{ categoria.expandido ? 'Mostrar menos' : 'Saiba mais' }}
+                <svg [class.rotate-180]="categoria.expandido" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m6 9 6 6 6-6"/>
+                </svg>
+              </button>
+            </div>
+
+            <!-- Conteúdo Expansível -->
+            @if (categoria.expandido) {
+              <div class="tech-details-wrapper">
+                
+                <!-- Texto -->
+                <div class="tech-text">
+                  <p>{{ categoria.detalhes }}</p>
+                </div>
+
+                <!-- Lista de Vantagens -->
+                <div class="tech-features">
+                  <h5>Destaques:</h5>
+                  <ul>
+                    @for (feature of categoria.features; track feature) {
+                      <li>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="check-icon"><polyline points="20 6 9 17 4 12"/></svg>
+                        {{ feature }}
+                      </li>
+                    }
+                  </ul>
+                </div>
+
+              </div>
+            }
+          </div>
+
+        </div>
+      }
+    </div>
+  </section>
+
+</div>

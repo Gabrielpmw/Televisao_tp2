@@ -1,0 +1,243 @@
+/* =========================================
+   CONTAINER E HEADER
+   ========================================= */
+.container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.form-header h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+/* Botão de Voltar */
+.btn-back {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: transparent;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  color: #4b5563;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-back:hover {
+  background-color: #f3f4f6;
+  border-color: #9ca3af;
+  color: #1f2937;
+}
+
+/* =========================================
+   GRID DO FORMULÁRIO
+   ========================================= */
+.fabricante-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Linha com múltiplos inputs (lado a lado) */
+.form-row {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.form-group {
+  flex: 1; /* Faz os itens ocuparem o mesmo espaço na linha */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Responsividade para telas pequenas */
+@media (max-width: 640px) {
+  .form-row {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+}
+
+/* =========================================
+   INPUTS E LABELS
+   ========================================= */
+label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.5rem;
+}
+
+input[type="text"],
+input[type="number"],
+select {
+  width: 100%;
+  padding: 0.625rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background-color: #fff;
+  font-size: 0.95rem;
+  color: #1f2937;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box; /* Importante para o padding não quebrar o layout */
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: #3f51b5; /* Cor primária (Indigo) */
+  box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.1);
+}
+
+/* Estilo para inputs inválidos e tocados */
+input.ng-invalid.ng-touched,
+select.ng-invalid.ng-touched {
+  border-color: #ef4444;
+}
+
+.error-message {
+  margin-top: 0.25rem;
+  font-size: 0.8rem;
+  color: #ef4444;
+}
+
+/* =========================================
+   SEÇÃO DE UPLOAD (NOVO)
+   ========================================= */
+.upload-section {
+  margin-top: 0.5rem;
+  padding: 1.5rem;
+  border: 2px dashed #e5e7eb;
+  border-radius: 8px;
+  background-color: #f9fafb;
+  text-align: center;
+  transition: border-color 0.2s;
+}
+
+.upload-section:hover {
+  border-color: #3f51b5;
+}
+
+.upload-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Centraliza conteúdo */
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.btn-upload {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  background-color: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  color: #374151;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s;
+}
+
+.btn-upload:hover {
+  background-color: #f3f4f6;
+  border-color: #3f51b5;
+  color: #3f51b5;
+}
+
+.file-name {
+  font-size: 0.9rem;
+  color: #4b5563;
+  background-color: #e5e7eb;
+  padding: 4px 8px;
+  border-radius: 4px;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Preview da Imagem */
+.image-preview {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: center;
+}
+
+.image-preview img {
+  max-width: 100%;
+  max-height: 250px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  object-fit: contain;
+  border: 1px solid #e5e7eb;
+}
+
+/* =========================================
+   BOTÕES DE AÇÃO (RODAPÉ)
+   ========================================= */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.btn-cancel {
+  padding: 0.75rem 1.5rem;
+  background-color: #fff;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  color: #374151;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-cancel:hover {
+  background-color: #f3f4f6;
+}
+
+.btn-submit {
+  padding: 0.75rem 2rem;
+  background-color: #3f51b5; /* Indigo */
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: background-color 0.2s;
+}
+
+.btn-submit:hover {
+  background-color: #312e81;
+}
+
+.btn-submit:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+  opacity: 0.7;
+}

@@ -1,0 +1,84 @@
+<div class="container-endereco">
+    
+    <div *ngIf="!exibirFormulario">
+        <div class="header-top">
+            <h2>Endereços</h2>
+            <button class="btn-add" (click)="iniciarNovoCadastro()">ADICIONAR ENDEREÇO</button>
+        </div>
+
+        <div class="lista-cards">
+            <div *ngFor="let end of enderecos" class="card-endereco">
+                <div class="card-conteudo">
+                    <p class="logradouro">{{ end.bairro }}, {{ end.numero }}</p>
+                    <p>{{ end.complemento }}</p>
+                    <p>{{ end.municipio.municipio }} - {{ end.municipio.estado.sigla }}</p>
+                    <p>{{ end.cep }}</p>
+                    <p class="pais">Brasil</p>
+                </div>
+                <div class="card-acoes">
+                    <button class="btn-acao" (click)="iniciarEdicao(end)">EDITAR</button>
+                    <button class="btn-acao btn-delete" (click)="deletarEndereco(end.idEndereco)">EXCLUIR</button>
+                </div>
+            </div>
+
+            <div *ngIf="enderecos.length === 0" class="sem-dados">
+                <p>Nenhum endereço cadastrado.</p>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="exibirFormulario" class="form-container">
+        <div class="form-header">
+            <button class="btn-voltar" (click)="cancelar()">&lt; Voltar</button>
+            <h3>{{ modoEdicao ? 'Editar endereço' : 'Adicionar endereço' }}</h3>
+        </div>
+
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            
+            <div class="form-group">
+                <label>País</label>
+                <input type="text" value="Brasil" disabled class="input-disabled">
+            </div>
+
+            <div class="form-group">
+                <label for="cep">CEP</label>
+                <input 
+                    type="text" 
+                    id="cep" 
+                    formControlName="cep" 
+                    placeholder="00000-000"
+                    (blur)="buscarCep($event)"> <small *ngIf="form.get('cep')?.invalid && form.get('cep')?.touched" class="error-msg">CEP obrigatório (8 dígitos)</small>
+            </div>
+
+            <div class="form-group">
+                <label for="bairro">Bairro</label>
+                <input type="text" id="bairro" formControlName="bairro">
+            </div>
+
+            <div class="row">
+                <div class="form-group half">
+                    <label for="numero">Número</label>
+                    <input type="number" id="numero" formControlName="numero">
+                </div>
+                <div class="form-group half">
+                    <label for="idMunicipio">Município</label>
+                    <select id="idMunicipio" formControlName="idMunicipio">
+                        <option [ngValue]="null" disabled>Selecione...</option>
+                        <option *ngFor="let m of listaMunicipios" [value]="m.idMunicipio">
+                            {{ m.municipio }} - {{ m.estado.sigla }}
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="complemento">Complemento e referência</label>
+                <input type="text" id="complemento" formControlName="complemento">
+            </div>
+
+            <button type="submit" class="btn-salvar" [disabled]="form.invalid">
+                {{ modoEdicao ? 'SALVAR ALTERAÇÕES' : 'ADICIONAR ENDEREÇO' }}
+            </button>
+        </form>
+    </div>
+</div>

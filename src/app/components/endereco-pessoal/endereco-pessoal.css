@@ -1,0 +1,134 @@
+.container-endereco {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Roboto', sans-serif; /* Ou a fonte do seu projeto */
+}
+
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.btn-add {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* CARDS */
+.card-endereco {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 25px;
+    margin-bottom: 20px;
+    background-color: #fff;
+    position: relative; /* Para posicionar o botão editar se quiser */
+}
+
+.logradouro {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.card-acoes {
+    margin-top: 15px;
+    border-top: 1px solid #eee;
+    padding-top: 15px;
+}
+
+.btn-acao {
+    background: none;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    margin-right: 20px;
+    text-decoration: underline;
+}
+
+.btn-delete {
+    color: #d32f2f;
+}
+
+/* FORMULÁRIO */
+.form-container {
+    border: 1px solid #e0e0e0;
+    padding: 30px;
+    border-radius: 8px;
+    background-color: #fff;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #555;
+}
+
+.form-group input, .form-group select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; /* Garante que o padding não estoura a largura */
+}
+
+.input-disabled {
+    background-color: #f5f5f5;
+    color: #777;
+}
+
+.row {
+    display: flex;
+    gap: 20px;
+}
+
+.half {
+    flex: 1;
+}
+
+.btn-salvar {
+    width: 100%;
+    padding: 15px;
+    background-color: #000;
+    color: #fff;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.btn-salvar:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.btn-voltar {
+    background: none;
+    border: none;
+    color: #007bff;
+    cursor: pointer;
+    margin-bottom: 10px;
+    padding: 0;
+    font-size: 0.9rem;
+}
+
+.error-msg {
+    color: red;
+    font-size: 0.8rem;
+    margin-top: 5px;
+    display: block;
+}

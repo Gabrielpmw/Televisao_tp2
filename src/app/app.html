@@ -1,0 +1,15 @@
+<!-- 
+  1. O Cabeçalho (Fixo)
+  Ele fica fora do router-outlet para aparecer em todas as páginas.
+-->
+<app-header></app-header>
+
+<!-- 
+  2. Área de Conteúdo
+  A div 'main-content' serve para empurrar o conteúdo para baixo,
+  já que o header é fixo.
+-->
+<div class="main-content">
+  <!-- O Angular carrega suas páginas (Login, Perfil, Home) aqui dentro -->
+  <router-outlet></router-outlet>
+</div>

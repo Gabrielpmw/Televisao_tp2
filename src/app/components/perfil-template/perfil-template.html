@@ -1,0 +1,51 @@
+<div class="perfil-container">
+  
+  <!-- BARRA LATERAL (SIDEBAR) -->
+  <aside class="sidebar">
+    
+    <!-- Cabeçalho do Menu (Avatar + Nome) -->
+    <div class="user-info">
+      <div class="avatar">
+        {{ getInicial() }}
+      </div>
+      <div class="welcome">
+        <span>Olá,</span>
+        <strong>{{ getNomeUsuario() }}!</strong>
+      </div>
+    </div>
+
+    <!-- Links de Navegação -->
+    <nav class="menu">
+      
+      <!-- routerLinkActive="active" aplica a classe CSS quando a rota é acessada -->
+      <a routerLink="/perfil/dados-pessoais" routerLinkActive="active">
+        Dados pessoais
+      </a>
+      
+      <a routerLink="/perfil/enderecos" routerLinkActive="active">
+        Endereços
+      </a>
+      
+      <a routerLink="/perfil/pedidos" routerLinkActive="active">
+        Pedidos
+      </a>
+      
+      <a routerLink="/perfil/cancelamentos" routerLinkActive="active">
+        Cancelamentos
+      </a>
+      
+      <!-- Botão de Sair -->
+      <button (click)="logout()" class="logout-btn">
+        Sair da conta
+      </button>
+
+    </nav>
+  </aside>
+
+  <!-- ÁREA DE CONTEÚDO DINÂMICO -->
+  <!-- É aqui que as telas de Dados Pessoais, Endereços, etc. serão renderizadas -->
+  <main class="content-area">
+    <router-outlet></router-outlet>
+  </main>
+
+</div>

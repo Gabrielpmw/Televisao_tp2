@@ -1,0 +1,73 @@
+<div class="container">
+  <div class="card">
+    
+    <div class="header">
+      <button class="back-btn" (click)="voltar()" type="button">←</button>
+      <h1>Recuperar senha</h1>
+    </div>
+    
+    <p class="subtitle">Digite seu usuário, CPF e a nova senha para redefinir seu acesso</p>
+
+    <form [formGroup]="recuperarForm" (ngSubmit)="onSubmit()">
+      
+      <!-- Username -->
+      <div class="form-group">
+        <label for="username">Nome de usuário</label>
+        <input 
+          type="text" 
+          id="username" 
+          formControlName="username" 
+          placeholder="Digite seu nome de usuário"
+          [class.error-input]="isFieldInvalid('username')">
+        
+        <div *ngIf="isFieldInvalid('username')" class="error-msg">
+          Nome de usuário é obrigatório.
+        </div>
+      </div>
+
+      <!-- CPF -->
+      <div class="form-group">
+        <label for="cpf">CPF</label>
+        <input 
+          type="text" 
+          id="cpf" 
+          formControlName="cpf" 
+          placeholder="000.000.000-00"
+          maxlength="14"
+          (input)="formatarCpf($event)"
+          [class.error-input]="isFieldInvalid('cpf')">
+         
+         <div *ngIf="isFieldInvalid('cpf')" class="error-msg">
+           CPF inválido ou incompleto.
+         </div>
+      </div>
+
+      <!-- Nova Senha (Necessário para o Backend) -->
+      <div class="form-group">
+        <label for="novaSenha">Nova Senha</label>
+        <input 
+          type="password" 
+          id="novaSenha" 
+          formControlName="novaSenha" 
+          placeholder="Crie sua nova senha"
+          [class.error-input]="isFieldInvalid('novaSenha')">
+        
+        <div *ngIf="isFieldInvalid('novaSenha')" class="error-msg">
+           Mínimo de 6 caracteres.
+        </div>
+      </div>
+
+      <!-- Botão -->
+      <button type="submit" [disabled]="recuperarForm.invalid || isLoading" class="btn-submit">
+        <span *ngIf="!isLoading">Validar e Alterar</span>
+        <span *ngIf="isLoading" class="spinner"></span>
+      </button>
+
+    </form>
+
+    <div class="footer">
+      <p>Lembrou sua senha? <a routerLink="/login">Voltar ao login</a></p>
+    </div>
+
+  </div>
+</div>

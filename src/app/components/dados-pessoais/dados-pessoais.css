@@ -1,0 +1,132 @@
+/* Container Principal */
+.dados-container {
+    width: 100%;
+    padding: 20px 0;
+    box-sizing: border-box;
+}
+
+/* Título */
+h2 {
+    font-size: 1.5rem;
+    color: #000;
+    margin-bottom: 30px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Layout do Formulário */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Linhas (Grid Flexível) */
+.row {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap; /* Permite quebrar linha em telas menores (celular) */
+}
+
+/* Grupos de Input */
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Classe para dividir a linha em colunas iguais */
+.half {
+    flex: 1;
+    min-width: 280px; /* Se a tela for menor que isso, o campo vai para a linha de baixo */
+}
+
+/* Labels */
+label {
+    font-size: 0.9rem;
+    color: #333;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+/* Inputs e Selects */
+input, select {
+    padding: 12px 16px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 1rem;
+    color: #333;
+    background-color: #fff;
+    outline: none;
+    transition: border-color 0.2s ease;
+    width: 100%; /* Garante que o input ocupe todo o espaço do pai (.half) */
+}
+
+input:focus, select:focus {
+    border-color: #2563eb; /* Azul destaque (foco) */
+}
+
+/* Estilo para campo desabilitado (como o CPF) */
+.disabled-input {
+    background-color: #f8fafc;
+    color: #94a3b8;
+    cursor: not-allowed;
+    border-color: #f1f5f9;
+}
+
+/* Mensagens de Erro */
+.error-msg {
+    color: #ef4444;
+    font-size: 0.8rem;
+    margin-top: 4px;
+}
+
+/* Área de Botões */
+.actions {
+    margin-top: 30px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+/* Botão Azul (Editar) */
+.btn-editar {
+    background-color: #2563eb; /* Azul Royal */
+    color: white;
+    padding: 12px 40px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    transition: background-color 0.2s;
+}
+
+.btn-editar:hover:not(:disabled) {
+    background-color: #1d4ed8; /* Azul mais escuro no hover */
+}
+
+.btn-editar:disabled {
+    background-color: #bfdbfe;
+    cursor: not-allowed;
+}
+
+/* Botão Branco/Outline (Excluir) */
+.btn-excluir {
+    background: white;
+    border: 1px solid #cbd5e1;
+    padding: 12px 24px;
+    border-radius: 6px;
+    color: #334155;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
+.btn-excluir:hover {
+    background-color: #fef2f2;
+    border-color: #fecaca;
+    color: #ef4444; /* Texto vermelho no hover */
+}
