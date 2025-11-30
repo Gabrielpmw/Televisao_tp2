@@ -1,57 +1,48 @@
 <div class="container">
-  <div class="form-header">
-    <h1 id="formTitle">{{ formTitle }}</h1>
-    
-    <button class="btn-back" [routerLink]="['/marcas']">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <line x1="19" y1="12" x2="5" y2="12"></line>
-        <polyline points="12 19 5 12 12 5"></polyline>
-      </svg>
-      Voltar
-    </button>
-  </div>
+    <div class="form-header">
+        <h1 id="formTitle">{{ formTitle }}</h1>
+       
+        <!-- Botão Voltar (Cabeçalho) - CHAMA O MÉTODO cancelaR() -->
+        <button type="button" class="btn-back" (click)="cancelar()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+            Voltar
+          </button>
+      </div>
 
-  <form id="marcaForm" class="fabricante-form" [formGroup]="marcaForm" (ngSubmit)="salvar()">
-    
-    <div class="form-group">
-      <label for="nomeMarca">Nome da Marca *</label>
-      <input type="text" id="nomeMarca" formControlName="nomeMarca" required>
-      
-      <div *ngIf="marcaForm.get('nomeMarca')?.invalid && (marcaForm.get('nomeMarca')?.touched || marcaForm.get('nomeMarca')?.dirty)" 
-           style="color: #ef4444; font-size: 0.875rem; margin-top: 0.5rem;">
-        O nome da marca é obrigatório.
-      </div>
-      </div>
+    <form id="modeloForm" class="fabricante-form" [formGroup]="marcaForm" (ngSubmit)="salvar()">
+       
+        <div class="form-group">
+            <label for="nomeMarca">Nome da Marca *</label>
+            <input type="text" id="nomeMarca" formControlName="nomeMarca" required>
+          </div>
 
-    <div class="form-group">
-      <label for="descricao">Descrição</label>
-      <input type="text" id="descricao" formControlName="descricao">
-    </div>
+        <div class="form-group">
+            <label for="descricao">Descrição</label>
+            <input type="text" id="descricao" formControlName="descricao">
+          </div>
 
-    <div class="form-group">
-      <label for="idFabricante">Fabricante *</label>
-      <select id="idFabricante" formControlName="idFabricante" required>
-        
-        <option [ngValue]="null" disabled>Selecione um fabricante</option>
-        
-        <option *ngFor="let fab of fabricantes" [ngValue]="fab.id">
-          {{ fab.razaoSocial }} 
-        </option>
-      </select>
+        <div class="form-group">
+            <label for="idFabricante">Fabricante *</label>
+            <select id="idFabricante" formControlName="idFabricante" required>
+                <option [ngValue]="null" disabled>Selecione um fabricante</option>
+               
+                <option *ngFor="let fab of fabricantes" [ngValue]="fab.id">
+                    {{ fab.razaoSocial }}
+                  </option>
+              </select>
+          </div>
 
-      <div *ngIf="marcaForm.get('idFabricante')?.invalid && (marcaForm.get('idFabricante')?.touched || marcaForm.get('idFabricante')?.dirty)"
-           style="color: #ef4444; font-size: 0.875rem; margin-top: 0.5rem;">
-        Selecionar um fabricante é obrigatório.
-      </div>
-      </div>
-
-    <div class="form-actions">
-      <button type="button" class="btn-cancel" (click)="cancelar()">
-        Cancelar
-      </button>
-      <button type="submit" class="btn-submit" [disabled]="marcaForm.invalid">
-        Salvar
-      </button>
-    </div>
-  </form>
+        <div class="form-actions">
+            <!-- Botão Cancelar (Rodapé) - CHAMA O MÉTODO cancelaR() -->
+            <button type="button" class="btn-cancel" (click)="cancelar()">
+                Cancelar
+              </button>
+            <button type="submit" class="btn-submit" [disabled]="marcaForm.invalid">
+                Salvar
+              </button>
+          </div>
+      </form>
 </div>

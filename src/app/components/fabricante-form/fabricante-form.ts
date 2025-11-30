@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormArray, FormControl } from '@angular/forms';
-import { Router, RouterModule, ActivatedRoute } from '@angular/router'; 
-import { CommonModule } from '@angular/common';
+import { Router, RouterModule, ActivatedRoute } from '@angular/router';
+import { CommonModule, Location } from '@angular/common'; // <-- Incluindo Location
 
 import { Fabricante } from '../../model/fabricante.model';
-import { Telefone } from '../../model/telefone.model'; 
+import { Telefone } from '../../model/telefone.model';
 import { FabricanteService } from '../../services/fabricante-service';
 
 
@@ -16,15 +16,15 @@ import { FabricanteService } from '../../services/fabricante-service';
     RouterModule,
     ReactiveFormsModule
   ],
-  templateUrl: './fabricante-form.html', 
-  styleUrl: './fabricante-form.css' 
+  templateUrl: './fabricante-form.html',
+  styleUrl: './fabricante-form.css'
 })
 export class FabricanteForm implements OnInit {
 
   fabricanteForm: FormGroup;
-  novoTelefoneControl = new FormControl('', [Validators.required, Validators.minLength(10)]); 
-  
-  formTitle: string = 'Novo Fabricante'; 
+  novoTelefoneControl = new FormControl('', [Validators.required, Validators.minLength(10)]);
+
+  formTitle: string = 'Novo Fabricante';
 
   isEditMode: boolean = false;
   fabricanteId: number | null = null;
@@ -33,15 +33,16 @@ export class FabricanteForm implements OnInit {
     private fb: FormBuilder,
     private fabricanteService: FabricanteService,
     private router: Router,
-    private route: ActivatedRoute 
+    private route: ActivatedRoute,
+    private location: Location // <-- Injetando Location
   ) {
     this.fabricanteForm = this.fb.group({
       razaoSocial: ['', Validators.required],
       cnpj: ['', Validators.required],
       status: [true, Validators.required],
-      dataAbertura: ['', Validators.required], 
+      dataAbertura: ['', Validators.required],
       paisSede: ['', Validators.required],
-      telefones: this.fb.array([]) 
+      telefones: this.fb.array([])
     });
   }
 
@@ -50,8 +51,8 @@ export class FabricanteForm implements OnInit {
 
     if (idParam) {
       this.isEditMode = true;
-      this.fabricanteId = +idParam; 
-      this.formTitle = 'Editar Fabricante'; 
+      this.fabricanteId = +idParam;
+      this.formTitle = 'Editar Fabricante';
 
       this.fabricanteService.getFabricanteById(this.fabricanteId).subscribe(fabricante => {
         this.preencherFormulario(fabricante);
@@ -109,7 +110,7 @@ export class FabricanteForm implements OnInit {
 
     this.telefones.push(
       this.fb.group({
-        id: [null], 
+        id: [null],
         ddd: [ddd, Validators.required],
         numero: [numero, Validators.required]
       })
@@ -127,7 +128,7 @@ export class FabricanteForm implements OnInit {
       this.fabricanteForm.markAllAsTouched();
       return;
     }
-    
+
     if (this.telefones.length === 0) {
       this.novoTelefoneControl.setErrors({ 'required': true });
       return;
@@ -138,7 +139,8 @@ export class FabricanteForm implements OnInit {
     if (this.isEditMode && this.fabricanteId) {
       this.fabricanteService.atualizar(this.fabricanteId, fabricanteData).subscribe({
         next: () => {
-          this.router.navigate(['/fabricantes']);
+          // CORREÇÃO 1: Navega para a rota ADM da lista
+          this.router.navigate(['/perfil-admin/fabricantes']);
         },
         error: (err) => {
           console.error('Erro ao ATUALIZAR fabricante', err);
@@ -147,7 +149,8 @@ export class FabricanteForm implements OnInit {
     } else {
       this.fabricanteService.incluir(fabricanteData).subscribe({
         next: () => {
-          this.router.navigate(['/fabricantes']);
+          // CORREÇÃO 1: Navega para a rota ADM da lista
+          this.router.navigate(['/perfil-admin/fabricantes']);
         },
         error: (err) => {
           console.error('Erro ao CRIAR fabricante', err);
@@ -156,7 +159,8 @@ export class FabricanteForm implements OnInit {
     }
   }
 
+  // CORREÇÃO 2: Usa Location.back() para voltar à página anterior
   cancelar(): void {
-    this.router.navigate(['/fabricantes']);
+    this.location.back();
   }
 }

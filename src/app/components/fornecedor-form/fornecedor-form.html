@@ -1,80 +1,77 @@
 <div class="container">
-  <div class="form-header">
-    <h1 id="formTitle">{{ formTitle }}</h1>
-    
-    <button class="btn-back" [routerLink]="['/fornecedores']">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <line x1="19" y1="12" x2="5" y2="12"></line>
-        <polyline points="12 19 5 12 12 5"></polyline>
-      </svg>
-      Voltar
-    </button>
-  </div>
+    <div class="form-header">
+        <h1 id="formTitle">{{ formTitle }}</h1>
+        <!-- CORREÇÃO AQUI: Mudando [routerLink] para (click)="cancelar()" -->
+        <button type="button" class="btn-back" (click)="cancelar()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+            Voltar
+          </button>
+      </div>
 
-  <form id="fornecedorForm" class="fabricante-form" [formGroup]="fornecedorForm" (ngSubmit)="salvar()">
-    
-    <div class="form-group">
-      <label for="razaoSocial">Razão Social *</label>
-      <input type="text" id="razaoSocial" formControlName="razaoSocial" required>
-    </div>
+    <form id="fabricanteForm" class="fabricante-form" [formGroup]="fornecedorForm" (ngSubmit)="salvar()">
+       
+        <div class="form-group">
+            <label for="razaoSocial">Razão Social *</label>
+            <input type="text" id="razaoSocial" formControlName="razaoSocial" required>
+          </div>
 
-    <div class="form-group">
-      <label for="cnpj">CNPJ *</label>
-      <input type="text" id="cnpj" formControlName="cnpj" placeholder="00.000.000/0000-00" required>
-    </div>
+        <div class="form-group">
+            <label for="cnpj">CNPJ *</label>
+            <input type="text" id="cnpj" formControlName="cnpj" placeholder="00.000.000/0000-00" required>
+          </div>
 
-    <div class="form-group">
-      <label for="status">Status *</label>
-      <select id="status" formControlName="status" required>
-        <option [ngValue]="true">Ativo</option>
-        <option [ngValue]="false">Inativo</option>
-      </select>
-    </div>
+        <div class="form-group">
+            <label for="status">Status *</label>
+            <select id="status" formControlName="status" required>
+                <option [ngValue]="true">Ativo</option>
+                <option [ngValue]="false">Inativo</option>
+              </select>
+          </div>
 
-    <div class="form-group">
-      <label for="email">Email *</label>
-      <input type="email" id="email" formControlName="email" placeholder="contato@empresa.com" required>
-    </div>
+        <div class="form-group">
+            <label for="email">E-mail *</label>
+            <input type="email" id="email" formControlName="email" required>
+          </div>
 
-    <div class="form-group">
-      <label for="telefone">Telefones *</label>
-      <div style="display: flex; gap: 1rem;">
-        <input type="tel" id="telefone" 
-               [formControl]="novoTelefoneControl" 
-               placeholder="(00) 00000-0000" 
-               style="flex-grow: 1;">
-        <button type="button" class="btn-add" (click)="adicionarTelefone()" style="flex-shrink: 0;">
-          + Adicionar Telefone
-        </button>
-      </div>
-      <div *ngIf="novoTelefoneControl.touched && novoTelefoneControl.hasError('required')" style="color: #ef4444; font-size: 0.875rem; margin-top: 0.5rem;">
-        Pelo menos um telefone é obrigatório.
-      </div>
-    </div>
+        <div class="form-group">
+            <label for="telefone">Telefones *</label>
+            <div style="display: flex; gap: 1rem;">
+                <input type="tel" id="telefone"                [formControl]="novoTelefoneControl"              
+           placeholder="(00) 00000-0000"                style="flex-grow: 1;">
+                <button type="button" class="btn-add" (click)="adicionarTelefone()" style="flex-shrink: 0;">
+                    + Adicionar Telefone
+                  </button>
+              </div>
+            <div *ngIf="novoTelefoneControl.touched && novoTelefoneControl.hasError('required')"
+        style="color: #ef4444; font-size: 0.875rem; margin-top: 0.5rem;">
+                Pelo menos um telefone é obrigatório.
+              </div>
+          </div>
 
-    <div class="telefones-list" formArrayName="telefones">
-      <div *ngFor="let tel of telefones.controls; let i = index" 
-           class="telefone-item" 
-           [formGroupName]="i">
-        <span>({{ tel.value.ddd }}) {{ tel.value.numero }}</span>
-        
-        <button type="button" class="btn-remover-telefone" (click)="removerTelefone(i)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="3 6 5 6 21 6"></polyline>
-            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-          </svg>
-        </button>
-      </div>
-    </div>
+        <div class="telefones-list" formArrayName="telefones">
+            <div *ngFor="let tel of telefones.controls; let i = index"            class="telefone-item"          
+         [formGroupName]="i"> <span>({{ tel.value.ddd }}) {{ tel.value.numero }}</span>
+               
+                <button type="button" class="btn-remover-telefone" (click)="removerTelefone(i)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                      </svg>
+                  </button>
+              </div>
+          </div>
 
 
-    <div class="form-actions">
-      <button type="button" class="btn-cancel" (click)="cancelar()">
-        Cancelar
-      </button>
-      <button type="submit" class="btn-submit" [disabled]="fornecedorForm.invalid">
-        Salvar
-      </button>
-    </div>
-  </form>
+        <div class="form-actions">
+            <button type="button" class="btn-cancel" (click)="cancelar()">
+                Cancelar
+              </button>
+            <button type="submit" class="btn-submit">
+                Salvar
+              </button>
+          </div>
+      </form>
 </div>

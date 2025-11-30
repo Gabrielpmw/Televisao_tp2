@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormArray, FormControl } from '@angular/forms';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common'; // <-- Incluindo Location
 
 import { Fornecedor } from '../../model/fornecedor.model';
 import { Telefone } from '../../model/telefone.model';
@@ -32,7 +32,8 @@ export class FornecedorFormComponent implements OnInit {
     private fb: FormBuilder,
     private fornecedorService: FornecedorService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private location: Location // <-- Injetando Location
   ) {
     this.fornecedorForm = this.fb.group({
       razaoSocial: ['', Validators.required],
@@ -134,7 +135,8 @@ export class FornecedorFormComponent implements OnInit {
     if (this.isEditMode && this.fornecedorId) {
       this.fornecedorService.atualizar(this.fornecedorId, fornecedorData).subscribe({
         next: () => {
-          this.router.navigate(['/fornecedores']);
+          // CORREÇÃO 1: Após salvar, navega para a rota ADM da lista
+          this.router.navigate(['/perfil-admin/fornecedores']);
         },
         error: (err: any) => {
           console.error('Erro ao ATUALIZAR fornecedor', err);
@@ -143,7 +145,8 @@ export class FornecedorFormComponent implements OnInit {
     } else {
       this.fornecedorService.incluir(fornecedorData).subscribe({
         next: () => {
-          this.router.navigate(['/fornecedores']);
+          // CORREÇÃO 1: Após criar, navega para a rota ADM da lista
+          this.router.navigate(['/perfil-admin/fornecedores']);
         },
         error: (err: any) => {
           console.error('Erro ao CRIAR fornecedor', err);
@@ -152,7 +155,8 @@ export class FornecedorFormComponent implements OnInit {
     }
   }
 
+  // CORREÇÃO 2: Usa Location.back() para o botão Voltar/Cancelar
   cancelar(): void {
-    this.router.navigate(['/fornecedores']);
+    this.location.back();
   }
 }

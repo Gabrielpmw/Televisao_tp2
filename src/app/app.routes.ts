@@ -21,6 +21,8 @@ import { FabricanteListComponent } from './components/fabricante-list/fabricante
 import { FabricanteForm } from './components/fabricante-form/fabricante-form';
 import { TelevisaoListComponent } from './components/televisao-list-component/televisao-list-component';
 import { TelevisaoFormComponent } from './components/televisao-form-component/televisao-form-component';
+// Importação do NOVO componente de lista ADM
+import { TelevisaoAdminList } from './components/televisao-admin-list/televisao-admin-list';
 import { FornecedorListComponent } from './components/fornecedor-list/fornecedor-list';
 import { FornecedorFormComponent } from './components/fornecedor-form/fornecedor-form';
 import { MarcaListComponent } from './components/marca-list/marca-list';
@@ -31,8 +33,9 @@ import { Home } from './components/home/home';
 
 // --- IMPORTAÇÕES DE GUARDS ---
 import { authGuard } from './guard/auth.guard';
-// Assumindo que você criou este arquivo
-import { roleGuard } from './guard/role.guard'; 
+import { roleGuard } from './guard/role.guard';
+// Ajustando a importação do template ADM para corresponder ao seu nome
+import { AdminTemplate } from './components/admin-template/admin-template';
 
 export const routes: Routes = [
 
@@ -43,11 +46,11 @@ export const routes: Routes = [
         path: 'login',
         component: LoginComponent,
         title: 'Login',
-        data: { public: true } 
+        data: { public: true }
     },
     {
         path: 'cadastro',
-        component: CadastroUsuario, 
+        component: CadastroUsuario,
         title: 'Cadastro de Usuário',
         data: { public: true }
     },
@@ -57,152 +60,94 @@ export const routes: Routes = [
         title: 'Recuperar Senha',
         data: { public: true }
     },
-    // Rota Home: Acesso Geral (Não requer login, mas é útil permitir se estiver logado)
-    { 
-        path: '', 
+    // Rota Home: Acesso Geral
+    {
+        path: '',
         component: Home,
         title: 'Início',
-        data: { public: true } // Acesso público para a home
+        data: { public: true }
     },
-    { 
-        path: 'televisoes', 
+    {
+        path: 'televisoes',
         component: TelevisaoListComponent,
         title: 'Lista de Televisões',
-        // Permite cliente ou adm, mas exige que esteja logado
         data: { public: true }
     },
 
 
     // =========================================================================
-    // 2. ROTAS EXCLUSIVAS DO USUÁRIO cliente (REQUER AUTH + ROLE: cliente)
+    // 2. ROTAS EXCLUSIVAS DO USUÁRIO cliente
     // =========================================================================
     {
         path: 'perfil',
-        component: PerfilTemplate, 
+        component: PerfilTemplate,
         title: 'Meu Perfil',
-        // RESTRITO: Exige Login (authGuard) E deve ter o Role cliente.
-        canActivate: [authGuard, roleGuard(['cliente'])], 
+        canActivate: [authGuard, roleGuard(['cliente'])],
         children: [
             { path: '', redirectTo: 'dados-pessoais', pathMatch: 'full' },
-            { 
-                path: 'dados-pessoais', 
-                component: DadosPessoaisComponent, 
-                title: 'Dados Pessoais' 
+            {
+                path: 'dados-pessoais',
+                component: DadosPessoaisComponent,
+                title: 'Dados Pessoais'
             },
-            { 
-                path: 'enderecos', 
+            {
+                path: 'enderecos',
                 component: EnderecoPessoal,
                 title: 'Meus Endereços'
             },
-            // { path: 'pedidos', component: PedidosListComponent }, // FUTURO
-            // { path: 'cancelamentos', component: CancelamentosComponent } // FUTURO
+            // ...
         ]
     },
 
 
     // =========================================================================
-    // 3. ROTAS EXCLUSIVAS DO ADMINISTRADOR (REQUER AUTH + ROLE: adm)
+    // 3. ROTAS EXCLUSIVAS DO ADMINISTRADOR
     // =========================================================================
+    {
+        path: 'perfil-admin',
+        component: AdminTemplate, // Ajuste para o nome correto do componente
+        title: 'Painel Administrativo',
+        canActivate: [authGuard, roleGuard(['adm'])],
+        children: [
+            // Redireciona /perfil-admin para /perfil-admin/fabricantes (ponto de entrada)
+            { path: '', pathMatch: 'full', redirectTo: 'televisoes-lista' }, // Redirecionamento para a nova lista
 
-    // Agrupamento para Fabricante (ADM)
-    {
-        path: 'fabricantes',
-        component: FabricanteListComponent,
-        title: 'Lista de Fabricantes',
-        canActivate: [authGuard, roleGuard(['adm'])]
-    },
-    {
-        path: 'fabricantes/new',
-        component: FabricanteForm,
-        title: 'Novo Fabricante',
-        canActivate: [authGuard, roleGuard(['adm'])]
-    },
-    {
-        path: 'fabricantes/edit/:id',
-        component: FabricanteForm,
-        title: 'Editar Fabricante',
-        canActivate: [authGuard, roleGuard(['adm'])]
-    },
-    
-    // Agrupamento para Fornecedor (ADM)
-    {
-        path: 'fornecedores',
-        component: FornecedorListComponent,
-        title: 'Lista de Fornecedores',
-        canActivate: [authGuard, roleGuard(['adm'])]
-    },
-    {
-        path: 'fornecedores/new',
-        component: FornecedorFormComponent,
-        title: 'Novo Fornecedor',
-        canActivate: [authGuard, roleGuard(['adm'])]
-    },
-    {
-        path: 'fornecedores/edit/:id',
-        component: FornecedorFormComponent,
-        title: 'Editar Fornecedor',
-        canActivate: [authGuard, roleGuard(['adm'])]
-    },
-    
-    // Agrupamento para Marca (ADM)
-    {
-        path: 'marcas',
-        component: MarcaListComponent,
-        title: 'Lista de Marcas',
-        canActivate: [authGuard, roleGuard(['adm'])]
-    },
-    {
-        path: 'marcas/new',
-        component: MarcaFormComponent,
-        title: 'Nova Marca',
-        canActivate: [authGuard, roleGuard(['adm'])]
-    },
-    {
-        path: 'marcas/edit/:id',
-        component: MarcaFormComponent,
-        title: 'Editar Marca',
-        canActivate: [authGuard, roleGuard(['adm'])]
+            // --- CRUDS ---
+            // Fabricante
+            { path: 'fabricantes', component: FabricanteListComponent, title: 'Lista de Fabricantes' },
+            { path: 'fabricantes/new', component: FabricanteForm, title: 'Novo Fabricante' },
+            { path: 'fabricantes/edit/:id', component: FabricanteForm, title: 'Editar Fabricante' },
+
+            // Fornecedor
+            { path: 'fornecedores', component: FornecedorListComponent, title: 'Lista de Fornecedores' },
+            { path: 'fornecedores/new', component: FornecedorFormComponent, title: 'Novo Fornecedor' },
+            { path: 'fornecedores/edit/:id', component: FornecedorFormComponent, title: 'Editar Fornecedor' },
+
+            // Marca
+            { path: 'marcas', component: MarcaListComponent, title: 'Lista de Marcas' },
+            { path: 'marcas/new', component: MarcaFormComponent, title: 'Nova Marca' },
+            { path: 'marcas/edit/:id', component: MarcaFormComponent, title: 'Editar Marca' },
+
+            // Modelo
+            { path: 'modelos', component: ModeloListComponent, title: 'Lista de Modelos' },
+            { path: 'modelos/new', component: ModeloFormComponent, title: 'Novo Modelo' },
+            { path: 'modelos/edit/:id', component: ModeloFormComponent, title: 'Editar Modelo' },
+
+            // Televisões (LISTA E GESTÃO)
+            {
+                path: 'televisoes-lista', // <--- ROTA MAPEADA PARA A LISTA
+                component: TelevisaoAdminList,
+                title: 'Gerenciar Televisões'
+            },
+            { path: 'televisoes/new', component: TelevisaoFormComponent, title: 'Nova Televisão' },
+            { path: 'televisoes/edit/:id', component: TelevisaoFormComponent, title: 'Editar Televisão' },
+
+            // Rotas de Gerenciamento de Usuários (FUTURO)
+            // { path: 'funcionarios', component: FuncionarioListComponent, title: 'Gerenciar Funcionários' },
+            // { path: 'usuarios', component: UsuarioComumListComponent, title: 'Gerenciar Clientes' },
+        ]
     },
 
-    // Agrupamento para Modelo (ADM)
-    {
-        path: 'modelos',
-        component: ModeloListComponent,
-        title: 'Lista de Modelos',
-        canActivate: [authGuard, roleGuard(['adm'])]
-    },
-    {
-        path: 'modelos/new',
-        component: ModeloFormComponent,
-        title: 'Novo Modelo',
-        canActivate: [authGuard, roleGuard(['adm'])]
-    },
-    {
-        path: 'modelos/edit/:id',
-        component: ModeloFormComponent,
-        title: 'Editar Modelo',
-        canActivate: [authGuard, roleGuard(['adm'])]
-    },
-
-
-    // =========================================================================
-    // 4. ROTAS DE ACESSO MISTO (REQUER AUTH + ROLE: cliente OU adm)
-    // =========================================================================
-    
-    // Cadastro/Edição de Televisões (Acesso APENAS para adm)
-    {
-        path: 'televisoes/new',
-        component: TelevisaoFormComponent,
-        title: 'Nova Televisão',
-        canActivate: [authGuard, roleGuard(['adm'])] 
-    },
-    {
-        path: 'televisoes/edit/:id',
-        component: TelevisaoFormComponent,
-        title: 'Editar Televisão',
-        canActivate: [authGuard, roleGuard(['adm'])]
-    },
-    
     // Catch-all para rotas não encontradas (Opcional)
     // { path: '**', redirectTo: '' }
 ];

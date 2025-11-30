@@ -1,92 +1,99 @@
 <div class="container">
-  <div class="form-header">
-    <h1 id="formTitle">{{ formTitle }}</h1>
-    
-    <!-- 1. Ícone mantido, [routerLink] atualizado para '/modelos' -->
-    <button class="btn-back" [routerLink]="['/modelos']">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <line x1="19" y1="12" x2="5" y2="12"></line>
-        <polyline points="12 19 5 12 12 5"></polyline>
-      </svg>
-      Voltar
-    </button>
-  </div>
+    <div class="form-header">
+        <h1 id="formTitle">{{ formTitle }}</h1>
+       
+        <!-- 1. Botão Voltar (Cabeçalho) - CHAMA O MÉTODO TS cancelaR() -->
+        <button type="button" class="btn-back" (click)="cancelar()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+            Voltar
+          </button>
+      </div>
 
-  <form id="modeloForm" class="fabricante-form" [formGroup]="modeloForm" (ngSubmit)="salvar()">
-    
-    <div class="form-group">
-      <label for="modelo">Nome do Modelo *</label>
-      <input type="text" id="modelo" formControlName="modelo" required>
-      
-      <div *ngIf="modeloForm.get('modelo')?.invalid && (modeloForm.get('modelo')?.touched || modeloForm.get('modelo')?.dirty)" 
-           style="color: #ef4444; font-size: 0.875rem; margin-top: 0.5rem;">
-        O nome do modelo é obrigatório.
-      </div>
-    </div>
+    <form id="modeloForm" class="fabricante-form" [formGroup]="modeloForm" (ngSubmit)="salvar()">
+       
+        <div class="form-group">
+            <label for="modelo">Nome do Modelo *</label>
+            <input type="text" id="modelo" formControlName="modelo" required>
+           
+            <div
+        *ngIf="modeloForm.get('modelo')?.invalid && (modeloForm.get('modelo')?.touched || modeloForm.get('modelo')?.dirty)"
+                   style="color: #ef4444; font-size: 0.875rem; margin-top: 0.5rem;">
+                O nome do modelo é obrigatório.
+              </div>
+          </div>
 
-    <div class="form-group">
-      <label for="mesesGarantia">Meses de Garantia *</label>
-      <input type="number" id="mesesGarantia" formControlName="mesesGarantia" required>
-      
-      <div *ngIf="modeloForm.get('mesesGarantia')?.invalid && (modeloForm.get('mesesGarantia')?.touched || modeloForm.get('mesesGarantia')?.dirty)" 
-           style="color: #ef4444; font-size: 0.875rem; margin-top: 0.5rem;">
-        A garantia é obrigatória (mín. 0).
-      </div>
-    </div>
+        <div class="form-group">
+            <label for="mesesGarantia">Meses de Garantia *</label>
+            <input type="number" id="mesesGarantia" formControlName="mesesGarantia" required>
+           
+            <div
+        *ngIf="modeloForm.get('mesesGarantia')?.invalid && (modeloForm.get('mesesGarantia')?.touched || modeloForm.get('mesesGarantia')?.dirty)"
+                   style="color: #ef4444; font-size: 0.875rem; margin-top: 0.5rem;">
+                A garantia é obrigatória (mín. 0).
+              </div>
+          </div>
 
-    <div class="form-group">
-      <label for="anoLancamento">Data de Lançamento *</label>
-      <input type="date" id="anoLancamento" formControlName="anoLancamento" required>
-      
-      <div *ngIf="modeloForm.get('anoLancamento')?.errors?.['pattern'] && (modeloForm.get('anoLancamento')?.touched)"
-           style="color: #ef4444; font-size: 0.875rem; margin-top: 0.5rem;">
-        Formato de data inválido (use YYYY-MM-DD).
-      </div>
-      <div *ngIf="modeloForm.get('anoLancamento')?.errors?.['required'] && (modeloForm.get('anoLancamento')?.touched)"
-           style="color: #ef4444; font-size: 0.875rem; margin-top: 0.5rem;">
-        A data é obrigatória.
-      </div>
-    </div>
+        <div class="form-group">
+            <label for="anoLancamento">Data de Lançamento *</label>
+            <input type="date" id="anoLancamento" formControlName="anoLancamento" required>
+           
+            <div
+        *ngIf="modeloForm.get('anoLancamento')?.errors?.['pattern'] && (modeloForm.get('anoLancamento')?.touched)"      
+             style="color: #ef4444; font-size: 0.875rem; margin-top: 0.5rem;">
+                Formato de data inválido (use YYYY-MM-DD).
+              </div>
+            <div
+        *ngIf="modeloForm.get('anoLancamento')?.errors?.['required'] && (modeloForm.get('anoLancamento')?.touched)"    
+               style="color: #ef4444; font-size: 0.875rem; margin-top: 0.5rem;">
+                A data é obrigatória.
+              </div>
+          </div>
 
-    <div class="form-group">
-      <label for="idMarca">Marca *</label>
-      <select id="idMarca" formControlName="idMarca" required>
-        <option [ngValue]="null" disabled>Selecione uma marca</option>
-        
-        <option *ngFor="let marca of marcas" [ngValue]="marca.id">
-          {{ marca.marca }}
-        </option>
-      </select>
+        <div class="form-group">
+            <label for="idMarca">Marca *</label>
+            <select id="idMarca" formControlName="idMarca" required>
+                <option [ngValue]="null" disabled>Selecione uma marca</option>
+               
+                <option *ngFor="let marca of marcas" [ngValue]="marca.id">
+                    {{ marca.marca }}
+                  </option>
+              </select>
 
-      <div *ngIf="modeloForm.get('idMarca')?.invalid && (modeloForm.get('idMarca')?.touched || modeloForm.get('idMarca')?.dirty)"
-           style="color: #ef4444; font-size: 0.875rem; margin-top: 0.5rem;">
-        Selecionar uma marca é obrigatório.
-      </div>
-    </div>
+            <div
+        *ngIf="modeloForm.get('idMarca')?.invalid && (modeloForm.get('idMarca')?.touched || modeloForm.get('idMarca')?.dirty)"
+                   style="color: #ef4444; font-size: 0.875rem; margin-top: 0.5rem;">
+                Selecionar uma marca é obrigatório.
+              </div>
+          </div>
 
-    <div class="form-group">
-      <label for="idCaracteristicas">Característica *</label>
-      <select id="idCaracteristicas" formControlName="idCaracteristicas" required>
-        <option [ngValue]="null" disabled>Selecione uma característica</option>
-        
-        <option *ngFor="let carac of caracteristicas" [ngValue]="carac.id">
-          {{ carac.nome }}
-        </option>
-      </select>
+        <div class="form-group">
+            <label for="idCaracteristicas">Característica *</label>
+            <select id="idCaracteristicas" formControlName="idCaracteristicas" required>
+                <option [ngValue]="null" disabled>Selecione uma característica</option>
+               
+                <option *ngFor="let carac of caracteristicas" [ngValue]="carac.id">
+                    {{ carac.nome }}
+                  </option>
+              </select>
 
-      <div *ngIf="modeloForm.get('idCaracteristicas')?.invalid && (modeloForm.get('idCaracteristicas')?.touched || modeloForm.get('idCaracteristicas')?.dirty)"
-           style="color: #ef4444; font-size: 0.875rem; margin-top: 0.5rem;">
-        Selecionar uma característica é obrigatório.
-      </div>
-    </div>
+            <div
+        *ngIf="modeloForm.get('idCaracteristicas')?.invalid && (modeloForm.get('idCaracteristicas')?.touched || modeloForm.get('idCaracteristicas')?.dirty)"
+                   style="color: #ef4444; font-size: 0.875rem; margin-top: 0.5rem;">
+                Selecionar uma característica é obrigatório.
+              </div>
+          </div>
 
-    <div class="form-actions">
-      <button type="button" class="btn-cancel" (click)="cancelar()">
-        Cancelar
-      </button>
-      <button type="submit" class="btn-submit" [disabled]="modeloForm.invalid">
-        Salvar
-      </button>
-    </div>
-  </form>
+        <div class="form-actions">
+            <!-- 2. Botão Cancelar (Rodapé) - CHAMA O MESMO MÉTODO TS -->
+            <button type="button" class="btn-cancel" (click)="cancelar()">
+                Cancelar
+              </button>
+            <button type="submit" class="btn-submit" [disabled]="modeloForm.invalid">
+                Salvar
+              </button>
+          </div>
+      </form>
 </div>

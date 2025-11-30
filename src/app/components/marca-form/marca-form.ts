@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common'; // <-- Incluindo Location
 
 import { Marca, MarcaRequest } from '../../model/marca.model';
 import { MarcaService } from '../../services/marca-service.service';
@@ -26,19 +26,20 @@ export class MarcaFormComponent implements OnInit {
   isEditMode: boolean = false;
   marcaId: number | null = null;
 
-  fabricantes: Fabricante[] = []; 
+  fabricantes: Fabricante[] = [];
 
   constructor(
     private fb: FormBuilder,
     private marcaService: MarcaService,
-    private fabricanteService: FabricanteService, 
+    private fabricanteService: FabricanteService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private location: Location // <-- Injetando Location
   ) {
     this.marcaForm = this.fb.group({
       nomeMarca: ['', Validators.required],
       descricao: [''],
-      idFabricante: [null, Validators.required] 
+      idFabricante: [null, Validators.required]
     });
   }
 
@@ -69,12 +70,12 @@ export class MarcaFormComponent implements OnInit {
     });
   }
 
- 
+
   preencherFormulario(marca: Marca): void {
     this.marcaForm.patchValue({
-      nomeMarca: marca.marca, 
+      nomeMarca: marca.marca,
       descricao: marca.descricao,
-      idFabricante: marca.idFabricante 
+      idFabricante: marca.idFabricante
     });
   }
 
@@ -89,7 +90,8 @@ export class MarcaFormComponent implements OnInit {
     if (this.isEditMode && this.marcaId) {
       this.marcaService.update(this.marcaId, request).subscribe({
         next: () => {
-          this.router.navigate(['/marcas']);
+          // CORREÇÃO 1: Navega para a rota ADM da lista
+          this.router.navigate(['/perfil-admin/marcas']);
         },
         error: (err: any) => {
           console.error('Erro ao ATUALIZAR marca', err);
@@ -98,7 +100,8 @@ export class MarcaFormComponent implements OnInit {
     } else {
       this.marcaService.create(request).subscribe({
         next: () => {
-          this.router.navigate(['/marcas']);
+          // CORREÇÃO 1: Navega para a rota ADM da lista
+          this.router.navigate(['/perfil-admin/marcas']);
         },
         error: (err: any) => {
           console.error('Erro ao CRIAR marca', err);
@@ -107,8 +110,8 @@ export class MarcaFormComponent implements OnInit {
     }
   }
 
-  
+  // CORREÇÃO 2: Usa Location.back() para o botão Voltar/Cancelar
   cancelar(): void {
-    this.router.navigate(['/marcas']);
+    this.location.back();
   }
 }

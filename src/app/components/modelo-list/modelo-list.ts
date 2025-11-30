@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { CommonModule, DatePipe } from '@angular/common'; // Importar DatePipe
-import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { HttpResponse } from '@angular/common/http';
+import { Location } from '@angular/common'; // <-- 1. Importa o Location
+
 import { ModeloResponse } from '../../model/modelo.model';
 import { ModeloService } from '../../services/modelo-service.service';
 
@@ -23,9 +24,7 @@ import { ModeloService } from '../../services/modelo-service.service';
 export class ModeloListComponent implements OnInit {
 
   modelos: ModeloResponse[] = []; 
-
   termoBusca: string = '';
-
   modalVisivel: boolean = false;
   modeloParaExcluir: number | null = null; 
 
@@ -37,7 +36,8 @@ export class ModeloListComponent implements OnInit {
 
   constructor(
     private modeloService: ModeloService, 
-    private router: Router
+    private router: Router,
+    private location: Location // <-- 2. Injeta Location
   ) { }
 
   ngOnInit(): void {
@@ -71,6 +71,12 @@ export class ModeloListComponent implements OnInit {
     });
   }
 
+  // --- NOVO MÉTODO PARA VOLTAR ---
+  voltar(): void {
+    // 3. Método que navega para trás no histórico do navegador
+    this.location.back();
+  }
+
   aplicarBusca(): void {
     this.paginaAtual = 1;
     this.carregarModelos();
@@ -102,8 +108,9 @@ export class ModeloListComponent implements OnInit {
     this.irParaPagina(this.paginaAtual + 1);
   }
 
+  // CORREÇÃO: Rota de navegação agora usa o prefixo /perfil-admin
   editarModelo(id: number): void {
-    this.router.navigate(['/modelos/edit', id]); 
+    this.router.navigate(['/perfil-admin/modelos/edit', id]); 
   }
 
 

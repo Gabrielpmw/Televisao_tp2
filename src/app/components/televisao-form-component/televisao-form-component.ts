@@ -1,14 +1,15 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Component, OnInit, inject } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl } from '@angular/forms';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common'; // Incluindo Location
 
-// A importação do modelo Televisao é necessária para pegar o ID de retorno
-import { Televisao, TelevisaoRequest } from '../../model/televisao.model';
+// Importe seus Modelos e Serviços
 import { Marca } from '../../model/marca.model';
 import { ModeloResponse } from '../../model/modelo.model';
-
+import { TipoResolucao, TipoTela, TelevisaoRequest, Televisao } from '../../model/televisao.model';
 import { TelevisaoService } from '../../services/televisao-service';
+
+// Importe outros serviços necessários (Marca/Modelo/etc.)
 import { MarcaService } from '../../services/marca-service.service';
 import { ModeloService } from '../../services/modelo-service.service';
 
@@ -16,6 +17,7 @@ interface EnumOption {
   id: number;
   nome: string;
 }
+
 
 @Component({
   selector: 'app-televisao-form',
@@ -26,51 +28,60 @@ interface EnumOption {
     ReactiveFormsModule
   ],
   templateUrl: './televisao-form-component.html',
-  styleUrl: './televisao-form-component.css'
+  styleUrl: './televisao-form-component.css' // Assumindo CSS
 })
 export class TelevisaoFormComponent implements OnInit {
+
+  // Dependências injetadas (usando inject() para modernidade)
+  private fb = inject(FormBuilder);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private location = inject(Location); // <--- Injetando Location
+  private televisaoService = inject(TelevisaoService);
+  private marcaService = inject(MarcaService);
+  private modeloService = inject(ModeloService);
 
   televisaoForm: FormGroup;
   formTitle: string = 'Nova Televisão';
   isEditMode: boolean = false;
   televisaoId: number | null = null;
 
+  // Variáveis para Dropdowns (Dados de seleção)
   marcas: Marca[] = [];
-  modelosFiltrados: ModeloResponse[] = []; 
+  modelosFiltrados: ModeloResponse[] = []; // Modelos visíveis
   tiposResolucao: EnumOption[] = [];
   tiposTela: EnumOption[] = [];
 
-  // ===================================
-  // NOVAS VARIÁVEIS PARA IMAGEM
-  // ===================================
+  // Variáveis para Upload
   selectedFile: File | null = null;
   imagePreview: string | ArrayBuffer | null = null;
-  // ===================================
 
-  constructor(
-    private fb: FormBuilder,
-    private televisaoService: TelevisaoService,
-    private marcaService: MarcaService,
-    private modeloService: ModeloService,
-    private router: Router,
-    private route: ActivatedRoute
-  ) {
+  constructor() {
     this.televisaoForm = this.fb.group({
+      // IDs para o RequestDTO
       idMarca: [null, Validators.required],
       idModelo: [null, Validators.required],
-      idTipoResolucao: [null, Validators.required], 
+      idTipoResolucao: [null, Validators.required],
       idTipoTela: [null, Validators.required],
+
+      // Dados da Televisão
       valor: [null, [Validators.required, Validators.min(0.01)]],
       estoque: [null, [Validators.required, Validators.min(0)]],
       descricao: ['', Validators.required],
+
+      // Dimensões (RequestDTO espera altura, largura, polegada)
       altura: [null, [Validators.required, Validators.min(1)]],
       largura: [null, [Validators.required, Validators.min(1)]],
-      polegada: [null, [Validators.required, Validators.min(1)]]
+      polegada: [null, [Validators.required, Validators.min(1)]],
     });
+
+    // REMOVIDO: O bloco de código que chamava this.filtrarModelos(idMarca) no construtor
+    // A lógica está corretamente em setupCascadingDropdown, que é chamado no ngOnInit.
   }
 
   ngOnInit(): void {
     this.carregarEnums();
+
     const idParam = this.route.snapshot.paramMap.get('id');
     this.isEditMode = !!idParam;
 
@@ -82,7 +93,7 @@ export class TelevisaoFormComponent implements OnInit {
       this.formTitle = 'Nova Televisão';
       this.carregarDropdowns();
     }
-    this.setupCascadingDropdown();
+    this.setupCascadingDropdown(); // Este método contém a lógica de valueChanges
   }
 
   carregarEnums(): void {
@@ -139,7 +150,7 @@ export class TelevisaoFormComponent implements OnInit {
             estoque: televisao.estoque,
             descricao: televisao.descricao,
             altura: televisao.dimensao.altura,
-            largura: televisao.dimensao.comprimento, 
+            largura: televisao.dimensao.comprimento,
             polegada: televisao.dimensao.polegada
           });
 
@@ -163,7 +174,7 @@ export class TelevisaoFormComponent implements OnInit {
 
       if (idNum) {
         console.log('Buscando modelos para a marca ID:', idNum);
-        modeloControl?.enable(); 
+        modeloControl?.enable();
 
         this.modeloService.findByMarca(idNum).subscribe(modelos => {
           this.modelosFiltrados = modelos;
@@ -214,7 +225,7 @@ export class TelevisaoFormComponent implements OnInit {
       estoque: formValue.estoque,
       descricao: formValue.descricao,
       altura: formValue.altura,
-      largura: formValue.largura, 
+      largura: formValue.largura,
       polegada: formValue.polegada
     };
 
@@ -226,7 +237,8 @@ export class TelevisaoFormComponent implements OnInit {
           if (this.selectedFile) {
             this.uploadImagem(this.televisaoId!);
           } else {
-            this.router.navigate(['/']); // Navega se não houver imagem
+            // CORREÇÃO: Navega para a lista ADM
+            this.router.navigate(['/perfil-admin/televisoes-lista']);
           }
         },
         error: (err: any) => {
@@ -242,7 +254,8 @@ export class TelevisaoFormComponent implements OnInit {
           if (this.selectedFile) {
             this.uploadImagem(novaTv.idTelevisao); // Usa o ID da TV recém-criada
           } else {
-            this.router.navigate(['/']); // Navega se não houver imagem
+            // CORREÇÃO: Navega para a lista ADM
+            this.router.navigate(['/perfil-admin/televisoes-lista']);
           }
         },
         error: (err: any) => {
@@ -264,19 +277,20 @@ export class TelevisaoFormComponent implements OnInit {
     this.televisaoService.uploadImagem(id, this.selectedFile).subscribe({
       next: () => {
         console.log('Imagem enviada com sucesso!');
-        this.router.navigate(['/']); // Navega APÓS enviar a imagem
+        // CORREÇÃO: Navega para a lista ADM APÓS o upload
+        this.router.navigate(['/perfil-admin/televisoes-lista']);
       },
       error: (err) => {
         console.error('Erro ao enviar imagem (dados da TV foram salvos):', err);
-        // Mesmo se a imagem falhar, os dados foram salvos.
-        this.router.navigate(['/']);
+        // Mesmo se a imagem falhar, os dados foram salvos. Navega para a lista.
+        this.router.navigate(['/perfil-admin/televisoes-lista']);
       }
     });
   }
   // ===================================
 
   cancelar(): void {
-    this.router.navigate(['/']); 
+    this.location.back();
   }
 
   isFieldInvalid(fieldName: string): boolean {

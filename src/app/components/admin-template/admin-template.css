@@ -1,0 +1,97 @@
+/* Estilos baseados no seu layout de perfil */
+.perfil-container {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f8f8f8;
+}
+
+.sidebar {
+    width: 250px;
+    padding: 20px;
+    background-color: #fff;
+    border-right: 1px solid #eee;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: #ef4444; /* Cor primária para ADM */
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    font-weight: bold;
+    margin-right: 15px;
+}
+
+.welcome span {
+    font-size: 14px;
+    color: #666;
+}
+.welcome strong {
+    display: block;
+    font-size: 16px;
+    color: #333;
+}
+
+.menu {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.menu-title {
+    font-size: 12px;
+    color: #999;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+}
+
+.menu a, .logout-btn {
+    text-decoration: none;
+    color: #444;
+    padding: 10px 15px;
+    border-radius: 8px;
+    transition: background-color 0.2s, color 0.2s;
+    font-size: 15px;
+    cursor: pointer;
+    text-align: left;
+    border: none;
+    background: none;
+}
+
+.menu a:hover, .menu button:hover {
+    background-color: #f0f0f0;
+}
+
+/* Cor de destaque diferente para o ADM */
+.menu a.active {
+    background-color: #ffe0e0; /* Fundo mais suave para admin */
+    color: #ef4444; /* Cor de texto para ativo (vermelho/destaque) */
+    font-weight: bold;
+}
+
+.logout-btn {
+    margin-top: 20px;
+    color: #ef4444; /* Cor de destaque para sair */
+    border: 1px solid #fecaca;
+    background-color: #fff;
+}
+
+.content-area {
+    flex-grow: 1;
+    padding: 30px;
+    background-color: #fff;
+}
