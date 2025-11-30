@@ -2,6 +2,7 @@ import { Component, signal, HostListener, ElementRef, ViewChild, inject, OnInit 
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router'; 
 import { AuthService } from '../../../services/auth-service.service';
+import { CarrinhoService } from '../../../services/carrinho.service';
 
 @Component({
   selector: 'app-header',
@@ -15,16 +16,26 @@ export class Cabecalho implements OnInit {
   private authService = inject(AuthService);
   private router = inject(Router);
 
+  // === NOVO ===
+  private carrinhoService = inject(CarrinhoService);
+  quantidadeCarrinho = signal(0);
+
   isProfileOpen = signal(false);
   usuarioLogado: any = null;
 
   @ViewChild('menuContainer') menuContainer!: ElementRef;
 
   ngOnInit(): void {
+    // Carrega usuário logado
     this.authService.getUsuarioLogado().subscribe(user => {
-      // LOG DE DEBUG: Veja no console do navegador o que aparece aqui ao carregar a página
       console.log('Cabecalho - Usuário carregado:', user);
       this.usuarioLogado = user;
+    });
+
+    // === NOVO: Atualiza quantidade do carrinho ===
+    this.carrinhoService.carrinho$.subscribe(itens => {
+      const total = itens.reduce((acc, item) => acc + item.quantidade, 0);
+      this.quantidadeCarrinho.set(total);
     });
   }
 
@@ -32,7 +43,6 @@ export class Cabecalho implements OnInit {
     this.isProfileOpen.update(v => !v);
   }
 
-  // --- ALTERADO: Função de ação (Click) ao invés de apenas retornar string ---
   navegarParaPerfil() {
     this.isProfileOpen.set(false);
 
@@ -41,25 +51,18 @@ export class Cabecalho implements OnInit {
       return;
     }
 
-    // 1. Tenta extrair o texto do perfil
     let perfilNome = '';
 
-    // Verifica se é objeto (devido ao @JsonFormat) e pega a propriedade 'nome' ou 'NOME'
     if (this.usuarioLogado.perfil && typeof this.usuarioLogado.perfil === 'object') {
-      // O Java geralmente serializa getNOME() como "nome" (minúsculo) ou "NOME"
       perfilNome = this.usuarioLogado.perfil.nome || this.usuarioLogado.perfil.NOME || '';
     } 
-    // Caso o Java mude e mande string direta no futuro
     else if (typeof this.usuarioLogado.perfil === 'string') {
       perfilNome = this.usuarioLogado.perfil;
     }
 
-    // 2. Normaliza (remove espaços e põe em minúsculo)
     perfilNome = perfilNome.trim().toLowerCase();
-
     console.log('Perfil detectado (String):', perfilNome);
 
-    // 3. Verificação
     if (perfilNome === 'adm') {
       this.router.navigate(['/perfil-admin']);
     } else {
@@ -71,6 +74,10 @@ export class Cabecalho implements OnInit {
     this.authService.logout();
     this.isProfileOpen.set(false);
     this.router.navigate(['/login']);
+  }
+
+  irParaCarrinho() {
+    this.router.navigate(['/carrinho']);
   }
 
   @HostListener('document:click', ['$event'])

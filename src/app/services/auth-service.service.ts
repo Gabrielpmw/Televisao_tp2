@@ -5,13 +5,13 @@ import { LocalStorageServiceService } from './local-storage-service.service';
 import { Usuario, LoginDTO } from '../model/usuario.model';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { jwtDecode } from 'jwt-decode';
+import { CarrinhoService } from './carrinho.service'; // <--- 1. IMPORTAÇÃO NOVA
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  // O mapeamento de ID para nome foi removido, pois o token agora envia o nome do role no campo 'groups'.
-
+  
   private baseURL: string = 'http://localhost:8080/auth';
   private tokenKey = 'jwt_token';
   private usuarioLogadoKey = 'usuario_logado';
@@ -21,7 +21,8 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private localStorageService: LocalStorageServiceService,
-    private jwtHelper: JwtHelperService
+    private jwtHelper: JwtHelperService,
+    private carrinhoService: CarrinhoService // <--- 2. INJEÇÃO DO CARRINHO
   ) {
     this.initUsuarioLogado();
   }
@@ -30,6 +31,12 @@ export class AuthService {
     const usuario = this.localStorageService.getItem(this.usuarioLogadoKey);
     if (usuario) {
       this.usuarioLogadoSubject.next(usuario as Usuario);
+      
+      // <--- 3. RECUPERA CARRINHO AO DAR F5 (ATUALIZAR PÁGINA) ---
+      const usuarioObj = usuario as Usuario;
+      if (usuarioObj.id) {
+        this.carrinhoService.identificarUsuario(usuarioObj.id);
+      }
     }
   }
 
@@ -51,6 +58,11 @@ export class AuthService {
         if (usuarioLogado) {
           this.setUsuarioLogado(usuarioLogado);
           this.usuarioLogadoSubject.next(usuarioLogado);
+
+          // <--- 4. CARREGA O CARRINHO ESPECÍFICO DESTE USUÁRIO ---
+          if (usuarioLogado.id) {
+            this.carrinhoService.identificarUsuario(usuarioLogado.id);
+          }
         }
       })
     );
@@ -73,6 +85,10 @@ export class AuthService {
   }
 
   logout(): void {
+    // <--- 5. LIMPA O CARRINHO DA MEMÓRIA AO SAIR ---
+    // Isso impede que outro usuário veja os itens deste usuário no mesmo PC
+    this.carrinhoService.limparSessao();
+
     this.localStorageService.removeItem(this.tokenKey);
     this.localStorageService.removeItem(this.usuarioLogadoKey);
     this.usuarioLogadoSubject.next(null);
@@ -93,20 +109,15 @@ export class AuthService {
   }
 
   /**
-   * MÉTODO FINAL: Verifica se o token decodificado contém o role requerido no campo 'groups'.
+   * Verifica se o token decodificado contém o role requerido no campo 'groups'.
    */
   hasRole(requiredRole: 'adm' | 'cliente'): boolean {
     const token = this.getToken();
     if (!token) return false;
 
     try {
-      // Uso de jwtDecode como função nomeada importada
       const decoded: any = jwtDecode(token);
-
-      // O JWT do Quarkus está enviando o role no campo 'groups' como um array.
       const userRoles: string[] = decoded['groups'] || [];
-
-      // Verifica se o array de roles do usuário inclui o role necessário.
       return userRoles.includes(requiredRole);
 
     } catch (error) {
@@ -116,7 +127,6 @@ export class AuthService {
   }
 
   getUsuarioLogadoSync(): Usuario | null {
-  return this.usuarioLogadoSubject.value;
-}
-
+    return this.usuarioLogadoSubject.value;
+  }
 }

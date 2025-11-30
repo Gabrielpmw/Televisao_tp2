@@ -1,7 +1,9 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router'; 
 import { Televisao } from '../../model/televisao.model';
 import { TelevisaoService } from '../../services/televisao-service'; 
+import { CarrinhoService } from '../../services/carrinho.service'; 
 
 @Component({
   selector: 'app-televisao-card',
@@ -16,12 +18,12 @@ export class TelevisaoCardComponent {
 
   @Input() televisao!: Televisao;
 
-  // Estado local para o coração
-  isFavorito: boolean = false;
-
   public defaultImageUrl: string = '/tv.jpg'; 
 
-  constructor(private televisaoService: TelevisaoService) { }
+  private carrinhoService = inject(CarrinhoService);
+  private router = inject(Router);
+
+  constructor(private televisaoService: TelevisaoService) { } 
 
   getImagemUrl(): string {
     if (this.televisao.nomeImagem) { 
@@ -30,16 +32,26 @@ export class TelevisaoCardComponent {
     return this.defaultImageUrl; 
   }
 
-  // Função para alternar a cor do coração
-  toggleFavorito() {
-    this.isFavorito = !this.isFavorito;
-  }
+  // --- MÉTODOS DE COMPRA ---
 
+  // Adiciona ao carrinho e permanece na página (SEM FEEDBACK VISÍVEL)
   onAddToCart() {
-    console.log(`Adicionando ao carrinho: ${this.televisao.modelo}`);
+    if (this.televisao.estoque <= 0) {
+      alert("Produto indisponível no momento."); // Mantemos o alerta de ERRO
+      return;
+    }
+    this.carrinhoService.adicionar(this.televisao);
+    // REMOVIDO: alert(`Produto adicionado ao carrinho!`); 
+    // O item será adicionado silenciosamente ao carrinho
   }
 
+  // Adiciona e vai direto para o checkout
   onBuyNow() {
-    console.log(`Comprar agora: ${this.televisao.modelo}`);
+    if (this.televisao.estoque <= 0) {
+      alert("Produto indisponível no momento.");
+      return;
+    }
+    this.carrinhoService.adicionar(this.televisao);
+    this.router.navigate(['/carrinho']);
   }
 }

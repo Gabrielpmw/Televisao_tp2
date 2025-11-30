@@ -1,0 +1,290 @@
+<div class="container">
+
+  <main class="main-content">
+    <div class="content-wrapper">
+
+      <div class="cart-section">
+
+        <h1 class="cart-title">Carrinho <span class="item-count">{{ itens.length }} item(ns)</span></h1>
+
+        <div class="product-card" *ngFor="let item of itens">
+
+          <button class="remove-btn" (click)="removerItem(item.id)">🗑</button>
+
+          <img [src]="getImagem(item)" 
+               class="product-image" 
+               onerror="this.src='/tv.jpg'">
+
+          <div class="product-details">
+            <h3 class="product-title">{{ item.nome }}</h3>
+
+            <div class="product-footer">
+              <div class="quantity-selector">
+                <button class="qty-btn" (click)="diminuirQtd(item)" [disabled]="item.quantidade <= 1">-</button>
+                <input type="text" [value]="item.quantidade" readonly id="quantity">
+                <button class="qty-btn" (click)="aumentarQtd(item)" [disabled]="item.quantidade >= 10">+</button>
+              </div>
+              <div class="product-price">{{ (item.preco * item.quantidade) | currency:'BRL' }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="itens.length === 0" class="empty-cart-msg"
+          style="padding: 20px; text-align: center; background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+          <p style="margin-bottom: 10px; font-size: 1.1rem;">Seu carrinho está vazio.</p>
+          <a routerLink="/televisoes"
+            style="color: #1351b4; font-weight: bold; text-decoration: none; padding: 10px; border: 1px solid #1351b4; border-radius: 6px;">
+            Ir para o catálogo
+          </a>
+        </div>
+
+        <div class="section-card">
+          <button class="section-header" (click)="toggleAddress()">
+            <div class="section-title">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+              <span>Endereço de Entrega</span>
+            </div>
+            <svg class="chevron" [class.rotated]="!isAddressOpen" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+
+          <div class="section-content" [class.hidden]="!isAddressOpen">
+
+            <div class="address-list" *ngIf="enderecos.length > 0; else semEndereco">
+
+              <label class="address-option" *ngFor="let end of enderecos"
+                [class.selected]="enderecoSelecionado === end.idEndereco">
+
+                <input type="radio" name="address" [value]="end.idEndereco"
+                  [checked]="enderecoSelecionado === end.idEndereco" (change)="selecionarEndereco(end.idEndereco)">
+
+                <div class="address-info">
+                  <div class="address-name">
+                    {{ end.bairro }}, {{ end.numero }}
+                  </div>
+                  <div class="address-details">
+                    {{ end.municipio?.municipio }} - {{ end.municipio?.estado?.sigla }}
+                    | CEP: {{ end.cep }}
+                    <span *ngIf="end.complemento"> - {{ end.complemento }}</span>
+                  </div>
+                </div>
+              </label>
+
+            </div>
+
+            <ng-template #semEndereco>
+              <div
+                style="padding: 15px; background: #fff3cd; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #ffc107;">
+                <p style="color: #856404; margin-bottom: 10px; font-weight: 500;">Você não possui endereços cadastrados.
+                </p>
+                <a routerLink="/perfil/enderecos"
+                  style="color: #1351b4; font-weight: bold; text-decoration: underline;">
+                  + Cadastrar Novo Endereço
+                </a>
+              </div>
+            </ng-template>
+
+            <div class="delivery-info" *ngIf="enderecoSelecionado">
+              <p><strong>Frete:</strong> {{ frete | currency:'BRL' }}</p>
+              <p><strong>Prazo de entrega:</strong> {{ prazoEntrega }} dias úteis</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <div class="section-header">
+            <div class="section-title">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                <line x1="1" y1="10" x2="23" y2="10"></line>
+              </svg>
+              <span>Forma de Pagamento</span>
+            </div>
+          </div>
+
+          <div class="section-content">
+            <div class="payment-options">
+
+              <label class="payment-option" [class.selected]="formaPagamento === 'pix'">
+                <input type="radio" name="payment" value="pix" [(ngModel)]="formaPagamento">
+                <div class="payment-info">Pix (Aprovação Imediata)</div>
+              </label>
+
+              <label class="payment-option" [class.selected]="formaPagamento === 'card'">
+                <input type="radio" name="payment" value="card" [(ngModel)]="formaPagamento">
+                <div class="payment-info">Cartão de Crédito</div>
+              </label>
+
+              <label class="payment-option" [class.selected]="formaPagamento === 'boleto'">
+                <input type="radio" name="payment" value="boleto" [(ngModel)]="formaPagamento">
+                <div class="payment-info">Boleto Bancário</div>
+              </label>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="summary-section">
+        <div class="summary-card">
+          <h2 class="summary-title">Resumo do Pedido</h2>
+
+          <div class="summary-row">
+            <span>Subtotal ({{ itens.length }} itens)</span>
+            <span>{{ getSubtotal() | currency:'BRL' }}</span>
+          </div>
+
+          <div class="summary-row">
+            <span>Frete</span>
+            <span class="shipping-value">
+              {{ enderecoSelecionado ? (frete | currency:'BRL') : 'A calcular' }}
+            </span>
+          </div>
+
+          <div class="summary-divider"></div>
+
+          <div class="summary-total">
+            <span>Total</span>
+            <span>{{ getTotal() | currency:'BRL' }}</span>
+          </div>
+
+          <button class="finalize-btn" [disabled]="itens.length === 0 || !enderecoSelecionado"
+            (click)="iniciarFinalizacao()">
+            {{ formaPagamento === 'card' ? 'Continuar para Cartão' : 'Finalizar Compra' }}
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<div class="modal" [class.hidden]="!modalPixVisible">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Pagamento via Pix</h3>
+      <button class="modal-close" (click)="modalPixVisible = false">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="pix-info">
+        <img src="/assets/images/qr-code-placeholder.png" class="qr-code" alt="QR Code">
+        <p class="pix-instructions">Escaneie o QR Code ou copie a chave:</p>
+
+        <div class="pix-code">
+          <code>{{ codigoPix }}</code>
+          <button class="copy-btn" (click)="copiarCodigo(codigoPix)">Copiar</button>
+        </div>
+
+        <p class="pix-value">Total a pagar: {{ getTotal() | currency:'BRL' }}</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-primary" (click)="confirmarPagamentoMock()">Já paguei</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" [class.hidden]="!modalBoletoVisible">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Boleto Bancário</h3>
+      <button class="modal-close" (click)="modalBoletoVisible = false">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="boleto-info">
+        <p class="boleto-instructions">Utilize o código de barras abaixo:</p>
+
+        <div class="boleto-code">
+          <code>{{ boletoCodigo }}</code>
+          <button class="copy-btn" (click)="copiarCodigo(boletoCodigo)">Copiar</button>
+        </div>
+
+        <div class="boleto-warning">
+          <p>Vencimento em 3 dias úteis. Compensação em até 72h.</p>
+        </div>
+
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary">Baixar PDF</button>
+      <button class="btn-primary" (click)="confirmarPagamentoMock()">Concluir</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" [class.hidden]="!modalCardVisible">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Dados do Cartão</h3>
+      <button class="modal-close" (click)="modalCardVisible = false">&times;</button>
+    </div>
+    <div class="modal-body">
+
+      <form id="cardForm">
+
+        <div class="form-group">
+          <label>Número do Cartão</label>
+          <input type="text" [(ngModel)]="dadosCartao.numero" name="numCartao" placeholder="0000 0000 0000 0000"
+            maxlength="16">
+        </div>
+
+        <div class="form-group">
+          <label>Nome no Cartão</label>
+          <input type="text" [(ngModel)]="dadosCartao.titular" name="nomeCartao" placeholder="NOME COMO NO CARTÃO"
+            style="text-transform: uppercase;">
+        </div>
+
+        <div class="form-row">
+
+          <div class="form-group">
+            <label>Validade</label>
+            <div class="form-row-inline">
+              <input type="text" [(ngModel)]="mesValidade" name="mes" placeholder="MM" maxlength="2"
+                style="width: 60px; text-align:center;">
+              <input type="text" [(ngModel)]="anoValidade" name="ano" placeholder="AA" maxlength="2"
+                style="width: 60px; text-align:center;">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>CVV</label>
+            <input type="text" [(ngModel)]="dadosCartao.cvv" name="cvv" placeholder="123" maxlength="4">
+          </div>
+
+        </div>
+
+      </form>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn-primary" (click)="validarECriarPedidoCartao()">Pagar e Finalizar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" [class.hidden]="!modalSuccessVisible">
+  <div class="modal-content">
+    <div class="modal-body success-body">
+
+      <div class="success-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+      </div>
+
+      <h3>Pedido Realizado!</h3>
+
+      <p>Seu pedido <strong>#{{ idPedidoCriado }}</strong> foi recebido com sucesso.</p>
+      <p *ngIf="formaPagamento !== 'card'">Aguardando compensação bancária.</p>
+
+      <button class="btn-primary" (click)="fecharSucesso()">Ver Meus Pedidos</button>
+
+    </div>
+  </div>
+</div>

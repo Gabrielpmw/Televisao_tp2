@@ -1,45 +1,29 @@
 <div class="product-card" *ngIf="televisao">
   
-  <!-- Imagem -->
   <div class="product-image-container">
-    
-    <!-- Botão Favorito -->
-    <button class="wishlist-btn" 
-            [class.active]="isFavorito" 
-            (click)="toggleFavorito()" 
-            title="Favoritar">
-      <svg class="heart-icon" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none">
-        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-      </svg>
-    </button>
     
     <img 
       [src]="getImagemUrl()" 
       [alt]="televisao.marca + ' ' + televisao.modelo" 
       class="product-image"
-      onerror="this.src='/tv.jpg'"
+      onerror="this.src='/assets/images/placeholder.png'"
     >
   </div>
 
-  <!-- Conteúdo -->
   <div class="product-content">
     
     <h3 class="product-title">{{ televisao.marca }} {{ televisao.modelo }}</h3>
     <span class="product-brand">{{ televisao.marca }}</span>
 
-    <!-- REMOVIDO: div.product-sizes com os badges de polegada -->
-
-    <!-- Preço -->
     <div class="product-price">
       {{ televisao.valor | currency:'BRL' }}
     </div>
     
-    <!-- Estoque -->
     <div class="product-stock" 
          [class.stock-high]="(televisao.estoque || 0) > 10"
          [class.stock-medium]="(televisao.estoque || 0) <= 10 && (televisao.estoque || 0) > 5"
          [class.stock-low]="(televisao.estoque || 0) <= 5">
-       
+      
        @if((televisao.estoque || 0) > 0) {
          {{ televisao.estoque }} unidades em estoque
        } @else {
@@ -47,13 +31,16 @@
        }
     </div>
 
-    <!-- Botões -->
     <div class="product-actions">
-      <button class="btn-buy" (click)="onBuyNow()">
+      <button class="btn-buy" 
+              (click)="onBuyNow()"
+              [disabled]="(televisao.estoque || 0) === 0">
         Comprar agora
       </button>
       
-      <button class="btn-cart" (click)="onAddToCart()">
+      <button class="btn-cart" 
+              (click)="onAddToCart()"
+              [disabled]="(televisao.estoque || 0) === 0">
         <svg class="cart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
         Adicionar ao carrinho
       </button>

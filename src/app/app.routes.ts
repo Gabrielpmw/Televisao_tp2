@@ -40,6 +40,7 @@ import { FuncionarioForm } from './components/funcionario-form/funcionario-form'
 // --- IMPORTAÇÕES DE GUARDS ---
 import { authGuard } from './guard/auth.guard';
 import { roleGuard } from './guard/role.guard';
+import { Carrinho } from './components/carrinho/carrinho';
 
 
 export const routes: Routes = [
@@ -89,23 +90,18 @@ export const routes: Routes = [
         canActivate: [authGuard, roleGuard(['cliente'])],
         children: [
             { path: '', redirectTo: 'dados-pessoais', pathMatch: 'full' },
-            {
-                path: 'dados-pessoais',
-                component: DadosPessoaisComponent,
-                title: 'Dados Pessoais'
-            },
-            {
-                path: 'enderecos',
-                component: EnderecoPessoal,
-                title: 'Meus Endereços'
-            },
-            // ADICIONADO: Rota de Segurança para Cliente
-            {
-                path: 'gerenciar-credenciais',
-                component: GerenciarCredenciaisComponent,
-                title: 'Segurança - Credenciais'
-            }
+            { path: 'dados-pessoais', component: DadosPessoaisComponent, title: 'Dados Pessoais' },
+            { path: 'enderecos', component: EnderecoPessoal, title: 'Meus Endereços' },
+            { path: 'gerenciar-credenciais', component: GerenciarCredenciaisComponent, title: 'Segurança' }
         ]
+    },
+
+    {
+        path: 'carrinho',
+        component: Carrinho,
+        title: 'Meu Carrinho de Compras',
+        // Apenas usuários logados com perfil 'cliente' podem acessar
+        canActivate: [authGuard, roleGuard(['cliente'])]
     },
 
 
