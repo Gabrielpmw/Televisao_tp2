@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 // Todas as tipagens necessárias para o Service
-import { Usuario, UsuarioCadastroDTO, RedefinirSenhaRequestDTO, DadosPessoaisDTO, UsuarioUpdateRequestDTO } from '../model/usuario.model';
+import { Usuario, UsuarioCadastroDTO, RedefinirSenhaRequestDTO, DadosPessoaisDTO, UsuarioUpdateRequestDTO, UpdateCredenciaisDTO } from '../model/usuario.model';
 
 @Injectable({
   providedIn: 'root'
@@ -36,5 +36,9 @@ export class UsuarioService {
 
   findByUsername(username: string): Observable<Usuario> {
     return this.http.get<Usuario>(`${this.API_URL}/${username}/buscar-username`);
+  }
+
+  atualizarCredenciais(dto: UpdateCredenciaisDTO): Observable<void> {
+    return this.http.patch<void>(`${this.API_URL}/atualizar-credenciais`, dto);
   }
 }

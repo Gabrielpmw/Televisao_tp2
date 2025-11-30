@@ -1,68 +1,67 @@
 <div class="perfil-container">
-   
-      <!-- BARRA LATERAL (SIDEBAR) - Menu ADM -->
-      <aside class="sidebar">
-         
-          <!-- Cabeçalho do Menu (Avatar + Nome) -->
-          <div class="user-info">
-              <div class="avatar">
-                  {{ getInicial() }}
-                </div>
-              <div class="welcome">
-                  <span>Olá,</span>
-                  <strong>{{ getNomeUsuario() }}!</strong>
-                </div>
-            </div>
+   
+      <aside class="sidebar">
+         
+          <div class="user-info">
+              <div class="avatar">
+                  {{ getInicial() }}
+                </div>
+              <div class="welcome">
+                  <span>Olá,</span>
+                  <strong>{{ getNomeUsuario() }}!</strong>
+                </div>
+            </div>
 
-          <!-- Links de Navegação ADM -->
-          <nav class="menu">
-             
-              <h2 class="menu-title">Gerenciamento de CRUDS</h2>
+          <nav class="menu">
+              
+              <h2 class="menu-title">Gerenciamento de CRUDS</h2>
 
-              <!-- Links de CRUDS -->
-              <a routerLink="/perfil-admin/fabricantes" routerLinkActive="active">
-                  Fabricantes
-                </a>
-             
-              <a routerLink="/perfil-admin/fornecedores" routerLinkActive="active">
-                  Fornecedores
-                </a>
-             
-              <a routerLink="/perfil-admin/marcas" routerLinkActive="active">
-                  Marcas
-                </a>
-             
-              <a routerLink="/perfil-admin/modelos" routerLinkActive="active">
-                  Modelos
-                </a>
-             
-      <!-- AQUI ESTÁ A MUDANÇA: Linka a lista ADM -->
-              <a routerLink="/perfil-admin/televisoes-lista" routerLinkActive="active">
-                  Televisões (CRUD)
-                </a>
-      <!-- Removemos o link "Nova Televisão" separado -->
+              <a routerLink="/perfil-admin/fabricantes" routerLinkActive="active">
+                  Fabricantes
+                </a>
+              
+              <a routerLink="/perfil-admin/fornecedores" routerLinkActive="active">
+                  Fornecedores
+                </a>
+              
+              <a routerLink="/perfil-admin/marcas" routerLinkActive="active">
+                  Marcas
+                </a>
+              
+              <a routerLink="/perfil-admin/modelos" routerLinkActive="active">
+                  Modelos
+                </a>
+              
+              <a routerLink="/perfil-admin/televisoes-lista" routerLinkActive="active">
+                  Televisões (CRUD)
+                </a>
 
-              <!-- Links para usuários/funcionários -->
-              <a routerLink="/perfil-admin/funcionarios" routerLinkActive="active" class="future-link">
-                  Funcionários (FUTURO)
-                </a>
+              <a routerLink="/perfil-admin/funcionarios" routerLinkActive="active" class="future-link">
+                  Funcionários (FUTURO)
+                </a>
 
-              <a routerLink="/perfil-admin/usuarios" routerLinkActive="active" class="future-link">
-                  Usuários Comuns (FUTURO)
-                </a>
-             
-              <!-- Botão de Sair -->
-              <button (click)="logout()" class="logout-btn">
-                  Sair da conta
-                </button>
+              <a routerLink="/perfil-admin/usuarios" routerLinkActive="active" class="future-link">
+                  Usuários Comuns (FUTURO)
+                </a>
 
-           
+
+              <h2 class="menu-title" style="margin-top: 20px;">Segurança</h2>
+
+              <a routerLink="/perfil-admin/gerenciar-credenciais" routerLinkActive="active">
+                  Gerenciar Credenciais
+              </a>
+
+
+              <button (click)="logout()" class="logout-btn">
+                  Sair da conta
+                </button>
+
+            
     </nav>
-        </aside>
+        </aside>
 
-      <!-- ÁREA DE CONTEÚDO DINÂMICO -->
-      <main class="content-area">
-          <router-outlet></router-outlet>
-        </main>
+      <main class="content-area">
+          <router-outlet></router-outlet>
+        </main>
 
 </div>

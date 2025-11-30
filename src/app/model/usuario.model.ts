@@ -74,3 +74,10 @@ export interface DadosPessoaisDTO {
   dataNascimento: string;
   telefoneRequestDTO?: Telefone;
 }
+
+export interface UpdateCredenciaisDTO {
+  usernameAntigo: string;
+  senhaAntiga: string;
+  novoUsername: string;
+  novaSenha: string;
+}

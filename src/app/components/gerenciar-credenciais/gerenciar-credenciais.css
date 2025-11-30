@@ -1,0 +1,187 @@
+/* Container principal - Centraliza o card na tela */
+.container-seguranca {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Alinha no topo com um pouco de respiro */
+  padding: 40px 20px;
+  background-color: #f4f6f8; /* Cor de fundo suave para a página */
+  min-height: 100vh; /* Ocupa a altura total da tela */
+}
+
+/* O Card branco */
+.card-seguranca {
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Sombra suave */
+  width: 100%;
+  max-width: 600px; /* Largura máxima para não ficar esticado em telas grandes */
+}
+
+/* Títulos e Textos */
+h2 {
+  color: #333;
+  margin-bottom: 5px;
+  font-size: 1.5rem;
+}
+
+.subtitle {
+  color: #666;
+  margin-bottom: 25px;
+  font-size: 0.95rem;
+}
+
+h3 {
+  font-size: 0.9rem;
+  color: #2c3e50;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 700;
+  border-left: 4px solid #0056b3; /* Detalhe visual azul ao lado do título */
+  padding-left: 10px;
+}
+
+/* Divisória */
+.divider {
+  border: 0;
+  border-top: 1px solid #eee;
+  margin: 25px 0;
+}
+
+/* Layout do Formulário */
+.form-section {
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Linha com dois campos lado a lado */
+.form-row {
+  display: flex;
+  gap: 15px;
+}
+
+.half {
+  flex: 1; /* Faz os campos ocuparem 50% cada */
+}
+
+/* Labels e Inputs */
+label {
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #444;
+  font-size: 0.9rem;
+}
+
+input {
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+  outline: none;
+}
+
+input:focus {
+  border-color: #0056b3; /* Cor de destaque ao clicar */
+  box-shadow: 0 0 0 3px rgba(0, 86, 179, 0.1);
+}
+
+/* Input desabilitado (Username antigo) */
+.input-disabled {
+  background-color: #e9ecef;
+  color: #6c757d;
+  cursor: not-allowed;
+  border-color: #dee2e6;
+}
+
+small {
+  color: #888;
+  font-size: 0.8rem;
+  margin-top: 5px;
+  display: block;
+}
+
+/* Mensagem de Erro */
+.alert-error {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  border: 1px solid #fecaca;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+}
+
+/* Botões */
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 30px;
+}
+
+button {
+  font-family: inherit;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-cancel {
+  background-color: transparent;
+  color: #555;
+  border: 1px solid #ccc;
+  padding: 10px 20px;
+  border-radius: 4px;
+}
+
+.btn-cancel:hover {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.btn-save {
+  background-color: #2e7d32; /* Verde sucesso */
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 4px;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.btn-save:hover {
+  background-color: #1b5e20;
+  transform: translateY(-1px);
+}
+
+.btn-save:disabled {
+  background-color: #a5d6a7;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Responsividade para telas pequenas (Celular) */
+@media (max-width: 600px) {
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+  
+  .container-seguranca {
+    padding: 10px;
+  }
+  
+  .card-seguranca {
+    padding: 20px;
+  }
+}

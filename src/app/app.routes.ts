@@ -16,12 +16,15 @@ import { PerfilTemplate } from './components/perfil-template/perfil-template';
 import { DadosPessoaisComponent } from './components/dados-pessoais/dados-pessoais';
 import { EnderecoPessoal } from './components/endereco-pessoal/endereco-pessoal';
 
-// 5. ROTAS DE CRUD EXISENTES (adm)
+// 5. COMPONENTE DE SEGURANÇA (Novo)
+// Ajuste o caminho conforme a pasta real onde você criou o componente
+import { GerenciarCredenciaisComponent } from './components/gerenciar-credenciais/gerenciar-credenciais';
+
+// 6. ROTAS DE CRUD EXISENTES (adm)
 import { FabricanteListComponent } from './components/fabricante-list/fabricante-list';
 import { FabricanteForm } from './components/fabricante-form/fabricante-form';
 import { TelevisaoListComponent } from './components/televisao-list-component/televisao-list-component';
 import { TelevisaoFormComponent } from './components/televisao-form-component/televisao-form-component';
-// Importação do NOVO componente de lista ADM
 import { TelevisaoAdminList } from './components/televisao-admin-list/televisao-admin-list';
 import { FornecedorListComponent } from './components/fornecedor-list/fornecedor-list';
 import { FornecedorFormComponent } from './components/fornecedor-form/fornecedor-form';
@@ -30,19 +33,19 @@ import { MarcaFormComponent } from './components/marca-form/marca-form';
 import { ModeloListComponent } from './components/modelo-list/modelo-list';
 import { ModeloFormComponent } from './components/modelo-form/modelo-form';
 import { Home } from './components/home/home';
-
-// --- IMPORTAÇÕES DE GUARDS ---
-import { authGuard } from './guard/auth.guard';
-import { roleGuard } from './guard/role.guard';
-// Ajustando a importação do template ADM para corresponder ao seu nome
 import { AdminTemplate } from './components/admin-template/admin-template';
 import { FuncionarioList } from './components/funcionar-list/funcionario-list';
 import { FuncionarioForm } from './components/funcionario-form/funcionario-form';
 
+// --- IMPORTAÇÕES DE GUARDS ---
+import { authGuard } from './guard/auth.guard';
+import { roleGuard } from './guard/role.guard';
+
+
 export const routes: Routes = [
 
     // =========================================================================
-    // 1. ROTAS PÚBLICAS NO NÍVEL RAIZ (ACESSÍVEIS A TODOS)
+    // 1. ROTAS PÚBLICAS NO NÍVEL RAIZ
     // =========================================================================
     {
         path: 'login',
@@ -62,7 +65,6 @@ export const routes: Routes = [
         title: 'Recuperar Senha',
         data: { public: true }
     },
-    // Rota Home: Acesso Geral
     {
         path: '',
         component: Home,
@@ -78,7 +80,7 @@ export const routes: Routes = [
 
 
     // =========================================================================
-    // 2. ROTAS EXCLUSIVAS DO USUÁRIO cliente
+    // 2. ROTAS EXCLUSIVAS DO USUÁRIO CLIENTE
     // =========================================================================
     {
         path: 'perfil',
@@ -97,7 +99,12 @@ export const routes: Routes = [
                 component: EnderecoPessoal,
                 title: 'Meus Endereços'
             },
-            // ...
+            // ADICIONADO: Rota de Segurança para Cliente
+            {
+                path: 'gerenciar-credenciais',
+                component: GerenciarCredenciaisComponent,
+                title: 'Segurança - Credenciais'
+            }
         ]
     },
 
@@ -107,12 +114,19 @@ export const routes: Routes = [
     // =========================================================================
     {
         path: 'perfil-admin',
-        component: AdminTemplate, // Ajuste para o nome correto do componente
+        component: AdminTemplate,
         title: 'Painel Administrativo',
         canActivate: [authGuard, roleGuard(['adm'])],
         children: [
-            // Redireciona /perfil-admin para /perfil-admin/fabricantes (ponto de entrada)
-            { path: '', pathMatch: 'full', redirectTo: 'televisoes-lista' }, // Redirecionamento para a nova lista
+            // Ponto de entrada
+            { path: '', pathMatch: 'full', redirectTo: 'televisoes-lista' },
+
+            // ADICIONADO: Rota de Segurança para Admin
+            {
+                path: 'gerenciar-credenciais',
+                component: GerenciarCredenciaisComponent,
+                title: 'Segurança - Credenciais'
+            },
 
             // --- CRUDS ---
             // Fabricante
@@ -135,19 +149,19 @@ export const routes: Routes = [
             { path: 'modelos/new', component: ModeloFormComponent, title: 'Novo Modelo' },
             { path: 'modelos/edit/:id', component: ModeloFormComponent, title: 'Editar Modelo' },
 
-            // Televisões (LISTA E GESTÃO)
+            // Televisões
             {
-                path: 'televisoes-lista', // <--- ROTA MAPEADA PARA A LISTA
+                path: 'televisoes-lista',
                 component: TelevisaoAdminList,
                 title: 'Gerenciar Televisões'
             },
             { path: 'televisoes/new', component: TelevisaoFormComponent, title: 'Nova Televisão' },
             { path: 'televisoes/edit/:id', component: TelevisaoFormComponent, title: 'Editar Televisão' },
 
-             { path: 'funcionarios', component: FuncionarioList, title: 'Gerenciar Funcionários' },
-             { path: 'funcionarios/new', component: FuncionarioForm, title: 'Novo Funcionário' },
-             { path: 'funcionarios/edit/:id', component: FuncionarioForm, title: 'Editar Funcionário' },
-            // { path: 'usuarios', component: UsuarioComumListComponent, title: 'Gerenciar Clientes' },
+            // Funcionários
+            { path: 'funcionarios', component: FuncionarioList, title: 'Gerenciar Funcionários' },
+            { path: 'funcionarios/new', component: FuncionarioForm, title: 'Novo Funcionário' },
+            { path: 'funcionarios/edit/:id', component: FuncionarioForm, title: 'Editar Funcionário' },
         ]
     },
 ];
