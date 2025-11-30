@@ -1,21 +1,22 @@
 import { Routes } from '@angular/router';
 
+// --- IMPORTAÇÕES DE COMPONENTES ---
+
 // 1. LOGIN
 import { LoginComponent } from './components/login/login';
 
 // 2. CADASTRO
 import { CadastroUsuario } from './components/cadastro-usuario/cadastro-usuario';
-// Nota: Se você usou "CadastroUsuario" no seu projeto, mantenha o nome que está lá.
-// No exemplo abaixo estou usando o nome padrão do componente gerado.
 
 // 3. RECUPERAR SENHA
 import { RecuperarSenhaComponent } from './components/recuperar-senha/recuperar-senha';
-// 4. PERFIL (TEMPLATE E DADOS PESSOAIS)
-// Importe o Componente Pai (Barra Lateral)
+
+// 4. PERFIL (cliente)
 import { PerfilTemplate } from './components/perfil-template/perfil-template';
-// Importe o Componente Filho (Formulário)
 import { DadosPessoaisComponent } from './components/dados-pessoais/dados-pessoais';
-// --- Seus componentes existentes (MANTIVE IGUAL) ---
+import { EnderecoPessoal } from './components/endereco-pessoal/endereco-pessoal';
+
+// 5. ROTAS DE CRUD EXISENTES (adm)
 import { FabricanteListComponent } from './components/fabricante-list/fabricante-list';
 import { FabricanteForm } from './components/fabricante-form/fabricante-form';
 import { TelevisaoListComponent } from './components/televisao-list-component/televisao-list-component';
@@ -26,106 +27,182 @@ import { MarcaListComponent } from './components/marca-list/marca-list';
 import { MarcaFormComponent } from './components/marca-form/marca-form';
 import { ModeloListComponent } from './components/modelo-list/modelo-list';
 import { ModeloFormComponent } from './components/modelo-form/modelo-form';
-import { EnderecoPessoal } from './components/endereco-pessoal/endereco-pessoal';
 import { Home } from './components/home/home';
+
+// --- IMPORTAÇÕES DE GUARDS ---
+import { authGuard } from './guard/auth.guard';
+// Assumindo que você criou este arquivo
+import { roleGuard } from './guard/role.guard'; 
 
 export const routes: Routes = [
 
-    // --- ROTAS PÚBLICAS ---
+    // =========================================================================
+    // 1. ROTAS PÚBLICAS NO NÍVEL RAIZ (ACESSÍVEIS A TODOS)
+    // =========================================================================
     {
         path: 'login',
-        component: LoginComponent
+        component: LoginComponent,
+        title: 'Login',
+        data: { public: true } 
     },
     {
         path: 'cadastro',
-        component: CadastroUsuario
+        component: CadastroUsuario, 
+        title: 'Cadastro de Usuário',
+        data: { public: true }
     },
     {
         path: 'recuperar-senha',
-        component: RecuperarSenhaComponent
+        component: RecuperarSenhaComponent,
+        title: 'Recuperar Senha',
+        data: { public: true }
+    },
+    // Rota Home: Acesso Geral (Não requer login, mas é útil permitir se estiver logado)
+    { 
+        path: '', 
+        component: Home,
+        title: 'Início',
+        data: { public: true } // Acesso público para a home
+    },
+    { 
+        path: 'televisoes', 
+        component: TelevisaoListComponent,
+        title: 'Lista de Televisões',
+        // Permite cliente ou adm, mas exige que esteja logado
+        data: { public: true }
     },
 
-    // --- ROTA DO PERFIL (COM BARRA LATERAL) ---
+
+    // =========================================================================
+    // 2. ROTAS EXCLUSIVAS DO USUÁRIO cliente (REQUER AUTH + ROLE: cliente)
+    // =========================================================================
     {
         path: 'perfil',
-        component: PerfilTemplate, // 1. Carrega a moldura (Sidebar)
+        component: PerfilTemplate, 
+        title: 'Meu Perfil',
+        // RESTRITO: Exige Login (authGuard) E deve ter o Role cliente.
+        canActivate: [authGuard, roleGuard(['cliente'])], 
         children: [
-            // 2. Redireciona /perfil para /perfil/dados-pessoais automaticamente
             { path: '', redirectTo: 'dados-pessoais', pathMatch: 'full' },
-            
-            // 3. Renderiza o formulário DENTRO da moldura
-            { path: 'dados-pessoais', component: DadosPessoaisComponent },
-            
-            // --- Futuros Componentes (Descomente quando criar os arquivos) ---
-             { path: 'enderecos', component: EnderecoPessoal },
-            // { path: 'pedidos', component: PedidosListComponent },
-            // { path: 'cancelamentos', component: CancelamentosComponent }
+            { 
+                path: 'dados-pessoais', 
+                component: DadosPessoaisComponent, 
+                title: 'Dados Pessoais' 
+            },
+            { 
+                path: 'enderecos', 
+                component: EnderecoPessoal,
+                title: 'Meus Endereços'
+            },
+            // { path: 'pedidos', component: PedidosListComponent }, // FUTURO
+            // { path: 'cancelamentos', component: CancelamentosComponent } // FUTURO
         ]
     },
 
-    // --- SUAS ROTAS EXISTENTES ---
+
+    // =========================================================================
+    // 3. ROTAS EXCLUSIVAS DO ADMINISTRADOR (REQUER AUTH + ROLE: adm)
+    // =========================================================================
+
+    // Agrupamento para Fabricante (ADM)
     {
         path: 'fabricantes',
-        component: FabricanteListComponent
+        component: FabricanteListComponent,
+        title: 'Lista de Fabricantes',
+        canActivate: [authGuard, roleGuard(['adm'])]
     },
     {
         path: 'fabricantes/new',
-        component: FabricanteForm
+        component: FabricanteForm,
+        title: 'Novo Fabricante',
+        canActivate: [authGuard, roleGuard(['adm'])]
     },
     {
         path: 'fabricantes/edit/:id',
-        component: FabricanteForm
+        component: FabricanteForm,
+        title: 'Editar Fabricante',
+        canActivate: [authGuard, roleGuard(['adm'])]
     },
+    
+    // Agrupamento para Fornecedor (ADM)
     {
         path: 'fornecedores',
-        component: FornecedorListComponent
+        component: FornecedorListComponent,
+        title: 'Lista de Fornecedores',
+        canActivate: [authGuard, roleGuard(['adm'])]
     },
     {
         path: 'fornecedores/new',
-        component: FornecedorFormComponent 
+        component: FornecedorFormComponent,
+        title: 'Novo Fornecedor',
+        canActivate: [authGuard, roleGuard(['adm'])]
     },
     {
         path: 'fornecedores/edit/:id',
-        component: FornecedorFormComponent 
+        component: FornecedorFormComponent,
+        title: 'Editar Fornecedor',
+        canActivate: [authGuard, roleGuard(['adm'])]
     },
-    {
-        path: 'televisoes', 
-        component: TelevisaoListComponent
-    },
-    {
-        path: 'televisoes/new',
-        component: TelevisaoFormComponent
-    },
-    {
-        path: 'televisoes/edit/:id',
-        component: TelevisaoFormComponent
-    },
+    
+    // Agrupamento para Marca (ADM)
     {
         path: 'marcas',
-        component: MarcaListComponent
+        component: MarcaListComponent,
+        title: 'Lista de Marcas',
+        canActivate: [authGuard, roleGuard(['adm'])]
     },
     {
         path: 'marcas/new',
-        component: MarcaFormComponent
+        component: MarcaFormComponent,
+        title: 'Nova Marca',
+        canActivate: [authGuard, roleGuard(['adm'])]
     },
     {
         path: 'marcas/edit/:id',
-        component: MarcaFormComponent
+        component: MarcaFormComponent,
+        title: 'Editar Marca',
+        canActivate: [authGuard, roleGuard(['adm'])]
     },
+
+    // Agrupamento para Modelo (ADM)
     {
         path: 'modelos',
-        component: ModeloListComponent
+        component: ModeloListComponent,
+        title: 'Lista de Modelos',
+        canActivate: [authGuard, roleGuard(['adm'])]
     },
     {
         path: 'modelos/new',
-        component: ModeloFormComponent
+        component: ModeloFormComponent,
+        title: 'Novo Modelo',
+        canActivate: [authGuard, roleGuard(['adm'])]
     },
     {
         path: 'modelos/edit/:id',
-        component: ModeloFormComponent
+        component: ModeloFormComponent,
+        title: 'Editar Modelo',
+        canActivate: [authGuard, roleGuard(['adm'])]
+    },
+
+
+    // =========================================================================
+    // 4. ROTAS DE ACESSO MISTO (REQUER AUTH + ROLE: cliente OU adm)
+    // =========================================================================
+    
+    // Cadastro/Edição de Televisões (Acesso APENAS para adm)
+    {
+        path: 'televisoes/new',
+        component: TelevisaoFormComponent,
+        title: 'Nova Televisão',
+        canActivate: [authGuard, roleGuard(['adm'])] 
     },
     {
-        path: '', 
-        component: Home
+        path: 'televisoes/edit/:id',
+        component: TelevisaoFormComponent,
+        title: 'Editar Televisão',
+        canActivate: [authGuard, roleGuard(['adm'])]
     },
+    
+    // Catch-all para rotas não encontradas (Opcional)
+    // { path: '**', redirectTo: '' }
 ];
