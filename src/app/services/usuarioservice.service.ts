@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Usuario, UsuarioCadastroDTO, RedefinirSenhaDTO, DadosPessoaisDTO } from '../model/usuario.model';
-
+// Todas as tipagens necessárias para o Service
+import { Usuario, UsuarioCadastroDTO, RedefinirSenhaRequestDTO, DadosPessoaisDTO, UsuarioUpdateRequestDTO } from '../model/usuario.model';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +17,8 @@ export class UsuarioService {
     return this.http.post<Usuario>(this.API_URL, usuario);
   }
 
-  recuperarSenha(dto: RedefinirSenhaDTO): Observable<void> {
+  // Método usa o DTO RedefinirSenhaRequestDTO (tipagem correta)
+  recuperarSenha(dto: RedefinirSenhaRequestDTO): Observable<void> {
     return this.http.put<void>(`${this.API_URL}/recuperar-senha`, dto);
   }
 

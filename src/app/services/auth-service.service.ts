@@ -114,4 +114,9 @@ export class AuthService {
       return false;
     }
   }
+
+  getUsuarioLogadoSync(): Usuario | null {
+  return this.usuarioLogadoSubject.value;
+}
+
 }

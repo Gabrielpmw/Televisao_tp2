@@ -1,25 +1,19 @@
-import { Telefone } from './telefone.model';
+import { Telefone } from './telefone.model'; // Assumindo que Telefone está em arquivo separado
 
 export class Usuario {
   id!: number;
   username!: string;
   perfil!: Perfil;
-  cpf!: string; 
-  
+  cpf!: string;
+
   // Campos opcionais de perfil
   nome?: string;
   sobrenome?: string;
   email?: string;
   dataNascimento?: string;
 
-  // ATUALIZADO: Agora usa a classe Telefone em vez de string
-  telefone?: Telefone; 
-}
-
-export class CreateUsuario {
-  username!: string;
-  senha!: string;
-  cpf!: string;
+  // ATUALIZADO: Agora usa a classe Telefone
+  telefone?: Telefone;
 }
 
 export enum Perfil {
@@ -27,30 +21,56 @@ export enum Perfil {
   USER = 'cliente'
 }
 
-export class LoginDTO {
-  username!: string;
-  senha!: string;
+// =========================================================
+// INTERFACES ADICIONADAS/ATUALIZADAS PARA O FUNCIONARIOSERVICE
+// =========================================================
+
+/**
+ * Usado pelo ADM para forçar a troca de username e senha de um funcionário.
+ * Reflete o UsuarioUpdateRequestDTO.java do backend.
+ */
+export interface UsuarioUpdateRequestDTO {
+  usernameAntigo: string;
+  senhaAntiga: string; // Senha antiga é exigida pelo backend (pode ser dummy para ADM)
+  novoUsername: string;
+  novaSenha: string;
 }
 
-// Usado no Cadastro inicial (POST)
+/**
+ * Usado para redefinição de senha (ADM ou Esquecimento).
+ * Reflete o RedefinirSenhaRequestDTO.java do backend.
+ */
+export interface RedefinirSenhaRequestDTO {
+  username: string;
+  cpf: string;
+  novaSenha: string;
+}
+
+// =========================================================
+// MANTENDO AS SUAS INTERFACES EXISTENTES
+// =========================================================
+
+export class CreateUsuario {
+  username!: string;
+  senha!: string;
+  cpf!: string;
+}
+
 export interface UsuarioCadastroDTO {
   username: string;
   cpf: string;
   senha: string;
 }
 
-// Usado na Recuperação de Senha (PUT)
-export interface RedefinirSenhaDTO {
-  username: string;
-  cpf: string;
-  novaSenha: string;
+export class LoginDTO {
+  username!: string;
+  senha!: string;
 }
 
-// Usado na tela de Dados Pessoais (PATCH)
 export interface DadosPessoaisDTO {
   nome: string;
   sobrenome: string;
   email: string;
   dataNascimento: string;
-telefoneRequestDTO?: Telefone;
+  telefoneRequestDTO?: Telefone;
 }

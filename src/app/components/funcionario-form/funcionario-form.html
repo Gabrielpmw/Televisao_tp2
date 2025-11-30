@@ -1,1 +1,93 @@
-<p>funcionario-form works!</p>
+<div class="funcionario-form-container">
+
+  <!-- Título dinâmico -->
+  <h2 *ngIf="!modoEdicao">Novo Funcionário</h2>
+  <h2 *ngIf="modoEdicao">Editar Funcionário</h2>
+
+  <form [formGroup]="funcionarioForm" (ngSubmit)="onSubmit()">
+
+    <!-- ====================
+         DADOS PESSOAIS
+    =======================-->
+    <fieldset>
+      <legend>Dados Pessoais</legend>
+
+      <!-- Nome -->
+      <div class="form-group">
+        <label for="nome">Nome *</label>
+        <input id="nome" type="text" formControlName="nome">
+      </div>
+
+      <!-- Sobrenome -->
+      <div class="form-group">
+        <label for="sobrenome">Sobrenome</label>
+        <input id="sobrenome" type="text" formControlName="sobrenome">
+      </div>
+
+      <!-- CPF -->
+      <div class="form-group">
+        <label for="cpf">CPF (11 dígitos) *</label>
+        <input id="cpf" type="text" maxlength="11" formControlName="cpf">
+      </div>
+
+      <!-- EMAIL -->
+      <div class="form-group">
+        <label for="email">E-mail *</label>
+        <input id="email" type="email" formControlName="email">
+      </div>
+
+    </fieldset>
+
+    <!-- ==========================
+         DADOS DE ACESSO (APENAS CRIAÇÃO)
+    ===========================-->
+    <fieldset *ngIf="!modoEdicao">
+      <legend>Dados de Acesso</legend>
+
+      <div class="form-group">
+        <label for="username">Nome de Usuário *</label>
+        <input id="username" type="text" formControlName="username">
+      </div>
+
+      <div class="form-group">
+        <label for="senha">Senha *</label>
+        <input id="senha" type="password" formControlName="senha">
+      </div>
+    </fieldset>
+
+    <!-- ==========================
+         CONFIRMAÇÃO DE SENHA (APENAS EDIÇÃO)
+    ===========================-->
+    <fieldset *ngIf="modoEdicao">
+      <legend>Confirmação de Segurança</legend>
+
+      <div class="form-group">
+        <label for="senhaAtualAlvo">Digite a senha atual do funcionário *</label>
+        <input id="senhaAtualAlvo" type="password" formControlName="senhaAtualAlvo">
+      </div>
+    </fieldset>
+
+    <!-- ====================
+          BOTÕES
+    =======================-->
+    <div class="form-actions">
+
+      <!-- SALVAR / ATUALIZAR -->
+      <button type="submit" [disabled]="!funcionarioForm.valid || isLoading">
+        <span *ngIf="!isLoading && !modoEdicao">Cadastrar Funcionário</span>
+        <span *ngIf="!isLoading && modoEdicao">Atualizar Funcionário</span>
+        <span *ngIf="isLoading">Aguarde...</span>
+      </button>
+
+      <!-- CANCELAR -->
+      <button type="button" (click)="router.navigate(['/perfil-admin/funcionarios'])">
+        Cancelar
+      </button>
+
+      <!-- ⚠️ BOTÃO DE EXCLUIR REMOVIDO (exclusão agora é feita na tabela de listagem) -->
+
+    </div>
+
+  </form>
+
+</div>

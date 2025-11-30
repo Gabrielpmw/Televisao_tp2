@@ -36,6 +36,8 @@ import { authGuard } from './guard/auth.guard';
 import { roleGuard } from './guard/role.guard';
 // Ajustando a importação do template ADM para corresponder ao seu nome
 import { AdminTemplate } from './components/admin-template/admin-template';
+import { FuncionarioList } from './components/funcionar-list/funcionario-list';
+import { FuncionarioForm } from './components/funcionario-form/funcionario-form';
 
 export const routes: Routes = [
 
@@ -142,12 +144,10 @@ export const routes: Routes = [
             { path: 'televisoes/new', component: TelevisaoFormComponent, title: 'Nova Televisão' },
             { path: 'televisoes/edit/:id', component: TelevisaoFormComponent, title: 'Editar Televisão' },
 
-            // Rotas de Gerenciamento de Usuários (FUTURO)
-            // { path: 'funcionarios', component: FuncionarioListComponent, title: 'Gerenciar Funcionários' },
+             { path: 'funcionarios', component: FuncionarioList, title: 'Gerenciar Funcionários' },
+             { path: 'funcionarios/new', component: FuncionarioForm, title: 'Novo Funcionário' },
+             { path: 'funcionarios/edit/:id', component: FuncionarioForm, title: 'Editar Funcionário' },
             // { path: 'usuarios', component: UsuarioComumListComponent, title: 'Gerenciar Clientes' },
         ]
     },
-
-    // Catch-all para rotas não encontradas (Opcional)
-    // { path: '**', redirectTo: '' }
 ];

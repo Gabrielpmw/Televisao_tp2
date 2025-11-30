@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
-import { RedefinirSenhaDTO } from '../../model/usuario.model';
+import { RedefinirSenhaRequestDTO } from '../../model/usuario.model';
 import { UsuarioService } from '../../services/usuarioservice.service';
 
 @Component({
@@ -53,7 +53,7 @@ export class RecuperarSenhaComponent {
 
     this.isLoading = true;
 
-    const dto: RedefinirSenhaDTO = {
+    const dto: RedefinirSenhaRequestDTO = {
       username: this.recuperarForm.get('username')?.value,
       cpf: this.recuperarForm.get('cpf')?.value, // Se o backend esperar limpo, use .replace(/\D/g, "")
       novaSenha: this.recuperarForm.get('novaSenha')?.value
