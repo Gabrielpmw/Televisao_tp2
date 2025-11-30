@@ -1,14 +1,15 @@
 <header class="app-header">
   
-  <!-- Lado Esquerdo: Nome da Empresa -->
   <div class="header-brand">
-    <h1>EMPRESA</h1>
+    <h1>
+      <a routerLink="/" class="brand-link">
+        TELEtela
+      </a>
+    </h1>
   </div>
 
-  <!-- Lado Direito: Ícones -->
   <div class="header-actions" #menuContainer>
     
-    <!-- Ícone Carrinho (Sem notificação) -->
     <button class="icon-button cart-button">
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/>
@@ -16,7 +17,6 @@
       </svg>
     </button>
 
-    <!-- Ícone Perfil & Dropdown -->
     <div class="profile-container">
       <button 
         (click)="toggleProfile()"
@@ -29,22 +29,29 @@
         </svg>
       </button>
 
-      <!-- Dropdown Menu (Fiel ao Design) -->
       @if (isProfileOpen()) {
         <div class="profile-dropdown">
           
-          <!-- Botão Entrar/Registrar (Estilizado) -->
-          <a href="/login" class="dropdown-item login-register-button">
-            Entrar/Registrar
-          </a>
+          @if (!usuarioLogado) {
+            <a routerLink="/login" class="dropdown-item login-register-button">
+              Entrar / Registrar
+            </a>
+          } 
+          @else {
+            <div class="dropdown-header">
+               Olá, {{ usuarioLogado.nome || usuarioLogado.username }}
+            </div>
 
-          <!-- Divisor -->
-          <div class="dropdown-divider"></div>
+            <button (click)="navegarParaPerfil()" class="dropdown-item" style="text-align: left;">
+              {{ (usuarioLogado.perfil?.nome === 'adm' || usuarioLogado.perfil?.nome === 'admin') ? 'Painel Administrativo' : 'Minha Conta' }}
+            </button>
 
-          <!-- Link Meus Pedidos (Estilo Link) -->
-          <a href="/perfil/pedidos" class="dropdown-item my-orders-link">
-            Meus pedidos
-          </a>
+            <div class="dropdown-divider"></div>
+
+            <button (click)="logout()" class="dropdown-item btn-logout">
+               Sair
+            </button>
+          }
 
         </div>
       }

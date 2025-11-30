@@ -25,11 +25,23 @@
     font-family: sans-serif;
     font-size: 1.5rem; /* 24px */
     font-weight: 700; /* Negrito */
-    color: #000000;
     margin: 0;
-    cursor: pointer;
     user-select: none;
     letter-spacing: -0.025em;
+    display: flex;
+    align-items: center;
+}
+
+/* NOVO: Estilo para o Link do título (<h1><a>...</a></h1>) */
+.brand-link {
+    text-decoration: none;
+    color: #000000;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.brand-link:hover {
+    opacity: 0.8;
 }
 
 /* Container dos ícones à direita */
@@ -95,11 +107,12 @@
     border-radius: 12px; /* Bordas arredondadas */
     border: 1px solid #e5e7eb;
     box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); /* Sombra mais forte */
-    padding: 16px; /* Espaçamento interno */
+    padding: 10px 0; /* Padding vertical apenas, itens preenchem largura */
     display: flex;
     flex-direction: column;
-    gap: 12px; /* Espaço entre os itens */
     box-sizing: border-box;
+    overflow: hidden; /* Para o header não sair da borda arredondada */
+    
     /* Animação de entrada */
     animation: dropdown-fade-in 0.2s ease-out;
     transform-origin: top right;
@@ -116,27 +129,54 @@
     }
 }
 
-/* Item genérico do dropdown */
+/* NOVO: Cabeçalho do Dropdown (Olá, Usuario) */
+.dropdown-header {
+    padding: 12px 20px;
+    font-family: sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #333;
+    background-color: #f9fafb;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 5px;
+}
+
+/* Item genérico do dropdown (Atualizado para alinhar à esquerda) */
 .dropdown-item {
     text-decoration: none;
     font-family: sans-serif;
-    font-size: 0.875rem; /* 14px */
+    font-size: 0.9rem; /* 14px */
     font-weight: 500;
-    text-align: center;
-    transition: background-color 0.2s;
+    text-align: left; /* Melhor para listas */
+    padding: 10px 20px;
+    color: #374151;
+    background: transparent;
+    border: none;
+    width: 100%;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
     display: block;
+    box-sizing: border-box;
 }
 
-/* Botão "Entrar/Registrar" (Estilo de botão sólido) */
+.dropdown-item:hover {
+    background-color: #f3f4f6;
+    color: #000;
+}
+
+/* Botão "Entrar/Registrar" (Estilo destacado) */
 .login-register-button {
-    background-color: #000000; /* Fundo preto */
-    color: #ffffff; /* Texto branco */
-    padding: 10px 16px;
+    text-align: center; /* Centralizado apenas para este botão */
+    background-color: #000000;
+    color: #ffffff;
+    margin: 10px 16px; /* Margem para não colar nas bordas */
+    width: auto; /* Largura automática baseada na margem */
     border-radius: 8px;
 }
 
 .login-register-button:hover {
-    background-color: #333333; /* Preto um pouco mais claro no hover */
+    background-color: #333333;
+    color: #ffffff;
 }
 
 /* Divisor */
@@ -146,14 +186,12 @@
     margin: 4px 0;
 }
 
-/* Link "Meus pedidos" (Estilo de link simples) */
-.my-orders-link {
-    color: #374151; /* Cinza escuro */
-    padding: 8px 16px;
-    border-radius: 8px;
+/* NOVO: Botão de Sair (Texto Vermelho) */
+.btn-logout {
+    color: #dc3545; /* Vermelho */
 }
 
-.my-orders-link:hover {
-    background-color: #f3f4f6; /* Fundo cinza claro no hover */
-    color: #000000;
+.btn-logout:hover {
+    background-color: #fff5f5; /* Fundo vermelho bem claro */
+    color: #c62828;
 }

@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core'; // Adicione inject se preferir ou use construtor
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router'; // Importe Router
 
 interface CategoriaTV {
   nome: string;
@@ -8,7 +8,7 @@ interface CategoriaTV {
   imagemInfo: string;
   descricao: string;
   detalhes: string;
-  features: string[]; // <--- O ERRO ESTAVA AQUI (Faltava essa linha)
+  features: string[];
   expandido: boolean;
 }
 
@@ -21,13 +21,17 @@ interface CategoriaTV {
 })
 export class Home {
   
+  // Injeta o Router para poder navegar via código
+  private router = inject(Router); 
+
   categorias: CategoriaTV[] = [
+    // ... seus dados (Plasma, LED, etc) continuam iguais ...
     { 
       nome: 'Plasma', 
       imagem: 'PLASMA', 
       imagemInfo: 'info_PLASMA.png',
       descricao: 'Cores profundas e alto contraste.',
-      detalhes: 'As TVs de Plasma oferecem níveis de preto profundos e excelentes ângulos de visão, ideais para ambientes com iluminação controlada. Uma tecnologia clássica para amantes de cinema.',
+      detalhes: 'As TVs de Plasma oferecem níveis de preto profundos e excelentes ângulos de visão...',
       features: ['Contraste Natural', 'Ângulo de visão amplo', 'Movimentos fluidos'],
       expandido: false
     },
@@ -36,7 +40,7 @@ export class Home {
       imagem: 'LED', 
       imagemInfo: 'info_LED.png',
       descricao: 'Eficiência e brilho intenso.',
-      detalhes: 'A tecnologia LED utiliza diodos emissores de luz para iluminar a tela, garantindo cores vivas, maior durabilidade e um design mais fino e eficiente energeticamente.',
+      detalhes: 'A tecnologia LED utiliza diodos emissores de luz...',
       features: ['Alto brilho', 'Baixo consumo', 'Variedade de tamanhos'],
       expandido: false
     },
@@ -45,7 +49,7 @@ export class Home {
       imagem: 'LCD', 
       imagemInfo: 'Info_LCD.png',
       descricao: 'A escolha versátil para o dia a dia.',
-      detalhes: 'Displays de Cristal Líquido (LCD) oferecem imagens nítidas e naturais. É uma tecnologia madura, confiável e com excelente custo-benefício para todos os tipos de uso.',
+      detalhes: 'Displays de Cristal Líquido (LCD) oferecem imagens nítidas...',
       features: ['Custo-benefício', 'Alta durabilidade', 'Sem risco de burn-in'],
       expandido: false
     },
@@ -54,7 +58,7 @@ export class Home {
       imagem: 'QLED', 
       imagemInfo: 'info_QLED.png',
       descricao: 'Pontos quânticos para cores perfeitas.',
-      detalhes: 'QLED usa pontos quânticos para entregar 100% do volume de cor. Brilho superior e cores que não desbotam com o tempo, perfeito para salas bem iluminadas.',
+      detalhes: 'QLED usa pontos quânticos para entregar 100% do volume de cor...',
       features: ['100% Volume de cor', 'Brilho HDR intenso', 'Garantia contra burn-in'],
       expandido: false
     },
@@ -63,7 +67,7 @@ export class Home {
       imagem: 'OLED', 
       imagemInfo: 'info_OLED.png',
       descricao: 'Pretos infinitos e contraste único.',
-      detalhes: 'No OLED, cada pixel se autoilumina, permitindo que se apaguem completamente para criar o preto perfeito. O contraste é infinito e as cores saltam da tela.',
+      detalhes: 'No OLED, cada pixel se autoilumina...',
       features: ['Preto Absoluto', 'Pixel Autoiluminado', 'Design Ultra Fino'],
       expandido: false
     }
@@ -71,5 +75,16 @@ export class Home {
 
   toggleDetalhes(categoria: CategoriaTV) {
     categoria.expandido = !categoria.expandido;
+  }
+
+  // --- NOVO MÉTODO ---
+  navegarParaFiltro(tipo: string) {
+    // CORREÇÃO: Converter para maiúsculo antes de enviar
+    // Assim 'Plasma' vira 'PLASMA', que é o que o Backend espera
+    const tipoFormatado = tipo.toUpperCase();
+
+    this.router.navigate(['/televisoes'], { 
+      queryParams: { tipoTela: tipoFormatado } 
+    });
   }
 }

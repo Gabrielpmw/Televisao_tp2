@@ -1,10 +1,10 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, inject } from '@angular/core'; // Adicionei inject (opcional, pode usar construtor)
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Televisao } from '../../model/televisao.model';
 import { TelevisaoService, TelevisaoPaginada, FiltrosTelevisao } from '../../services/televisao-service';
 import { PageEvent, MatPaginatorModule } from '@angular/material/paginator';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterModule, ActivatedRoute } from '@angular/router'; // <--- IMPORTANTE: ActivatedRoute
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TelevisaoCardComponent } from '../televisao-card-component/televisao-card-component';
@@ -31,24 +31,20 @@ export class TelevisaoListComponent implements OnInit {
   pageSize: number = 8;
   pageIndex: number = 0;
 
-  // --- Estado dos Filtros Selecionados ---
   filtros: FiltrosTelevisao = {
     marcas: [],
     tipos: [],
-    // REMOVIDO: minPolegada
-    maxPolegada: undefined, // Agora usamos só o max
-    sort: '' // ADICIONADO: Campo para ordenação
+    maxPolegada: undefined,
+    sort: ''
   };
 
   selectedTipos: string[] = [];
   selectedTamanhos: number[] = []; 
-  
   tempSelectedMarcas: string[] = []; 
 
-  // --- Controle de UI ---
+  // UI Controls
   activeDropdown: string | null = null;
   showMarcaModal: boolean = false;
-
   opcoesTamanho = ['32"', '43"', '50"', '55"', '65"', '75"', '85"'];
   opcoesTipo = ['LED', 'QLED', 'OLED', 'LCD', 'PLASMA'];
   
@@ -58,27 +54,40 @@ export class TelevisaoListComponent implements OnInit {
 
   constructor(
     private televisaoService: TelevisaoService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute // <--- INJEÇÃO NECESSÁRIA
   ) { }
 
   ngOnInit(): void {
     this.marcasDisponiveis$ = this.televisaoService.findAllMarcas();
-    this.carregarTelevisoes();
+
+    // --- LÓGICA DE FILTRO VIA URL ---
+    // Inscreve-se nos parâmetros da rota (ex: ?tipoTela=OLED)
+    this.route.queryParams.subscribe(params => {
+      const tipoUrl = params['tipoTela'];
+
+      if (tipoUrl) {
+        // Se veio algo na URL, marcamos como selecionado
+        // O array é reiniciado para garantir que filtra apenas o que veio da home
+        this.selectedTipos = [tipoUrl];
+        
+        // Atualiza o objeto de filtros
+        this.filtros.tipos = this.selectedTipos;
+      }
+
+      // Chama o carregamento APÓS configurar os filtros
+      this.carregarTelevisoes();
+    });
   }
 
   carregarTelevisoes(): void {
-    
-    // --- LÓGICA ATUALIZADA DE POLEGADAS ---
-    // Regra: "A partir de um número, pegar todas as polegadas abaixo dele"
-    // Se o usuário selecionar 50" e 65", consideramos o 65" como teto.
     if (this.selectedTamanhos.length > 0) {
-      // Pega o MAIOR valor selecionado e define como limite máximo
       this.filtros.maxPolegada = Math.max(...this.selectedTamanhos);
     } else {
       this.filtros.maxPolegada = undefined;
     }
-    // Obs: minPolegada foi removido
 
+    // Garante que os tipos selecionados (seja via clique ou URL) vão para o filtro
     this.filtros.tipos = this.selectedTipos;
 
     this.listaPaginada$ = this.televisaoService.findAll(this.pageIndex, this.pageSize, this.filtros).pipe(
@@ -88,24 +97,19 @@ export class TelevisaoListComponent implements OnInit {
     );
   }
 
+  // ... (RESTO DO CÓDIGO IGUAL: onPageChange, ordenarProdutos, toggles, etc.) ...
+  
   onPageChange(event: PageEvent): void {
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
     this.carregarTelevisoes();
   }
 
-  // ==========================================
-  // LÓGICA DE ORDENAÇÃO (NOVO)
-  // ==========================================
   ordenarProdutos(criterio: string): void {
     this.filtros.sort = criterio;
-    this.pageIndex = 0; // Volta para a primeira página ao reordenar
+    this.pageIndex = 0;
     this.carregarTelevisoes();
   }
-
-  // ==========================================
-  // LÓGICA DE FILTROS (CHECKBOXES)
-  // ==========================================
 
   toggleTipo(tipo: string, event: any): void {
     if (event.target.checked) {
@@ -119,7 +123,6 @@ export class TelevisaoListComponent implements OnInit {
 
   toggleTamanho(tamanhoStr: string, event: any): void {
     const valor = parseInt(tamanhoStr.replace('"', '').trim());
-
     if (event.target.checked) {
       this.selectedTamanhos.push(valor);
     } else {
@@ -129,11 +132,18 @@ export class TelevisaoListComponent implements OnInit {
     this.carregarTelevisoes();
   }
 
+  // Método auxiliar para o HTML saber se o checkbox deve estar marcado
+  isTipoSelecionado(tipo: string): boolean {
+    return this.selectedTipos.includes(tipo);
+  }
+
   isTamanhoSelecionado(tam: string): boolean {
     const valor = parseInt(tam.replace('"', '').trim());
     return this.selectedTamanhos.includes(valor);
   }
 
+  // ... Métodos de Marca, Modal, Dropdown, etc ...
+  
   openMarcaModal(): void {
     this.tempSelectedMarcas = [...this.filtros.marcas || []]; 
     this.showMarcaModal = true;
@@ -167,7 +177,6 @@ export class TelevisaoListComponent implements OnInit {
     this.showMarcaModal = false;
   }
 
-  // UI Helpers
   toggleDropdown(name: string, event: Event): void {
     event.stopPropagation();
     this.activeDropdown = this.activeDropdown === name ? null : name;

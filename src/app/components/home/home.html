@@ -1,19 +1,17 @@
 <div class="home-container">
   
-  <!-- Banner Principal -->
   <section class="hero-banner">
     <div class="hero-content">
-      <h2>Descubra a TV certa para você*</h2>
+      <h2>Descubra a TV certa para você</h2>
     </div>
   </section>
 
-  <!-- Seção de Categorias (Grade Superior) -->
   <section class="categories-section">
     
-    <!-- A Grade de Produtos -->
     <div class="categories-grid">
       @for (categoria of categorias; track categoria.nome) {
-        <div class="category-card" (click)="toggleDetalhes(categoria)">
+        
+        <div class="category-card" (click)="navegarParaFiltro(categoria.nome)" style="cursor: pointer;">
           <div class="image-container">
             <img 
               [src]="'/Imagens_TV/' + categoria.imagem + '.jpg'" 
@@ -25,17 +23,16 @@
           <span class="category-name">{{ categoria.nome }}</span>
           <p class="category-desc">{{ categoria.descricao }}</p>
         </div>
+
       }
     </div>
 
-    <!-- NOVO: Botão Explorar (Logo abaixo da grade) -->
     <div class="explore-container">
       <a routerLink="/televisoes" class="btn-explore">Explorar Todos os Modelos</a>
     </div>
 
   </section>
 
-  <!-- Seção Inferior: Detalhes das Tecnologias -->
   <section class="tech-showcase-section">
     <h3 class="section-title">Conheça as Tecnologias</h3>
 
@@ -43,7 +40,6 @@
       @for (categoria of categorias; track categoria.nome) {
         <div class="tech-card">
           
-          <!-- Imagem Grande (Banner) -->
           <div class="tech-banner-container">
             <img 
               [src]="'/Imagens_TV/' + categoria.imagemInfo" 
@@ -53,7 +49,6 @@
             >
           </div>
 
-          <!-- Barra de Ação e Conteúdo -->
           <div class="tech-action-bar">
             <div class="tech-info-header">
               <h4>{{ categoria.nome }}</h4>
@@ -66,16 +61,11 @@
               </button>
             </div>
 
-            <!-- Conteúdo Expansível -->
             @if (categoria.expandido) {
               <div class="tech-details-wrapper">
-                
-                <!-- Texto -->
                 <div class="tech-text">
                   <p>{{ categoria.detalhes }}</p>
                 </div>
-
-                <!-- Lista de Vantagens -->
                 <div class="tech-features">
                   <h5>Destaques:</h5>
                   <ul>
@@ -87,7 +77,6 @@
                     }
                   </ul>
                 </div>
-
               </div>
             }
           </div>
