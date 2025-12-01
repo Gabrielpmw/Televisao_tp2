@@ -1,0 +1,177 @@
+<div class="container">
+    <div class="header">
+        <h1>Gerenciamento de Clientes</h1>
+        <button class="btn-add" [routerLink]="['/perfil-admin/usuarios/new']">
+            <span>+</span> Adicionar Cliente
+        </button>
+    </div>
+
+    <!-- Mensagem de Erro/Sucesso -->
+    <div *ngIf="mensagemErro" class="alert-error">
+        <strong>Erro: </strong> {{ mensagemErro }}
+    </div>
+    <div *ngIf="mensagemSucesso" class="alert-success">
+        <strong>Sucesso: </strong> {{ mensagemSucesso }}
+    </div>
+
+    <!-- Busca -->
+    <div class="search-container">
+        <input type="text" 
+               class="search-input"
+               placeholder="Buscar por Nome, Username, CPF ou Email..." 
+               [(ngModel)]="termoBusca"
+               (keydown.enter)="aplicarBusca()"
+               (input)="aplicarBusca()">
+    </div>
+
+    <!-- Tabela -->
+    <div class="table-container">
+        <table class="fabricante-table">
+            <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>Username</th>
+                    <th>Nome Completo</th>
+                    <th>CPF</th>
+                    <th>Email</th>
+                    <th>Dt. Nasc.</th>
+                    <th>Telefone</th>
+                    <th class="text-center">Ações</th>
+                </tr>
+            </thead>
+
+            <tbody *ngIf="usuariosPaginados.length > 0; else emptyState">
+                <tr *ngFor="let usuario of usuariosPaginados; let i = index">
+                    
+                    <td>{{ (paginaAtual - 1) * itensPorPagina + i + 1 }}</td>
+
+                    <td class="highlight-text">{{ usuario.username }}</td>
+                    
+                    <td>{{ usuario.nome }} {{ usuario.sobrenome }}</td>
+                    
+                    <td>{{ usuario.cpf }}</td> <!-- Se tiver ngx-mask, senão remove o pipe -->
+                    
+                    <td>{{ usuario.email || '-' }}</td>
+                    
+                    <!-- Formatação de Data -->
+                    <td>{{ usuario.dataNascimento | date:'dd/MM/yyyy' }}</td>
+                    
+                    <!-- Formatação de Telefone -->
+                    <td>
+                        <span *ngIf="usuario.telefone">
+                            ({{ usuario.telefone.ddd }}) {{ usuario.telefone.numero }}
+                        </span>
+                        <span *ngIf="!usuario.telefone" class="text-muted">-</span>
+                    </td>
+
+                    <td class="text-center">
+                        <div class="action-buttons">
+                            
+                            <!-- 1. Botão ALTERAR CREDENCIAIS (Novo) -->
+                            <button class="btn-icon btn-key" (click)="abrirModalCredenciais(usuario)" title="Alterar Login/Senha">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path>
+                                </svg>
+                            </button>
+
+                            <!-- 2. Botão EDITAR (Dados Pessoais) -->
+                            <button class="btn-icon btn-edit" [routerLink]="['/perfil-admin/usuarios/editar', usuario.id]" title="Editar Dados">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                </svg>
+                            </button>
+
+                            <!-- 3. Botão EXCLUIR -->
+                            <button class="btn-icon btn-delete-icon" (click)="abrirModalExclusao(usuario.id)" title="Excluir">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                                </svg>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+
+            <ng-template #emptyState>
+                <tbody>
+                    <tr>
+                        <td colspan="8" class="empty-state">
+                            <p *ngIf="totalRegistros === 0 && !termoBusca; else noResults">
+                                Nenhum cliente cadastrado.
+                            </p>
+                            <ng-template #noResults>
+                                <p>Nenhum cliente encontrado com o termo "{{ termoBusca }}".</p>
+                            </ng-template>
+                        </td>
+                    </tr>
+                </tbody>
+            </ng-template>
+        </table>
+    </div>
+
+    <!-- Paginação -->
+    <div class="pagination-controls" *ngIf="totalRegistros > 0">
+        <div class="page-size-selector">
+            <label for="itensPorPagina">Itens:</label>
+            <select id="itensPorPagina" [(ngModel)]="itensPorPagina" (change)="onItensPorPaginaChange()">
+                <option *ngFor="let size of opcoesItensPorPagina" [value]="size">{{ size }}</option>
+            </select>
+        </div>
+        <span class="page-info">
+            Página {{ paginaAtual }} de {{ totalPaginas }} ({{ totalRegistros }} total)
+        </span>
+        <div class="page-buttons" *ngIf="totalPaginas > 1">
+            <button class="page-button" (click)="paginaAnterior()" [disabled]="paginaAtual === 1">&lt;</button>
+            <button class="page-button" (click)="proximaPagina()" [disabled]="paginaAtual === totalPaginas">&gt;</button>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MODAL 1: EXCLUSÃO -->
+    <!-- ========================================== -->
+    <div class="modal" [class.active]="modalVisivel">
+        <div class="modal-content">
+            <h2>Confirmar Exclusão</h2>
+            <p>Tem certeza que deseja excluir <strong>{{ usuarioSelecionado?.nome }}</strong>?</p>
+            <p class="warning-text">Esta ação é irreversível.</p>
+            <div class="modal-actions">
+                <button class="btn-cancel" (click)="fecharModal()">Cancelar</button>
+                <button class="btn-delete" (click)="confirmarExclusao()">Excluir</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MODAL 2: ALTERAR CREDENCIAIS (NOVO) -->
+    <!-- ========================================== -->
+    <div class="modal" [class.active]="modalCredenciaisVisivel">
+        <div class="modal-content">
+            <h2>Alterar Credenciais</h2>
+            <p class="modal-subtitle">Atualize o acesso de <strong>{{ usuarioSelecionado?.nome }}</strong></p>
+
+            <div class="form-group-modal">
+                <label>Novo Username (Login)</label>
+                <!-- Vinculado ao objeto temporário credenciaisData -->
+                <input type="text" [(ngModel)]="credenciaisData.username" placeholder="Username">
+            </div>
+
+            <div class="form-group-modal">
+                <label>Nova Senha</label>
+                <input type="text" [(ngModel)]="credenciaisData.novaSenha" placeholder="Digite a nova senha">
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-cancel" (click)="fecharModalCredenciais()">Cancelar</button>
+                <button class="btn-save" (click)="salvarCredenciais()" 
+                        [disabled]="!credenciaisData.username || !credenciaisData.novaSenha">
+                    Salvar
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div>

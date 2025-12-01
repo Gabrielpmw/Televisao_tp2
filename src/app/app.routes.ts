@@ -16,8 +16,7 @@ import { PerfilTemplate } from './components/perfil-template/perfil-template';
 import { DadosPessoaisComponent } from './components/dados-pessoais/dados-pessoais';
 import { EnderecoPessoal } from './components/endereco-pessoal/endereco-pessoal';
 
-// 5. COMPONENTE DE SEGURANÇA (Novo)
-// Ajuste o caminho conforme a pasta real onde você criou o componente
+// 5. COMPONENTE DE SEGURANÇA
 import { GerenciarCredenciaisComponent } from './components/gerenciar-credenciais/gerenciar-credenciais';
 
 // 6. ROTAS DE CRUD EXISENTES (adm)
@@ -36,11 +35,14 @@ import { Home } from './components/home/home';
 import { AdminTemplate } from './components/admin-template/admin-template';
 import { FuncionarioList } from './components/funcionar-list/funcionario-list';
 import { FuncionarioForm } from './components/funcionario-form/funcionario-form';
+import { Carrinho } from './components/carrinho/carrinho';
 
+// --- NOVO COMPONENTE (Importado aqui) ---
+import { UsuarioList } from './components/usuarios-list/usuarios-list';
+import { UsuarioForm } from './components/usuarios-form/usuarios-form';
 // --- IMPORTAÇÕES DE GUARDS ---
 import { authGuard } from './guard/auth.guard';
 import { roleGuard } from './guard/role.guard';
-import { Carrinho } from './components/carrinho/carrinho';
 
 
 export const routes: Routes = [
@@ -100,7 +102,6 @@ export const routes: Routes = [
         path: 'carrinho',
         component: Carrinho,
         title: 'Meu Carrinho de Compras',
-        // Apenas usuários logados com perfil 'cliente' podem acessar
         canActivate: [authGuard, roleGuard(['cliente'])]
     },
 
@@ -117,44 +118,58 @@ export const routes: Routes = [
             // Ponto de entrada
             { path: '', pathMatch: 'full', redirectTo: 'televisoes-lista' },
 
-            // ADICIONADO: Rota de Segurança para Admin
+            // Segurança do Admin
             {
                 path: 'gerenciar-credenciais',
                 component: GerenciarCredenciaisComponent,
                 title: 'Segurança - Credenciais'
             },
 
-            // --- CRUDS ---
-            // Fabricante
+            // --- GESTÃO DE USUÁRIOS (CLIENTES) ---
+            { 
+                path: 'usuarios', 
+                component: UsuarioList, 
+                title: 'Gerenciar Clientes' 
+            },
+            { 
+                path: 'usuarios/new', 
+                component: UsuarioForm, 
+                title: 'Novo Cliente' 
+            },
+            { 
+                path: 'usuarios/editar/:id', 
+                component: UsuarioForm, 
+                title: 'Editar Cliente' 
+            },
+
+            // --- OUTROS CRUDS ---
+            
+            // Fabricantes
             { path: 'fabricantes', component: FabricanteListComponent, title: 'Lista de Fabricantes' },
             { path: 'fabricantes/new', component: FabricanteForm, title: 'Novo Fabricante' },
             { path: 'fabricantes/edit/:id', component: FabricanteForm, title: 'Editar Fabricante' },
 
-            // Fornecedor
+            // Fornecedores
             { path: 'fornecedores', component: FornecedorListComponent, title: 'Lista de Fornecedores' },
             { path: 'fornecedores/new', component: FornecedorFormComponent, title: 'Novo Fornecedor' },
             { path: 'fornecedores/edit/:id', component: FornecedorFormComponent, title: 'Editar Fornecedor' },
 
-            // Marca
+            // Marcas
             { path: 'marcas', component: MarcaListComponent, title: 'Lista de Marcas' },
             { path: 'marcas/new', component: MarcaFormComponent, title: 'Nova Marca' },
             { path: 'marcas/edit/:id', component: MarcaFormComponent, title: 'Editar Marca' },
 
-            // Modelo
+            // Modelos
             { path: 'modelos', component: ModeloListComponent, title: 'Lista de Modelos' },
             { path: 'modelos/new', component: ModeloFormComponent, title: 'Novo Modelo' },
             { path: 'modelos/edit/:id', component: ModeloFormComponent, title: 'Editar Modelo' },
 
             // Televisões
-            {
-                path: 'televisoes-lista',
-                component: TelevisaoAdminList,
-                title: 'Gerenciar Televisões'
-            },
+            { path: 'televisoes-lista', component: TelevisaoAdminList, title: 'Gerenciar Televisões' },
             { path: 'televisoes/new', component: TelevisaoFormComponent, title: 'Nova Televisão' },
             { path: 'televisoes/edit/:id', component: TelevisaoFormComponent, title: 'Editar Televisão' },
 
-            // Funcionários
+            // Funcionários (Admins)
             { path: 'funcionarios', component: FuncionarioList, title: 'Gerenciar Funcionários' },
             { path: 'funcionarios/new', component: FuncionarioForm, title: 'Novo Funcionário' },
             { path: 'funcionarios/edit/:id', component: FuncionarioForm, title: 'Editar Funcionário' },
