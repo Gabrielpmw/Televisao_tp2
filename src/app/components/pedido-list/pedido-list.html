@@ -1,0 +1,141 @@
+<div class="container">
+  <header class="page-header">
+    <h1>🛍️ Meus Pedidos</h1>
+    <p class="subtitle">Acompanhe o status e histórico das suas compras</p>
+  </header>
+
+  <!-- Estado Vazio -->
+  <div *ngIf="pedidos.length === 0" class="empty-state">
+    <div class="empty-icon">📦</div>
+    <h3>Você ainda não fez nenhum pedido</h3>
+    <p>Que tal dar uma olhada nas nossas novidades?</p>
+  </div>
+
+  <!-- Grid de Pedidos -->
+  <div class="pedidos-grid">
+    <div *ngFor="let pedido of pedidos" class="pedido-card">
+      
+      <!-- Cabeçalho do Card -->
+      <div class="pedido-header">
+        <div class="pedido-id">
+          <span class="label">Pedido</span>
+          <span class="value">#{{ pedido.id }}</span>
+        </div>
+        <div class="pedido-data">
+          {{ pedido.dataPedido | date:'dd/MM/yyyy HH:mm' }}
+        </div>
+      </div>
+
+      <!-- Status -->
+      <div class="pedido-status">
+        <span class="status-badge" [ngClass]="getStatusClass(pedido.statusPedido)">
+          {{ getStatusLabel(pedido.statusPedido) }}
+        </span>
+      </div>
+
+      <!-- Resumo dos Itens -->
+      <div class="pedido-itens">
+        <div class="item-preview" *ngFor="let item of pedido.itens">
+          <span class="item-qtd">{{ item.quantidadeTelevisao }}x</span>
+          <!-- CORREÇÃO 1: Usando .modelo (conforme seu Televisao.ts) -->
+          <span class="item-nome">{{ item.televisao.modelo }}</span>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Informações de Entrega (Snapshot do Pedido) -->
+      <div class="pedido-info">
+        <div class="info-row">
+          <span class="info-label">📍 Entrega em:</span>
+          <!-- Nota: enderecoEntrega.municipio é String (vem do DTO do Pedido), então está correto -->
+          <span class="info-value">
+            {{ pedido.enderecoEntrega.municipio }} - {{ pedido.enderecoEntrega.bairro }}
+          </span>
+        </div>
+        <div class="info-row endereco-detalhe">
+          <span>{{ pedido.enderecoEntrega.cep }}, Nº {{ pedido.enderecoEntrega.numero }}</span>
+        </div>
+        
+        <div class="info-row total-row">
+          <span class="info-label">Total:</span>
+          <span class="total-value">{{ pedido.valorTotal | currency:'BRL' }}</span>
+        </div>
+      </div>
+
+      <!-- Ações (Só aparecem se a regra de 24h/Status permitir) -->
+      <div *ngIf="podeEditar(pedido)" class="pedido-acoes">
+        <button class="btn btn-outline" (click)="abrirModalEndereco(pedido.id)">
+          ✏️ Mudar Endereço
+        </button>
+        <button class="btn btn-danger" (click)="abrirModalCancelar(pedido.id)">
+          ❌ Cancelar
+        </button>
+      </div>
+      
+      <!-- Mensagem informativa quando não pode mais editar -->
+      <div *ngIf="!podeEditar(pedido) && pedido.statusPedido.id !== 4" class="pedido-bloqueado">
+        <small>🔒 Pedido em transporte ou prazo de alteração expirado.</small>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Alterar Endereço -->
+<div class="modal-overlay" [class.ativo]="modalEnderecoAberto">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>📍 Alterar Endereço de Entrega</h2>
+      <button class="btn-close" (click)="fecharModais()">&times;</button>
+    </div>
+    
+    <div class="modal-body">
+      <p>Selecione um dos seus endereços cadastrados para onde devemos enviar este pedido:</p>
+      
+      <div class="form-group">
+        <label for="selectEndereco">Meus Endereços:</label>
+        <select id="selectEndereco" [(ngModel)]="idNovoEndereco" class="form-select">
+          <option [ngValue]="null" disabled>Selecione um endereço...</option>
+          <option *ngFor="let end of meusEnderecos" [ngValue]="end.idEndereco">
+            <!-- CORREÇÃO 2: Usando .municipio.municipio (conforme seu MunicipioResponseDTO) -->
+            {{ end.municipio.municipio }} - {{ end.bairro }}, Nº {{ end.numero }}
+          </option>
+        </select>
+      </div>
+
+      <div *ngIf="meusEnderecos.length === 0" class="alert-warning">
+        Você não possui outros endereços cadastrados. Vá ao seu perfil para adicionar um novo.
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="fecharModais()">Cancelar</button>
+      <button class="btn btn-primary" (click)="confirmarTrocaEndereco()" [disabled]="!idNovoEndereco">
+        Salvar Alteração
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Cancelar Pedido -->
+<div class="modal-overlay" [class.ativo]="modalCancelarAberto">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>⚠️ Confirmar Cancelamento</h2>
+      <button class="btn-close" (click)="fecharModais()">&times;</button>
+    </div>
+    
+    <div class="modal-body">
+      <p>Tem certeza que deseja cancelar o <strong>Pedido #{{ idPedidoSelecionado }}</strong>?</p>
+      <p class="text-muted">Essa ação não poderá ser desfeita.</p>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="fecharModais()">Voltar</button>
+      <button class="btn btn-danger" (click)="confirmarCancelamento()">
+        Confirmar Cancelamento
+      </button>
+    </div>
+  </div>
+</div>

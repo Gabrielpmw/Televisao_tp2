@@ -43,6 +43,7 @@ import { UsuarioForm } from './components/usuarios-form/usuarios-form';
 // --- IMPORTAÇÕES DE GUARDS ---
 import { authGuard } from './guard/auth.guard';
 import { roleGuard } from './guard/role.guard';
+import { PedidoList } from './components/pedido-list/pedido-list';
 
 
 export const routes: Routes = [
@@ -94,6 +95,10 @@ export const routes: Routes = [
             { path: '', redirectTo: 'dados-pessoais', pathMatch: 'full' },
             { path: 'dados-pessoais', component: DadosPessoaisComponent, title: 'Dados Pessoais' },
             { path: 'enderecos', component: EnderecoPessoal, title: 'Meus Endereços' },
+            
+            // ✅ Nova rota adicionada aqui:
+            { path: 'pedidos', component: PedidoList, title: 'Meus Pedidos' },
+
             { path: 'gerenciar-credenciais', component: GerenciarCredenciaisComponent, title: 'Segurança' }
         ]
     },

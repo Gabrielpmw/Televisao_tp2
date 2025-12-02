@@ -1,0 +1,318 @@
+/* --- Layout Geral --- */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  background-color: #ffffff;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.page-header h1 {
+  font-size: 2.5rem;
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  color: #7f8c8d;
+  font-size: 1.1rem;
+}
+
+/* --- Empty State --- */
+.empty-state {
+  text-align: center;
+  padding: 60px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  margin-top: 20px;
+}
+
+.empty-icon {
+  font-size: 4rem;
+  margin-bottom: 20px;
+}
+
+/* --- Grid --- */
+.pedidos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 30px;
+}
+
+/* --- Card --- */
+.pedido-card {
+  background: #fff;
+  border: 1px solid #e1e8ed;
+  border-radius: 16px;
+  padding: 25px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+}
+
+.pedido-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+}
+
+/* --- Header do Card --- */
+.pedido-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.pedido-id .label {
+  display: block;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: #95a5a6;
+  font-weight: 700;
+}
+
+.pedido-id .value {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #2c3e50;
+}
+
+.pedido-data {
+  font-size: 0.9rem;
+  color: #7f8c8d;
+  background: #f1f2f6;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+/* --- Status Badges --- */
+.pedido-status {
+  margin-bottom: 20px;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  width: 100%;
+  text-align: center;
+}
+
+.status-processo { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+.status-entrega { background: #cfe2ff; color: #084298; border: 1px solid #b6d4fe; }
+.status-entregue { background: #d1e7dd; color: #0f5132; border: 1px solid #badbcc; }
+.status-cancelado { background: #f8d7da; color: #842029; border: 1px solid #f5c2c7; }
+
+/* --- Itens --- */
+.pedido-itens {
+  margin-bottom: 15px;
+}
+
+.item-preview {
+  font-size: 0.95rem;
+  color: #34495e;
+  margin-bottom: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.item-qtd {
+  font-weight: 700;
+  margin-right: 5px;
+}
+
+.divider {
+  height: 1px;
+  background: #eee;
+  margin: 15px 0;
+}
+
+/* --- Info Entrega --- */
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  font-size: 0.95rem;
+}
+
+.info-label {
+  color: #7f8c8d;
+}
+
+.info-value {
+  font-weight: 600;
+  color: #2c3e50;
+  text-align: right;
+}
+
+.endereco-detalhe {
+  font-size: 0.85rem;
+  color: #95a5a6;
+  justify-content: flex-end;
+  margin-bottom: 15px;
+}
+
+.total-row {
+  margin-top: 10px;
+  font-size: 1.2rem;
+  color: #2c3e50;
+}
+
+.total-value {
+  font-weight: 800;
+  color: #27ae60;
+}
+
+/* --- Ações --- */
+.pedido-acoes {
+  margin-top: auto;
+  padding-top: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.pedido-bloqueado {
+  margin-top: 15px;
+  text-align: center;
+  color: #95a5a6;
+  background: #f8f9fa;
+  padding: 8px;
+  border-radius: 6px;
+}
+
+.btn {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.btn-outline {
+  background: transparent;
+  border: 2px solid #3498db;
+  color: #3498db;
+}
+
+.btn-outline:hover {
+  background: #3498db;
+  color: white;
+}
+
+.btn-danger {
+  background: #e74c3c;
+  color: white;
+}
+
+.btn-danger:hover {
+  background: #c0392b;
+}
+
+.btn-primary {
+  background: #2ecc71;
+  color: white;
+}
+
+.btn-secondary {
+  background: #95a5a6;
+  color: white;
+}
+
+.btn-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #7f8c8d;
+}
+
+/* --- Modais --- */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s;
+  z-index: 1000;
+  backdrop-filter: blur(2px);
+}
+
+.modal-overlay.ativo {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-content {
+  background: white;
+  width: 90%;
+  max-width: 500px;
+  border-radius: 12px;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+  transform: translateY(20px);
+  transition: transform 0.3s;
+}
+
+.modal-overlay.ativo .modal-content {
+  transform: translateY(0);
+}
+
+.modal-header {
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-body {
+  padding: 25px 20px;
+  color: #555;
+  line-height: 1.6;
+}
+
+.modal-footer {
+  padding: 20px;
+  background: #f8f9fa;
+  border-top: 1px solid #eee;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.form-group {
+  margin-top: 15px;
+}
+
+.form-select {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  margin-top: 5px;
+  outline: none;
+}
+
+.form-select:focus {
+  border-color: #3498db;
+}
