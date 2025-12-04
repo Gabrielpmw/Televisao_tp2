@@ -97,7 +97,7 @@ export class FuncionarioForm implements OnInit {
   // 2. Carregar dados para edição
   // =================================================================
   carregarFuncionario() {
-    this.funcionarioService.getById(this.id).subscribe({
+    this.funcionarioService.findById(this.id).subscribe({
       next: (func) => {
 
         this.funcionarioForm.patchValue({

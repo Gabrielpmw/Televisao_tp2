@@ -7,8 +7,13 @@
   </div>
 
   <div class="search-container">
-    <input type="text" class="search-input" placeholder="Buscar por Nome do Modelo... (Pressione Enter)"
-           [(ngModel)]="termoBusca" (keydown.enter)="aplicarBusca()">
+    <!-- ALTERAÇÃO: Input configurado para busca automática via (ngModelChange) -->
+    <input 
+      type="text" 
+      class="search-input" 
+      placeholder="Buscar por Nome do Modelo..."
+      [ngModel]="termoBusca" 
+      (ngModelChange)="onBuscaInput($event)">
   </div>
 
   <div class="table-container">
@@ -17,7 +22,7 @@
         <tr>
           <th>No.</th>
           <th>Modelo</th>
-          <th>Marca</th> <!-- Coluna OK -->
+          <th>Marca</th>
           <th>Característica (Nome)</th>
           <th>Ano Lançamento</th>
           <th>Ações</th>
@@ -33,7 +38,9 @@
 
           <td>{{ modelo.marca }}</td>
           
-          <td>{{ modelo.caracteristicasResponseDTO.nome }}</td>
+          <!-- Certifique-se que seu DTO possui caracteristicasResponseDTO -->
+          <td>{{ modelo.caracteristicasResponseDTO?.nome || 'N/A' }}</td>
+          
           <td>{{ modelo.anoLancamento | date: 'yyyy' }}</td>
 
           <td>

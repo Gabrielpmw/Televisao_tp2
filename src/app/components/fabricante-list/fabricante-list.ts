@@ -1,12 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { HttpResponse } from '@angular/common/http';
+import { Observable, Subject, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+
 import { Fabricante } from '../../model/fabricante.model';
 import { FabricanteService } from '../../services/fabricante-service';
-import { HttpResponse } from '@angular/common/http'; // IMPORTANTE
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-fabricante-list',
@@ -19,11 +20,15 @@ import { Observable } from 'rxjs';
   templateUrl: './fabricante-list.html',
   styleUrl: './fabricante-list.css'
 })
-export class FabricanteListComponent implements OnInit {
+export class FabricanteListComponent implements OnInit, OnDestroy {
 
   fabricantes: Fabricante[] = [];
 
   termoBusca: string = '';
+  
+  // Controle da Busca Automática (RxJS)
+  private buscaSubject = new Subject<string>();
+  private buscaSubscription!: Subscription;
 
   modalVisivel: boolean = false;
   fabricanteParaExcluir: number | null = null;
@@ -41,6 +46,30 @@ export class FabricanteListComponent implements OnInit {
 
   ngOnInit(): void {
     this.carregarFabricantes();
+    this.configurarBuscaAutomatica();
+  }
+
+  ngOnDestroy(): void {
+    // É importante cancelar a inscrição para evitar vazamento de memória
+    if (this.buscaSubscription) {
+      this.buscaSubscription.unsubscribe();
+    }
+  }
+
+  configurarBuscaAutomatica(): void {
+    this.buscaSubscription = this.buscaSubject.pipe(
+      debounceTime(500), // Espera 500ms após a última digitação
+      distinctUntilChanged() // Só pesquisa se o termo for diferente do anterior
+    ).subscribe((termo: string) => {
+      this.termoBusca = termo;
+      this.paginaAtual = 1;
+      this.carregarFabricantes();
+    });
+  }
+
+  // Este método é chamado a cada letra digitada no input
+  onBuscaInput(termo: string): void {
+    this.buscaSubject.next(termo);
   }
 
   carregarFabricantes(): void {
@@ -49,7 +78,7 @@ export class FabricanteListComponent implements OnInit {
 
     let observable: Observable<HttpResponse<Fabricante[]>>;
 
-    if (this.termoBusca.trim()) {
+    if (this.termoBusca && this.termoBusca.trim()) {
       observable = this.fabricanteService.findByNome(this.termoBusca, page, pageSize);
     } else {
       observable = this.fabricanteService.getFabricantes(page, pageSize);
@@ -58,13 +87,12 @@ export class FabricanteListComponent implements OnInit {
     observable.subscribe({
       next: (response: HttpResponse<Fabricante[]>) => {
         this.fabricantes = response.body || [];
-
         this.totalRegistros = +response.headers.get('X-Total-Count')!;
-
         this.totalPaginas = Math.ceil(this.totalRegistros / this.itensPorPagina);
         
         if (this.termoBusca.trim() && this.totalRegistros === 0) {
-          console.warn("A busca retornou X-Total-Count = 0. Se há resultados na tela, o bug no 'count(nome)' do backend está ativo.");
+           // Debug opcional
+           // console.log("Nenhum resultado encontrado.");
         }
       },
       error: (err: any) => {
@@ -73,6 +101,7 @@ export class FabricanteListComponent implements OnInit {
     });
   }
 
+  // Mantido para o botão de "limpar" ou busca manual se necessário
   aplicarBusca(): void {
     this.paginaAtual = 1;
     this.carregarFabricantes();
@@ -89,7 +118,6 @@ export class FabricanteListComponent implements OnInit {
     this.carregarFabricantes();
   }
 
-
   irParaPagina(pagina: number): void {
     if (pagina >= 1 && pagina <= this.totalPaginas) {
       this.paginaAtual = pagina;
@@ -105,7 +133,6 @@ export class FabricanteListComponent implements OnInit {
     this.irParaPagina(this.paginaAtual + 1);
   }
 
-
   getPrimeiroTelefone(fabricante: Fabricante): string {
     if (fabricante.telefones && fabricante.telefones.length > 0) {
       return `(${fabricante.telefones[0].ddd}) ${fabricante.telefones[0].numero}`;
@@ -114,7 +141,7 @@ export class FabricanteListComponent implements OnInit {
   }
 
   editarFabricante(id: number): void {
-    this.router.navigate(['/fabricantes/edit', id]);
+    this.router.navigate(['/perfil-admin/fabricantes/edit', id]);
   }
 
   abrirModalExclusao(id: number): void {

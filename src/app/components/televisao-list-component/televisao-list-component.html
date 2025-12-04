@@ -1,7 +1,7 @@
 <header class="header">
   <div class="container header-content">
       <h1 class="header-title">Catálogo de Televisores</h1>
-      </div>
+  </div>
 </header>
 
 <main class="content">
@@ -16,6 +16,7 @@
 
         <div class="filters-controls">
           
+          <!-- Filtro Tamanho -->
           <div class="filter-dropdown">
             <button class="filter-btn" [class.active]="activeDropdown === 'tamanho'" (click)="toggleDropdown('tamanho', $event)">
               Tamanho da tela
@@ -31,6 +32,7 @@
             </div>
           </div>
 
+          <!-- Filtro Tipo -->
           <div class="filter-dropdown">
             <button class="filter-btn" [class.active]="activeDropdown === 'tipo'" (click)="toggleDropdown('tipo', $event)">
               Tipo da tela
@@ -46,6 +48,7 @@
             </div>
           </div>
 
+          <!-- Filtro Marca (Botão que abre o Modal) -->
           <div class="filter-dropdown">
             <button class="filter-btn" (click)="openMarcaModal()">
               Marca
@@ -53,6 +56,7 @@
             </button>
           </div>
 
+          <!-- Ordenação -->
           <div class="filter-dropdown">
             <button class="filter-btn" [class.active]="activeDropdown === 'ordenar'" (click)="toggleDropdown('ordenar', $event)">
               Ordenar
@@ -86,11 +90,13 @@
   <div class="products-section">
     <div class="container">
       
+      <!-- Loading State -->
       <div *ngIf="!(listaPaginada$ | async)" class="loading-state">
          <mat-spinner diameter="40"></mat-spinner>
          <p>Carregando catálogo...</p>
       </div>
 
+      <!-- Grid de Produtos -->
       <ng-container *ngIf="listaPaginada$ | async as paginacao">
         <div class="products-grid" *ngIf="paginacao.televisoes.length > 0; else emptyState">
           <app-televisao-card 
@@ -119,6 +125,7 @@
     </div>
   </div>
 
+  <!-- MODAL DE MARCAS (SEM RODAPÉ DE BOTÕES) -->
   <div class="modal-overlay" *ngIf="showMarcaModal">
     <div class="modal-content modal-brands">
       <div class="modal-header">
@@ -130,8 +137,8 @@
         <ng-container *ngIf="marcasDisponiveis$ | async as marcas; else loadingMarcas">
             <label class="checkbox-item large" *ngFor="let marca of marcas">
               <input type="checkbox" 
-                     [checked]="tempSelectedMarcas.includes(marca)"
-                     (change)="toggleMarcaTemp(marca, $event)">
+                     [checked]="isMarcaSelecionada(marca)"
+                     (change)="toggleMarca(marca, $event)">
               <span>{{ marca }}</span>
             </label>
             
@@ -142,14 +149,12 @@
             <p>Carregando marcas...</p>
         </ng-template>
       </div>
-
-      <div class="modal-footer">
-        <button class="btn-secondary" (click)="limparFiltroMarca()">Limpar</button>
-        <button class="btn-primary" (click)="aplicarFiltroMarca()">Aplicar</button>
-      </div>
+      
+      <!-- Footer removido propositalmente -->
     </div>
   </div>
 
+  <!-- Modal de Exclusão -->
   <div class="modal-overlay" *ngIf="showDeleteModal">
     <div class="modal-content">
       <h2>Confirmar Exclusão</h2>

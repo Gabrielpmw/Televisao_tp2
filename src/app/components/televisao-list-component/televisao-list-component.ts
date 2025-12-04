@@ -1,10 +1,10 @@
-import { Component, OnInit, HostListener, inject } from '@angular/core'; // Adicionei inject (opcional, pode usar construtor)
+import { Component, OnInit, HostListener } from '@angular/core';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Televisao } from '../../model/televisao.model';
 import { TelevisaoService, TelevisaoPaginada, FiltrosTelevisao } from '../../services/televisao-service';
 import { PageEvent, MatPaginatorModule } from '@angular/material/paginator';
-import { Router, RouterModule, ActivatedRoute } from '@angular/router'; // <--- IMPORTANTE: ActivatedRoute
+import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TelevisaoCardComponent } from '../televisao-card-component/televisao-card-component';
@@ -39,8 +39,8 @@ export class TelevisaoListComponent implements OnInit {
   };
 
   selectedTipos: string[] = [];
-  selectedTamanhos: number[] = []; 
-  tempSelectedMarcas: string[] = []; 
+  selectedTamanhos: number[] = [];
+  // tempSelectedMarcas REMOVIDO: A atualização agora é direta
 
   // UI Controls
   activeDropdown: string | null = null;
@@ -55,27 +55,19 @@ export class TelevisaoListComponent implements OnInit {
   constructor(
     private televisaoService: TelevisaoService,
     private router: Router,
-    private route: ActivatedRoute // <--- INJEÇÃO NECESSÁRIA
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
     this.marcasDisponiveis$ = this.televisaoService.findAllMarcas();
 
-    // --- LÓGICA DE FILTRO VIA URL ---
-    // Inscreve-se nos parâmetros da rota (ex: ?tipoTela=OLED)
     this.route.queryParams.subscribe(params => {
       const tipoUrl = params['tipoTela'];
 
       if (tipoUrl) {
-        // Se veio algo na URL, marcamos como selecionado
-        // O array é reiniciado para garantir que filtra apenas o que veio da home
         this.selectedTipos = [tipoUrl];
-        
-        // Atualiza o objeto de filtros
         this.filtros.tipos = this.selectedTipos;
       }
-
-      // Chama o carregamento APÓS configurar os filtros
       this.carregarTelevisoes();
     });
   }
@@ -87,7 +79,6 @@ export class TelevisaoListComponent implements OnInit {
       this.filtros.maxPolegada = undefined;
     }
 
-    // Garante que os tipos selecionados (seja via clique ou URL) vão para o filtro
     this.filtros.tipos = this.selectedTipos;
 
     this.listaPaginada$ = this.televisaoService.findAll(this.pageIndex, this.pageSize, this.filtros).pipe(
@@ -97,8 +88,6 @@ export class TelevisaoListComponent implements OnInit {
     );
   }
 
-  // ... (RESTO DO CÓDIGO IGUAL: onPageChange, ordenarProdutos, toggles, etc.) ...
-  
   onPageChange(event: PageEvent): void {
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
@@ -132,7 +121,7 @@ export class TelevisaoListComponent implements OnInit {
     this.carregarTelevisoes();
   }
 
-  // Método auxiliar para o HTML saber se o checkbox deve estar marcado
+  // Métodos auxiliares para o HTML
   isTipoSelecionado(tipo: string): boolean {
     return this.selectedTipos.includes(tipo);
   }
@@ -142,40 +131,44 @@ export class TelevisaoListComponent implements OnInit {
     return this.selectedTamanhos.includes(valor);
   }
 
-  // ... Métodos de Marca, Modal, Dropdown, etc ...
-  
+  // --- ALTERADO: Lógica de Marcas Automática ---
+
   openMarcaModal(): void {
-    this.tempSelectedMarcas = [...this.filtros.marcas || []]; 
     this.showMarcaModal = true;
     this.activeDropdown = null;
   }
 
-  toggleMarcaTemp(marca: string, event: any): void {
-    if (event.target.checked) {
-      this.tempSelectedMarcas.push(marca);
-    } else {
-      this.tempSelectedMarcas = this.tempSelectedMarcas.filter(m => m !== marca);
+  // Antigo toggleMarcaTemp agora atualiza direto
+  toggleMarca(marca: string, event: any): void {
+    // Garante que a lista de marcas existe
+    if (!this.filtros.marcas) {
+      this.filtros.marcas = [];
     }
-  }
 
-  aplicarFiltroMarca(): void {
-    this.filtros.marcas = [...this.tempSelectedMarcas];
+    if (event.target.checked) {
+      this.filtros.marcas.push(marca);
+    } else {
+      this.filtros.marcas = this.filtros.marcas.filter(m => m !== marca);
+    }
+    
+    // Atualização Automática
     this.pageIndex = 0;
     this.carregarTelevisoes();
-    this.closeMarcaModal();
   }
 
-  limparFiltroMarca(): void {
-    this.tempSelectedMarcas = [];
-    this.filtros.marcas = [];
-    this.pageIndex = 0;
-    this.carregarTelevisoes();
-    this.closeMarcaModal();
+  // Método novo para verificar estado do checkbox de marca
+  isMarcaSelecionada(marca: string): boolean {
+    return this.filtros.marcas ? this.filtros.marcas.includes(marca) : false;
   }
+
+  // aplicarFiltroMarca() -> REMOVIDO (Não é mais necessário)
+  // limparFiltroMarca() -> REMOVIDO (Não é mais necessário)
 
   closeMarcaModal(): void {
     this.showMarcaModal = false;
   }
+
+  // --- Dropdown e outros ---
 
   toggleDropdown(name: string, event: Event): void {
     event.stopPropagation();

@@ -1,9 +1,11 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { CommonModule, Location } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { HttpResponse } from '@angular/common/http';
+
 import { AuthService } from '../../services/auth-service.service';
 import { FuncionarioResponse } from '../../model/Funcionario.model';
 import { FuncionarioService } from '../../services/funcionario.service';
@@ -19,14 +21,18 @@ import { FuncionarioService } from '../../services/funcionario.service';
   templateUrl: './funcionario-list.html',
   styleUrls: ['./funcionario-list.css']
 })
-export class FuncionarioList implements OnInit {
+export class FuncionarioList implements OnInit, OnDestroy {
 
   private funcionarioService = inject(FuncionarioService);
   private router = inject(Router);
-  private authService = inject(AuthService); // Correção: Serviço injetado aqui
+  private authService = inject(AuthService);
 
   funcionarios: FuncionarioResponse[] = [];
   termoBusca: string = '';
+
+  // Controle da Busca Automática (RxJS)
+  private buscaSubject = new Subject<string>();
+  private buscaSubscription!: Subscription;
 
   modalVisivel: boolean = false;
   funcionarioParaExcluir: number | null = null;
@@ -40,6 +46,29 @@ export class FuncionarioList implements OnInit {
 
   ngOnInit(): void {
     this.carregarFuncionarios();
+    this.configurarBuscaAutomatica();
+  }
+
+  ngOnDestroy(): void {
+    if (this.buscaSubscription) {
+      this.buscaSubscription.unsubscribe();
+    }
+  }
+
+  configurarBuscaAutomatica(): void {
+    this.buscaSubscription = this.buscaSubject.pipe(
+      debounceTime(500), // Espera 500ms
+      distinctUntilChanged()
+    ).subscribe((termo: string) => {
+      this.termoBusca = termo;
+      this.paginaAtual = 1;
+      this.carregarFuncionarios();
+    });
+  }
+
+  // Chamado pelo (ngModelChange) do HTML
+  onBuscaInput(termo: string): void {
+    this.buscaSubject.next(termo);
   }
 
   carregarFuncionarios(): void {
@@ -48,24 +77,28 @@ export class FuncionarioList implements OnInit {
 
     let observable: Observable<HttpResponse<FuncionarioResponse[]>>;
 
-    // Se tiver termo de busca → ignora paginação
-    if (this.termoBusca.trim()) {
-      observable = this.funcionarioService.findByUsername(this.termoBusca);
+    if (this.termoBusca && this.termoBusca.trim()) {
+      // Agora passamos a paginação também para a busca!
+      // Usando findByNome conforme solicitado anteriormente.
+      // Se quiser buscar por username, troque para this.funcionarioService.findByUsername(...)
+      observable = this.funcionarioService.findByNome(this.termoBusca, page, pageSize);
     } else {
-      observable = this.funcionarioService.getAll(page, pageSize);
+      observable = this.funcionarioService.findAll(page, pageSize);
     }
 
     observable.subscribe({
       next: (response: HttpResponse<FuncionarioResponse[]>) => {
         this.funcionarios = response.body || [];
 
+        // Lê o total do Header X-Total-Count
         const totalCountHeader = response.headers.get('X-Total-Count');
-        this.totalRegistros = totalCountHeader ? +totalCountHeader : this.funcionarios.length;
+        this.totalRegistros = totalCountHeader ? +totalCountHeader : 0;
 
+        // Recalcula o total de páginas
         this.totalPaginas = Math.ceil(this.totalRegistros / this.itensPorPagina);
 
-        // Se excluiu algo e a página ficou vazia, volta uma página
-        if (this.funcionarios.length === 0 && this.paginaAtual > 1 && !this.termoBusca.trim()) {
+        // Se a página atual ficou vazia (ex: deletou o último item), volta uma página
+        if (this.funcionarios.length === 0 && this.paginaAtual > 1) {
           this.paginaAtual--;
           this.carregarFuncionarios();
         }
@@ -76,17 +109,7 @@ export class FuncionarioList implements OnInit {
     });
   }
 
-  aplicarBusca(): void {
-    this.paginaAtual = 1;
-    this.carregarFuncionarios();
-  }
-
-  limparBusca(): void {
-    this.termoBusca = '';
-    this.paginaAtual = 1;
-    this.carregarFuncionarios();
-  }
-
+  // Métodos de Paginação
   onItensPorPaginaChange(): void {
     this.paginaAtual = 1;
     this.carregarFuncionarios();
@@ -107,6 +130,7 @@ export class FuncionarioList implements OnInit {
     this.irParaPagina(this.paginaAtual + 1);
   }
 
+  // Ações da Tabela
   editarFuncionario(id: number): void {
     this.router.navigate(['/perfil-admin/funcionarios/edit', id]);
   }
@@ -124,10 +148,11 @@ export class FuncionarioList implements OnInit {
   confirmarExclusao(): void {
     if (!this.funcionarioParaExcluir) return;
 
-    const senha = prompt("Digite a senha do funcionário para confirmar:");
+    // TODO: Idealmente, usar um modal próprio para pedir a senha, e não o prompt nativo
+    const senha = prompt("Digite a senha do funcionário (ADMIN) para confirmar a exclusão:");
 
     if (!senha) {
-      alert("A exclusão foi cancelada.");
+      alert("A exclusão foi cancelada (senha não informada).");
       return;
     }
 
@@ -138,27 +163,25 @@ export class FuncionarioList implements OnInit {
 
     this.funcionarioService.deletarFuncionario(dto).subscribe({
       next: () => {
-
-        // Obtém usuário logado do AuthService
+        // Verifica se deletou o próprio usuário logado
         const usuarioLogado = this.authService.getUsuarioLogadoSync();
-
-        // Caso 1 — deletou a própria conta
+        
         if (usuarioLogado && usuarioLogado.id === dto.idFuncionario) {
-          this.authService.logout();      // limpa token + usuário
+          this.authService.logout();
           alert("Sua conta foi excluída. Você será desconectado.");
           this.router.navigate(['/login']);
           return;
         }
 
-        // Caso 2 — ADM deletou outro funcionário
         this.fecharModal();
         this.carregarFuncionarios();
       },
-
       error: (err) => {
         console.error("Erro ao excluir funcionário:", err);
-        alert("Erro ao excluir funcionário: " + (err.error?.message || ""));
-        this.fecharModal();
+        // Tenta pegar a mensagem de erro do backend (ex: "Senha incorreta")
+        const msg = err.error?.message || err.error?.error || "Erro desconhecido";
+        alert("Erro ao excluir: " + msg);
+        this.fecharModal(); // Opcional: manter aberto se quiser que tente de novo
       }
     });
   }
