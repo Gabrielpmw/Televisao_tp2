@@ -4,13 +4,27 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router, RouterModule } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 
+// Importações do Angular Material
+import { MatSnackBar } from '@angular/material/snack-bar'; // Importe o MatSnackBar
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+
 import { UsuarioService } from '../../services/usuarioservice.service';
 import { UsuarioCadastroDTO } from '../../model/usuario.model';
 
 @Component({
   selector: 'app-cadastro',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  // Adicione os módulos do Material aqui, se necessário, ou no módulo principal
+  imports: [
+    CommonModule, 
+    ReactiveFormsModule, 
+    RouterModule, 
+    MatButtonModule, 
+    MatInputModule, 
+    MatFormFieldModule
+  ],
   templateUrl: './cadastro-usuario.html',
   styleUrls: ['./cadastro-usuario.css']
 })
@@ -19,11 +33,13 @@ export class CadastroUsuario {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private usuarioService = inject(UsuarioService);
+  private snackBar = inject(MatSnackBar); // 💡 INJEÇÃO DO SNACK BAR
 
   isLoading = false;
 
   cadastroForm: FormGroup = this.fb.group({
     username: ['', Validators.required],
+    // Ajuste o minLength para 11 (sem pontos) ou 14 (com pontos) se não for numérico puro
     cpf: ['', [Validators.required, Validators.minLength(11)]], 
     senha: ['', [Validators.required, Validators.minLength(6)]]
   });
@@ -45,6 +61,16 @@ export class CadastroUsuario {
     this.cadastroForm.get('cpf')?.setValue(valor, { emitEvent: false });
   }
 
+  // 💡 NOVO MÉTODO PARA EXIBIR SNACK BAR
+  exibirSnackBar(mensagem: string, classe: string) {
+    this.snackBar.open(mensagem, 'FECHAR', {
+      duration: 5000, // 5 segundos
+      panelClass: [classe],
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+    });
+  }
+
   onSubmit() {
     if (this.cadastroForm.invalid) {
       this.cadastroForm.markAllAsTouched();
@@ -53,9 +79,12 @@ export class CadastroUsuario {
 
     this.isLoading = true;
 
+    // Remove formatação do CPF para enviar apenas números
+    const cpfLimpo = this.cadastroForm.get('cpf')?.value.replace(/\D/g, "") || '';
+
     const dto: UsuarioCadastroDTO = {
       username: this.cadastroForm.get('username')?.value, 
-      cpf: this.cadastroForm.get('cpf')?.value, 
+      cpf: cpfLimpo, 
       senha: this.cadastroForm.get('senha')?.value
     };
 
@@ -64,7 +93,8 @@ export class CadastroUsuario {
         this.isLoading = false;
         console.log('Usuário criado com sucesso:', usuarioCriado);
         
-        alert('Conta criada com sucesso! Você será redirecionado para o login.');
+        // 💡 SUCESSO: Usa o Snack Bar verde
+        this.exibirSnackBar('Usuário cadastrado com sucesso!', 'snackbar-success');
         
         this.router.navigate(['/login']);
       },
@@ -80,7 +110,8 @@ export class CadastroUsuario {
           mensagemErro = err.error.message; 
         }
 
-        alert(mensagemErro);
+        // 💡 ERRO: Usa o Snack Bar vermelho
+        this.exibirSnackBar(mensagemErro, 'snackbar-admin-error');
       }
     });
   }

@@ -14,9 +14,10 @@
       <div class="form-group">
         <label for="senhaAntiga">Senha Atual *</label>
         <input type="password" 
-               id="senhaAntiga" 
-               [(ngModel)]="senhaAntiga" 
-               placeholder="Digite sua senha atual">
+              id="senhaAntiga" 
+              [(ngModel)]="senhaAntiga" 
+              placeholder="Digite sua senha atual"
+              name="senhaAntiga"> <!-- Adicionado name para FormsModule -->
       </div>
     </div>
 
@@ -28,9 +29,10 @@
       <div class="form-group">
         <label for="novoUser">Novo Username</label>
         <input type="text" 
-               id="novoUser" 
-               [(ngModel)]="novoUsername"
-               placeholder="Seu username">
+              id="novoUser" 
+              [(ngModel)]="novoUsername"
+              placeholder="Seu username"
+              name="novoUsername"> <!-- Adicionado name para FormsModule -->
         <small>Você pode manter o mesmo se desejar.</small>
       </div>
 
@@ -38,24 +40,24 @@
         <div class="form-group half">
           <label for="novaSenha">Nova Senha *</label>
           <input type="password" 
-                 id="novaSenha" 
-                 [(ngModel)]="novaSenha"
-                 placeholder="Mínimo 6 caracteres">
+                id="novaSenha" 
+                [(ngModel)]="novaSenha"
+                placeholder="Mínimo 6 caracteres"
+                name="novaSenha"> <!-- Adicionado name para FormsModule -->
         </div>
 
         <div class="form-group half">
           <label for="confSenha">Confirmar Nova Senha *</label>
           <input type="password" 
-                 id="confSenha" 
-                 [(ngModel)]="confirmacaoNovaSenha"
-                 placeholder="Repita a senha">
+                id="confSenha" 
+                [(ngModel)]="confirmacaoNovaSenha"
+                placeholder="Repita a senha"
+                name="confSenha"> <!-- Adicionado name para FormsModule -->
         </div>
       </div>
     </div>
 
-    <div *ngIf="mensagemErro" class="alert-error">
-      {{ mensagemErro }}
-    </div>
+    <!-- BLOCO DE ERRO REMOVIDO: As mensagens de erro agora são exibidas via Snack Bar -->
 
     <div class="actions">
       <button class="btn-cancel" (click)="cancelar()" [disabled]="processando">Cancelar</button>

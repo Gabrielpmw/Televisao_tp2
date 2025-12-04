@@ -3,16 +3,22 @@
   <main class="main-content">
     <div class="content-wrapper">
 
+      <!-- ==============================
+           SEÇÃO DA ESQUERDA (ITENS, ENDEREÇO, PAGAMENTO)
+           ============================== -->
       <div class="cart-section">
 
+        <!-- CABEÇALHO -->
         <h1 class="cart-title">Carrinho <span class="item-count">{{ itens.length }} item(ns)</span></h1>
 
+        <!-- LISTA DE PRODUTOS -->
         <div class="product-card" *ngFor="let item of itens">
 
-          <button class="remove-btn" (click)="removerItem(item.id)">🗑</button>
+          <button class="remove-btn" (click)="removerItem(item.id)" title="Remover item">🗑</button>
 
           <img [src]="getImagem(item)" 
                class="product-image" 
+               alt="{{ item.nome }}"
                onerror="this.src='/tv.jpg'">
 
           <div class="product-details">
@@ -29,25 +35,23 @@
           </div>
         </div>
 
-        <div *ngIf="itens.length === 0" class="empty-cart-msg"
-          style="padding: 20px; text-align: center; background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-          <p style="margin-bottom: 10px; font-size: 1.1rem;">Seu carrinho está vazio.</p>
-          <a routerLink="/televisoes"
-            style="color: #1351b4; font-weight: bold; text-decoration: none; padding: 10px; border: 1px solid #1351b4; border-radius: 6px;">
-            Ir para o catálogo
-          </a>
+        <!-- MENSAGEM DE CARRINHO VAZIO -->
+        <div *ngIf="itens.length === 0" class="empty-cart-msg">
+          <p>Seu carrinho está vazio.</p>
+          <a routerLink="/televisoes" class="btn-outline">Ir para o catálogo</a>
         </div>
 
+        <!-- SEÇÃO DE ENDEREÇO -->
         <div class="section-card">
           <button class="section-header" (click)="toggleAddress()">
             <div class="section-title">
-              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                 <circle cx="12" cy="10" r="3"></circle>
               </svg>
               <span>Endereço de Entrega</span>
             </div>
-            <svg class="chevron" [class.rotated]="!isAddressOpen" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <svg class="chevron" [class.rotated]="!isAddressOpen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <polyline points="6 9 12 15 18 9"></polyline>
             </svg>
           </button>
@@ -55,7 +59,6 @@
           <div class="section-content" [class.hidden]="!isAddressOpen">
 
             <div class="address-list" *ngIf="enderecos.length > 0; else semEndereco">
-
               <label class="address-option" *ngFor="let end of enderecos"
                 [class.selected]="enderecoSelecionado === end.idEndereco">
 
@@ -73,18 +76,12 @@
                   </div>
                 </div>
               </label>
-
             </div>
 
             <ng-template #semEndereco>
-              <div
-                style="padding: 15px; background: #fff3cd; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #ffc107;">
-                <p style="color: #856404; margin-bottom: 10px; font-weight: 500;">Você não possui endereços cadastrados.
-                </p>
-                <a routerLink="/perfil/enderecos"
-                  style="color: #1351b4; font-weight: bold; text-decoration: underline;">
-                  + Cadastrar Novo Endereço
-                </a>
+              <div class="alert-warning">
+                <p>Você não possui endereços cadastrados.</p>
+                <a routerLink="/perfil/enderecos">+ Cadastrar Novo Endereço</a>
               </div>
             </ng-template>
 
@@ -95,10 +92,11 @@
           </div>
         </div>
 
+        <!-- SEÇÃO DE PAGAMENTO -->
         <div class="section-card">
           <div class="section-header">
             <div class="section-title">
-              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
                 <line x1="1" y1="10" x2="23" y2="10"></line>
               </svg>
@@ -108,7 +106,6 @@
 
           <div class="section-content">
             <div class="payment-options">
-
               <label class="payment-option" [class.selected]="formaPagamento === 'pix'">
                 <input type="radio" name="payment" value="pix" [(ngModel)]="formaPagamento">
                 <div class="payment-info">Pix (Aprovação Imediata)</div>
@@ -123,13 +120,15 @@
                 <input type="radio" name="payment" value="boleto" [(ngModel)]="formaPagamento">
                 <div class="payment-info">Boleto Bancário</div>
               </label>
-
             </div>
           </div>
         </div>
 
       </div>
 
+      <!-- ==============================
+           SEÇÃO DA DIREITA (RESUMO)
+           ============================== -->
       <div class="summary-section">
         <div class="summary-card">
           <h2 class="summary-title">Resumo do Pedido</h2>
@@ -153,8 +152,9 @@
             <span>{{ getTotal() | currency:'BRL' }}</span>
           </div>
 
-          <button class="finalize-btn" [disabled]="itens.length === 0 || !enderecoSelecionado"
-            (click)="iniciarFinalizacao()">
+          <button class="finalize-btn" 
+                  [disabled]="itens.length === 0 || !enderecoSelecionado"
+                  (click)="iniciarFinalizacao()">
             {{ formaPagamento === 'card' ? 'Continuar para Cartão' : 'Finalizar Compra' }}
           </button>
         </div>
@@ -164,6 +164,11 @@
   </main>
 </div>
 
+<!-- ==============================
+     MODAIS
+     ============================== -->
+
+<!-- MODAL PIX -->
 <div class="modal" [class.hidden]="!modalPixVisible">
   <div class="modal-content">
     <div class="modal-header">
@@ -172,7 +177,12 @@
     </div>
     <div class="modal-body">
       <div class="pix-info">
-        <img src="/assets/images/qr-code-placeholder.png" class="qr-code" alt="QR Code">
+        <!-- Placeholder para QR Code -->
+        <div class="qr-code-container">
+            <img src="assets/images/qr-code-placeholder.png" class="qr-code" alt="QR Code" onerror="this.style.display='none'">
+            <div class="qr-text" *ngIf="!codigoPix">Gerando QR Code...</div>
+        </div>
+        
         <p class="pix-instructions">Escaneie o QR Code ou copie a chave:</p>
 
         <div class="pix-code">
@@ -180,6 +190,7 @@
           <button class="copy-btn" (click)="copiarCodigo(codigoPix)">Copiar</button>
         </div>
 
+        <!-- AQUI ESTÁ A CORREÇÃO VISUAL: getTotal() agora retorna o valor correto -->
         <p class="pix-value">Total a pagar: {{ getTotal() | currency:'BRL' }}</p>
       </div>
     </div>
@@ -189,6 +200,7 @@
   </div>
 </div>
 
+<!-- MODAL BOLETO -->
 <div class="modal" [class.hidden]="!modalBoletoVisible">
   <div class="modal-content">
     <div class="modal-header">
@@ -207,7 +219,8 @@
         <div class="boleto-warning">
           <p>Vencimento em 3 dias úteis. Compensação em até 72h.</p>
         </div>
-
+        
+        <p class="pix-value">Valor do boleto: {{ getTotal() | currency:'BRL' }}</p>
       </div>
     </div>
     <div class="modal-footer">
@@ -217,6 +230,7 @@
   </div>
 </div>
 
+<!-- MODAL CARTÃO -->
 <div class="modal" [class.hidden]="!modalCardVisible">
   <div class="modal-content">
     <div class="modal-header">
@@ -257,6 +271,8 @@
           </div>
 
         </div>
+        
+        <p class="pix-value" style="margin-top: 15px;">Total a debitar: {{ getTotal() | currency:'BRL' }}</p>
 
       </form>
 
@@ -267,6 +283,7 @@
   </div>
 </div>
 
+<!-- MODAL SUCESSO -->
 <div class="modal" [class.hidden]="!modalSuccessVisible">
   <div class="modal-content">
     <div class="modal-body success-body">
@@ -283,6 +300,7 @@
       <p>Seu pedido <strong>#{{ idPedidoCriado }}</strong> foi recebido com sucesso.</p>
       <p *ngIf="formaPagamento !== 'card'">Aguardando compensação bancária.</p>
 
+      <!-- Botão que limpa o carrinho e redireciona -->
       <button class="btn-primary" (click)="fecharSucesso()">Ver Meus Pedidos</button>
 
     </div>

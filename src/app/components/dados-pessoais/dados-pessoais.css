@@ -130,3 +130,14 @@ input:focus, select:focus {
     border-color: #fecaca;
     color: #ef4444; /* Texto vermelho no hover */
 }
+
+.snackbar-admin-error {
+  background-color: #d32f2f !important; /* Vermelho Erro */
+  color: white !important;
+  font-weight: bold;
+}
+
+.snackbar-success {
+  background-color: #2e7d32 !important; /* Verde Sucesso */
+  color: white !important;
+}

@@ -1,6 +1,8 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar'; // Importação do MatSnackBar
 
 // Services
 import { PedidoService } from '../../services/pedido.service';
@@ -17,7 +19,8 @@ import { EnderecoResponseDTO } from '../../model/Endereco.model';
 @Component({
   selector: 'app-pedido-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  // 💡 Adicionando MatSnackBarModule nas importações
+  imports: [CommonModule, FormsModule, MatSnackBarModule],
   templateUrl: './pedido-list.html',
   styleUrls: ['./pedido-list.css']
 })
@@ -26,6 +29,7 @@ export class PedidoList implements OnInit {
   // Injeções
   private pedidoService = inject(PedidoService);
   private enderecoService = inject(EnderecoService);
+  private snackBar = inject(MatSnackBar); // 💡 INJEÇÃO DO SNACK BAR
 
   // Estados
   pedidos: PedidoResponseDTO[] = [];
@@ -43,6 +47,16 @@ export class PedidoList implements OnInit {
     this.carregarPedidos();
   }
 
+  // 💡 NOVO MÉTODO PARA EXIBIR SNACK BAR
+  exibirSnackBar(mensagem: string, classe: string) {
+    this.snackBar.open(mensagem, 'FECHAR', {
+      duration: 5000, // 5 segundos
+      panelClass: [classe],
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+    });
+  }
+
   carregarPedidos() {
     this.pedidoService.findMeusPedidos().subscribe({
       next: (dados) => {
@@ -50,7 +64,10 @@ export class PedidoList implements OnInit {
         // Opcional: Ordenar do mais recente para o mais antigo
         this.pedidos.sort((a, b) => new Date(b.dataPedido).getTime() - new Date(a.dataPedido).getTime());
       },
-      error: (err) => console.error('Erro ao buscar pedidos', err)
+      error: (err) => {
+        console.error('Erro ao buscar pedidos', err);
+        this.exibirSnackBar('Erro ao carregar seus pedidos.', 'snackbar-admin-error');
+      }
     });
   }
 
@@ -103,13 +120,13 @@ export class PedidoList implements OnInit {
         this.meusEnderecos = enderecos;
         this.modalEnderecoAberto = true;
       },
-      error: () => alert('Erro ao carregar seus endereços. Tente novamente.')
+      error: () => this.exibirSnackBar('Erro ao carregar seus endereços. Tente novamente.', 'snackbar-admin-error')
     });
   }
 
   confirmarTrocaEndereco() {
     if (!this.idPedidoSelecionado || !this.idNovoEndereco) {
-      alert("Por favor, selecione um endereço da lista.");
+      this.exibirSnackBar("Por favor, selecione um endereço da lista.", 'snackbar-admin-error');
       return;
     }
 
@@ -120,14 +137,14 @@ export class PedidoList implements OnInit {
 
     this.pedidoService.atualizarPedido(this.idPedidoSelecionado, dto).subscribe({
       next: () => {
-        alert('Endereço de entrega atualizado com sucesso!');
+        this.exibirSnackBar('Endereço de entrega atualizado com sucesso!', 'snackbar-success');
         this.fecharModais();
         this.carregarPedidos(); // Recarrega a lista para mostrar o novo endereço snapshot
       },
-      error: (err) => {
+      error: (err: HttpErrorResponse) => {
         // Exibe a mensagem de erro vinda do backend (ex: prazo expirado)
         const mensagem = err.error?.message || 'Erro ao atualizar endereço.';
-        alert(mensagem);
+        this.exibirSnackBar(mensagem, 'snackbar-admin-error');
       }
     });
   }
@@ -150,13 +167,13 @@ export class PedidoList implements OnInit {
 
     this.pedidoService.atualizarPedido(this.idPedidoSelecionado, dto).subscribe({
       next: () => {
-        alert('Pedido cancelado com sucesso.');
+        this.exibirSnackBar('Pedido cancelado com sucesso.', 'snackbar-success');
         this.fecharModais();
         this.carregarPedidos();
       },
-      error: (err) => {
+      error: (err: HttpErrorResponse) => {
         const mensagem = err.error?.message || 'Erro ao cancelar pedido.';
-        alert(mensagem);
+        this.exibirSnackBar(mensagem, 'snackbar-admin-error');
       }
     });
   }

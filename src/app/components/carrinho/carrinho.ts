@@ -9,7 +9,7 @@ import { PedidoService } from '../../services/pedido.service';
 import { EnderecoService } from '../../services/endereco.service';
 import { TelevisaoService } from '../../services/televisao-service';
 // Models
-import { ItemCarrinho, PedidoRequestDTO, CartaoRequestDTO } from '../../model/pedido.model';
+import { ItemCarrinho, CartaoRequestDTO } from '../../model/pedido.model'; // PedidoRequestDTO foi movido para uso implícito (tipo any) para simplificar
 import { EnderecoResponseDTO } from '../../model/Endereco.model';
 
 @Component({
@@ -156,7 +156,6 @@ export class Carrinho implements OnInit {
     }
 
     if (this.formaPagamento === 'card') {
-      // 💡 CORREÇÃO 1: Remover validação daqui para permitir a abertura do modal
       this.modalCardVisible = true;
       return;
     }
@@ -164,9 +163,7 @@ export class Carrinho implements OnInit {
     this.processarPedido();
   }
 
-  // 💡 NOVO MÉTODO: Valida os dados do cartão e só então prossegue.
   validarECriarPedidoCartao() {
-    // Validação no momento em que o usuário clica em "Pagar e Finalizar"
     if (!this.dadosCartao.titular ||
       !this.dadosCartao.numero ||
       !this.dadosCartao.cvv ||
@@ -177,30 +174,32 @@ export class Carrinho implements OnInit {
       return;
     }
 
-    // Se a validação passar, chama o método principal de criação do pedido
     this.processarPedido();
   }
 
   processarPedido() {
-    const pedidoDTO: PedidoRequestDTO = {
+    
+    const pedidoDTO: any = { 
       idEndereco: this.enderecoSelecionado!,
       itens: this.itens.map(i => ({
         idTelevisao: i.id,
         quatidade: i.quantidade
-      }))
+      })),
+      
+      // 💡 CORREÇÃO AQUI: Enviamos os dois campos que o DTO do Java espera (Double)
+      valorTotal: this.getTotal(), 
+      valorFrete: this.frete 
     };
 
     this.pedidoService.criarPedido(pedidoDTO).subscribe({
       next: (resp) => {
         this.idPedidoCriado = resp.id;
 
-        // Limpa o carrinho apenas após criar pedido
-        this.carrinhoService.limparCarrinho();
-
+        // Limpeza do carrinho movida para o fecharSucesso()
+        
         switch (this.formaPagamento) {
           case 'pix': this.gerarPix(resp.id); break;
           case 'boleto': this.gerarBoleto(resp.id); break;
-          // 💡 Chamada de pagamento de cartão é feita AGORA, após o pedido ser criado
           case 'card': this.pagarComCartao(resp.id); break;
         }
       },
@@ -240,7 +239,6 @@ export class Carrinho implements OnInit {
   // CARTÃO
   // ----------------------------
   pagarComCartao(idPedido: number) {
-    // 💡 CORREÇÃO DA DATA: Formata a data para YYYY-MM-DD
     const mes = this.mesValidade.padStart(2, '0');
     const ano = `20${this.anoValidade}`;
 
@@ -284,6 +282,9 @@ export class Carrinho implements OnInit {
   // FINALIZAÇÃO
   // ----------------------------
   fecharSucesso() {
+    // Limpa o carrinho SÓ AGORA
+    this.carrinhoService.limparCarrinho(); 
+    
     this.modalSuccessVisible = false;
     this.router.navigate(['/perfil/pedidos']);
   }
@@ -297,7 +298,6 @@ export class Carrinho implements OnInit {
     if (item.imagem) {
       return `/Imagens_TV/${item.imagem}`;
     }
-    return '/tv.jpg'; // seu fallback que já existe em /public
+    return '/tv.jpg';
   }
-
 }
