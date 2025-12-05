@@ -7,13 +7,8 @@
   </div>
 
   <div class="search-container">
-    <!-- ALTERAÇÃO AQUI: Mudamos para (ngModelChange) para ativar a busca automática -->
-    <input 
-      type="text" 
-      class="search-input" 
-      placeholder="Buscar por Nome da Marca..."
-      [ngModel]="termoBusca"
-      (ngModelChange)="onBuscaInput($event)">
+    <input type="text" class="search-input" placeholder="Buscar por Nome da Marca... (Pressione Enter)"
+      [(ngModel)]="termoBusca" (keydown.enter)="aplicarBusca()">
   </div>
 
   <div class="table-container">
@@ -33,7 +28,7 @@
 
           <td>{{ (paginaAtual - 1) * itensPorPagina + i + 1 }}</td>
 
-          <td>{{ marca.marca }}</td> <!-- Ajuste se o campo no seu model for 'nome' -->
+          <td>{{ marca.marca }}</td>
 
           <td>{{ marca.fabricante || 'N/A' }}</td>
 

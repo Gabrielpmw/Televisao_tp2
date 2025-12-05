@@ -5,17 +5,19 @@ import { FormsModule } from '@angular/forms';
 import { HttpResponse } from '@angular/common/http';
 import { Observable, Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { MatDialog } from '@angular/material/dialog'; // Importar MatDialog
 
 import { Fabricante } from '../../model/fabricante.model';
 import { FabricanteService } from '../../services/fabricante-service';
-
+import { CaixaDialogo, DialogData } from '../caixa-dialogo/caixa-dialogo';
 @Component({
   selector: 'app-fabricante-list',
   standalone: true,
   imports: [
     CommonModule,
     RouterModule,
-    FormsModule
+    FormsModule,
+    CaixaDialogo // Adicionado aos imports (embora o MatDialog carregue dinamicamente, é boa prática)
   ],
   templateUrl: './fabricante-list.html',
   styleUrl: './fabricante-list.css'
@@ -23,16 +25,14 @@ import { FabricanteService } from '../../services/fabricante-service';
 export class FabricanteListComponent implements OnInit, OnDestroy {
 
   fabricantes: Fabricante[] = [];
-
   termoBusca: string = '';
   
   // Controle da Busca Automática (RxJS)
   private buscaSubject = new Subject<string>();
   private buscaSubscription!: Subscription;
 
-  modalVisivel: boolean = false;
-  fabricanteParaExcluir: number | null = null;
-
+  // Controle de Paginação e Filtros
+  filtroStatus: 'ativos' | 'inativos' = 'ativos';
   paginaAtual: number = 1; 
   itensPorPagina: number = 10;
   totalRegistros: number = 0; 
@@ -41,7 +41,8 @@ export class FabricanteListComponent implements OnInit, OnDestroy {
 
   constructor(
     private fabricanteService: FabricanteService,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog // Injetando o serviço de diálogo
   ) {}
 
   ngOnInit(): void {
@@ -50,7 +51,6 @@ export class FabricanteListComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // É importante cancelar a inscrição para evitar vazamento de memória
     if (this.buscaSubscription) {
       this.buscaSubscription.unsubscribe();
     }
@@ -58,8 +58,8 @@ export class FabricanteListComponent implements OnInit, OnDestroy {
 
   configurarBuscaAutomatica(): void {
     this.buscaSubscription = this.buscaSubject.pipe(
-      debounceTime(500), // Espera 500ms após a última digitação
-      distinctUntilChanged() // Só pesquisa se o termo for diferente do anterior
+      debounceTime(500),
+      distinctUntilChanged()
     ).subscribe((termo: string) => {
       this.termoBusca = termo;
       this.paginaAtual = 1;
@@ -67,9 +67,17 @@ export class FabricanteListComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Este método é chamado a cada letra digitada no input
   onBuscaInput(termo: string): void {
     this.buscaSubject.next(termo);
+  }
+
+  alternarStatusVisualizacao(status: 'ativos' | 'inativos'): void {
+    if (this.filtroStatus !== status) {
+      this.filtroStatus = status;
+      this.paginaAtual = 1;
+      this.termoBusca = ''; 
+      this.carregarFabricantes();
+    }
   }
 
   carregarFabricantes(): void {
@@ -81,30 +89,23 @@ export class FabricanteListComponent implements OnInit, OnDestroy {
     if (this.termoBusca && this.termoBusca.trim()) {
       observable = this.fabricanteService.findByNome(this.termoBusca, page, pageSize);
     } else {
-      observable = this.fabricanteService.getFabricantes(page, pageSize);
+      if (this.filtroStatus === 'ativos') {
+        observable = this.fabricanteService.getFabricantes(page, pageSize);
+      } else {
+        observable = this.fabricanteService.getInativos(page, pageSize);
+      }
     }
 
     observable.subscribe({
       next: (response: HttpResponse<Fabricante[]>) => {
         this.fabricantes = response.body || [];
-        this.totalRegistros = +response.headers.get('X-Total-Count')!;
+        this.totalRegistros = +(response.headers.get('X-Total-Count') || 0);
         this.totalPaginas = Math.ceil(this.totalRegistros / this.itensPorPagina);
-        
-        if (this.termoBusca.trim() && this.totalRegistros === 0) {
-           // Debug opcional
-           // console.log("Nenhum resultado encontrado.");
-        }
       },
       error: (err: any) => {
         console.error('Erro ao carregar fabricantes:', err);
       }
     });
-  }
-
-  // Mantido para o botão de "limpar" ou busca manual se necessário
-  aplicarBusca(): void {
-    this.paginaAtual = 1;
-    this.carregarFabricantes();
   }
 
   limparBusca(): void {
@@ -144,22 +145,59 @@ export class FabricanteListComponent implements OnInit, OnDestroy {
     this.router.navigate(['/perfil-admin/fabricantes/edit', id]);
   }
 
-  abrirModalExclusao(id: number): void {
-    this.fabricanteParaExcluir = id;
-    this.modalVisivel = true;
+  // --- NOVA Lógica do Modal com MatDialog ---
+
+  /**
+   * Abre o modal de confirmação usando CaixaDialogo.
+   * @param id ID do fabricante
+   * @param acao 'desativar' para soft delete, 'ativar' para restaurar
+   */
+  abrirModalConfirmacao(id: number, acao: 'desativar' | 'ativar'): void {
+    // Configura os dados baseados na ação
+    const dadosDialogo: DialogData = {
+      titulo: acao === 'desativar' ? 'Confirmar Desativação' : 'Confirmar Reativação',
+      mensagem: acao === 'desativar' 
+        ? 'Tem certeza que deseja desativar este fabricante?' 
+        : 'Tem certeza que deseja reativar este fabricante?',
+      textoBotaoConfirmar: 'Sim',
+      textoBotaoCancelar: 'Cancelar',
+      corBotaoConfirmar: acao === 'desativar' ? 'warn' : 'primary' // Vermelho para desativar, Azul para ativar
+    };
+
+    // Abre o diálogo
+    const dialogRef = this.dialog.open(CaixaDialogo, {
+      width: '400px',
+      data: dadosDialogo
+    });
+
+    // Escuta o fechamento
+    dialogRef.afterClosed().subscribe((resultado: boolean) => {
+      // Se o resultado for true, o usuário clicou em "Sim"
+      if (resultado === true) {
+        this.executarAcao(id, acao);
+      }
+    });
   }
 
-  fecharModal(): void {
-    this.modalVisivel = false;
-    this.fabricanteParaExcluir = null;
-  }
+  // Método auxiliar para chamar o serviço (separado do modal)
+  private executarAcao(id: number, acao: 'desativar' | 'ativar'): void {
+    let observable: Observable<void>;
 
-  confirmarExclusao(): void {
-    if (this.fabricanteParaExcluir) {
-      this.fabricanteService.deletar(this.fabricanteParaExcluir).subscribe(() => {
-        this.fecharModal();
-        this.carregarFabricantes(); 
-      });
+    if (acao === 'desativar') {
+      observable = this.fabricanteService.deletar(id);
+    } else {
+      observable = this.fabricanteService.ativar(id);
     }
+
+    observable.subscribe({
+      next: () => {
+        // Recarrega a lista para mostrar o item movido/removido
+        this.carregarFabricantes(); 
+      },
+      error: (err) => {
+        console.error(`Erro ao ${acao} fabricante:`, err);
+        // Aqui você poderia abrir outro Dialog de erro ou um Toast
+      }
+    });
   }
 }

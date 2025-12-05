@@ -1,12 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormArray, FormControl } from '@angular/forms';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
-import { CommonModule, Location } from '@angular/common'; // <-- Incluindo Location
+import { CommonModule, Location } from '@angular/common';
 
 import { Fabricante } from '../../model/fabricante.model';
-import { Telefone } from '../../model/telefone.model';
 import { FabricanteService } from '../../services/fabricante-service';
-
 
 @Component({
   selector: 'app-fabricante-form',
@@ -22,10 +20,10 @@ import { FabricanteService } from '../../services/fabricante-service';
 export class FabricanteForm implements OnInit {
 
   fabricanteForm: FormGroup;
+  // Controle isolado para o input de adicionar telefone (não faz parte do grupo principal até ser adicionado)
   novoTelefoneControl = new FormControl('', [Validators.required, Validators.minLength(10)]);
 
   formTitle: string = 'Novo Fabricante';
-
   isEditMode: boolean = false;
   fabricanteId: number | null = null;
 
@@ -34,12 +32,12 @@ export class FabricanteForm implements OnInit {
     private fabricanteService: FabricanteService,
     private router: Router,
     private route: ActivatedRoute,
-    private location: Location // <-- Injetando Location
+    private location: Location
   ) {
     this.fabricanteForm = this.fb.group({
       razaoSocial: ['', Validators.required],
       cnpj: ['', Validators.required],
-      status: [true, Validators.required],
+      // Status removido propositalmente
       dataAbertura: ['', Validators.required],
       paisSede: ['', Validators.required],
       telefones: this.fb.array([])
@@ -54,10 +52,10 @@ export class FabricanteForm implements OnInit {
       this.fabricanteId = +idParam;
       this.formTitle = 'Editar Fabricante';
 
-      this.fabricanteService.getFabricanteById(this.fabricanteId).subscribe(fabricante => {
-        this.preencherFormulario(fabricante);
+      this.fabricanteService.getFabricanteById(this.fabricanteId).subscribe({
+        next: (fabricante) => this.preencherFormulario(fabricante),
+        error: (err) => console.error('Erro ao carregar fabricante', err)
       });
-
     } else {
       this.isEditMode = false;
       this.formTitle = 'Novo Fabricante';
@@ -68,8 +66,7 @@ export class FabricanteForm implements OnInit {
     this.fabricanteForm.patchValue({
       razaoSocial: fabricante.razaoSocial,
       cnpj: fabricante.cnpj,
-      status: fabricante.status,
-      dataAbertura: fabricante.dataAbertura, // Use o nome do seu model/form
+      dataAbertura: fabricante.dataAbertura,
       paisSede: fabricante.paisSede
     });
 
@@ -88,7 +85,7 @@ export class FabricanteForm implements OnInit {
     }
   }
 
-  // Getter para o FormArray (sem mudanças)
+  // Getter para facilitar o acesso no HTML
   get telefones(): FormArray {
     return this.fabricanteForm.get('telefones') as FormArray;
   }
@@ -100,13 +97,12 @@ export class FabricanteForm implements OnInit {
     }
 
     const telString = this.novoTelefoneControl.value!.replace(/\D/g, '');
+    
+    // Validação extra de segurança
+    if (telString.length < 10) return;
+
     const ddd = telString.substring(0, 2);
     const numero = telString.substring(2);
-
-    if (numero.length < 8) {
-      this.novoTelefoneControl.setErrors({ 'minLength': true });
-      return;
-    }
 
     this.telefones.push(
       this.fb.group({
@@ -129,37 +125,30 @@ export class FabricanteForm implements OnInit {
       return;
     }
 
+    // Validação customizada: Exigir pelo menos 1 telefone
     if (this.telefones.length === 0) {
-      this.novoTelefoneControl.setErrors({ 'required': true });
+      alert("É necessário cadastrar pelo menos um telefone.");
       return;
     }
 
     const fabricanteData: Fabricante = this.fabricanteForm.value;
 
+    // Se estiver editando, mantemos o ID original e o Status original (se o backend precisar)
+    // Se for novo, o backend define o Status padrão (Ativo)
+    
     if (this.isEditMode && this.fabricanteId) {
       this.fabricanteService.atualizar(this.fabricanteId, fabricanteData).subscribe({
-        next: () => {
-          // CORREÇÃO 1: Navega para a rota ADM da lista
-          this.router.navigate(['/perfil-admin/fabricantes']);
-        },
-        error: (err) => {
-          console.error('Erro ao ATUALIZAR fabricante', err);
-        }
+        next: () => this.router.navigate(['/perfil-admin/fabricantes']),
+        error: () => alert('Erro ao atualizar fabricante.')
       });
     } else {
       this.fabricanteService.incluir(fabricanteData).subscribe({
-        next: () => {
-          // CORREÇÃO 1: Navega para a rota ADM da lista
-          this.router.navigate(['/perfil-admin/fabricantes']);
-        },
-        error: (err) => {
-          console.error('Erro ao CRIAR fabricante', err);
-        }
+        next: () => this.router.navigate(['/perfil-admin/fabricantes']),
+        error: () => alert('Erro ao criar fabricante.')
       });
     }
   }
 
-  // CORREÇÃO 2: Usa Location.back() para voltar à página anterior
   cancelar(): void {
     this.location.back();
   }

@@ -6,6 +6,7 @@
         cnpj ?: string|null;
         dataAbertura ?: string|null;
         paisSede ?: string|null;
-        status ?: boolean|null;
+        ativo ?: boolean|null;
         telefones ?: Telefone[]|null;
+
     }

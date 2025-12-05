@@ -1,12 +1,11 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { Marca } from '../../model/marca.model'; // 1. Model correto
 import { HttpResponse } from '@angular/common/http';
-import { Observable, Subject, Subscription } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-
-import { Marca } from '../../model/marca.model';
+import { Observable } from 'rxjs';
 import { MarcaService } from '../../services/marca-service.service';
 
 @Component({
@@ -20,14 +19,11 @@ import { MarcaService } from '../../services/marca-service.service';
   templateUrl: './marca-list.html',
   styleUrl: './marca-list.css' 
 })
-export class MarcaListComponent implements OnInit, OnDestroy {
+export class MarcaListComponent implements OnInit {
 
   marcas: Marca[] = []; 
-  termoBusca: string = '';
 
-  // Controle da Busca Automática (RxJS)
-  private buscaSubject = new Subject<string>();
-  private buscaSubscription!: Subscription;
+  termoBusca: string = '';
 
   modalVisivel: boolean = false;
   marcaParaExcluir: number | null = null; 
@@ -44,31 +40,7 @@ export class MarcaListComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.carregarMarcas();
-    this.configurarBuscaAutomatica();
-  }
-
-  ngOnDestroy(): void {
-    // Importante cancelar a inscrição para não vazar memória
-    if (this.buscaSubscription) {
-      this.buscaSubscription.unsubscribe();
-    }
-  }
-
-  configurarBuscaAutomatica(): void {
-    this.buscaSubscription = this.buscaSubject.pipe(
-      debounceTime(500), // Espera 500ms depois que você para de digitar
-      distinctUntilChanged() // Só pesquisa se o texto mudou
-    ).subscribe((termo: string) => {
-      this.termoBusca = termo;
-      this.paginaAtual = 1;
-      this.carregarMarcas();
-    });
-  }
-
-  // Método chamado pelo Input do HTML a cada letra digitada
-  onBuscaInput(termo: string): void {
-    this.buscaSubject.next(termo);
+    this.carregarMarcas(); 
   }
 
   carregarMarcas(): void {
@@ -77,7 +49,7 @@ export class MarcaListComponent implements OnInit, OnDestroy {
 
     let observable: Observable<HttpResponse<Marca[]>>;
 
-    if (this.termoBusca && this.termoBusca.trim()) {
+    if (this.termoBusca.trim()) {
       observable = this.marcaService.findByNome(this.termoBusca, page, pageSize);
     } else {
       observable = this.marcaService.getAll(page, pageSize);
@@ -92,10 +64,8 @@ export class MarcaListComponent implements OnInit, OnDestroy {
 
         this.totalPaginas = Math.ceil(this.totalRegistros / this.itensPorPagina);
 
-        // Se a página ficou vazia e não é a primeira, volta uma
-        if (this.marcas.length === 0 && this.paginaAtual > 1) {
-          this.paginaAtual--;
-          this.carregarMarcas();
+        if (this.termoBusca.trim() && this.totalRegistros === 0) {
+          console.warn("A busca retornou X-Total-Count = 0.");
         }
       },
       error: (err: any) => {
@@ -104,7 +74,19 @@ export class MarcaListComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Paginação e Controles
+
+
+  aplicarBusca(): void {
+    this.paginaAtual = 1;
+    this.carregarMarcas();
+  }
+
+  limparBusca(): void {
+    this.termoBusca = '';
+    this.paginaAtual = 1;
+    this.carregarMarcas();
+  }
+
   onItensPorPaginaChange(): void {
     this.paginaAtual = 1;
     this.carregarMarcas();
@@ -125,10 +107,10 @@ export class MarcaListComponent implements OnInit, OnDestroy {
     this.irParaPagina(this.paginaAtual + 1);
   }
 
-  // Ações
   editarMarca(id: number): void {
     this.router.navigate(['/marcas/edit', id]);
   }
+
 
   abrirModalExclusao(id: number): void {
     this.marcaParaExcluir = id;
