@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
-import { CommonModule, Location } from '@angular/common'; // <-- Incluindo Location
+import { CommonModule, Location } from '@angular/common';
 
 import { Marca, MarcaRequest } from '../../model/marca.model';
 import { MarcaService } from '../../services/marca-service.service';
@@ -34,10 +34,11 @@ export class MarcaFormComponent implements OnInit {
     private fabricanteService: FabricanteService,
     private router: Router,
     private route: ActivatedRoute,
-    private location: Location // <-- Injetando Location
+    private location: Location
   ) {
+    // Mantemos 'nome' aqui para ficar bonito no HTML e no Angular
     this.marcaForm = this.fb.group({
-      nomeMarca: ['', Validators.required],
+      nome: ['', Validators.required], 
       descricao: [''],
       idFabricante: [null, Validators.required]
     });
@@ -53,8 +54,9 @@ export class MarcaFormComponent implements OnInit {
       this.marcaId = +idParam;
       this.formTitle = 'Editar Marca';
 
-      this.marcaService.getById(this.marcaId).subscribe(marca => {
-        this.preencherFormulario(marca);
+      this.marcaService.getById(this.marcaId).subscribe({
+        next: (marca) => this.preencherFormulario(marca),
+        error: (err) => console.error('Erro ao carregar marca', err)
       });
 
     } else {
@@ -64,18 +66,20 @@ export class MarcaFormComponent implements OnInit {
   }
 
   carregarFabricantes(): void {
-
     this.fabricanteService.getAllFabricantes().subscribe(data => {
       this.fabricantes = data;
     });
   }
 
-
   preencherFormulario(marca: Marca): void {
+    const fab = marca.fabricante as any;
+    const idFab = (fab && fab.id) ? fab.id : fab; 
+
     this.marcaForm.patchValue({
-      nomeMarca: marca.marca,
+      // Mapeamos 'marca' (do banco) para 'nome' (do formulário)
+      nome: marca.marca, 
       descricao: marca.descricao,
-      idFabricante: marca.idFabricante
+      idFabricante: idFab
     });
   }
 
@@ -85,12 +89,20 @@ export class MarcaFormComponent implements OnInit {
       return;
     }
 
-    const request: MarcaRequest = this.marcaForm.value;
+    // --- CORREÇÃO AQUI ---
+    // Criamos o objeto manualmente para garantir que a chave enviada seja 'marca'
+    // e não 'nome', pois o Java DTO espera 'marca'.
+    const formValue = this.marcaForm.value;
+    
+    const request: MarcaRequest = {
+      nomeMarca: formValue.nome, // <--- O segredo: pega do form 'nome' e joga em 'marca'
+      descricao: formValue.descricao,
+      idFabricante: formValue.idFabricante
+    };
 
     if (this.isEditMode && this.marcaId) {
       this.marcaService.update(this.marcaId, request).subscribe({
         next: () => {
-          // CORREÇÃO 1: Navega para a rota ADM da lista
           this.router.navigate(['/perfil-admin/marcas']);
         },
         error: (err: any) => {
@@ -100,7 +112,6 @@ export class MarcaFormComponent implements OnInit {
     } else {
       this.marcaService.create(request).subscribe({
         next: () => {
-          // CORREÇÃO 1: Navega para a rota ADM da lista
           this.router.navigate(['/perfil-admin/marcas']);
         },
         error: (err: any) => {
@@ -110,7 +121,6 @@ export class MarcaFormComponent implements OnInit {
     }
   }
 
-  // CORREÇÃO 2: Usa Location.back() para o botão Voltar/Cancelar
   cancelar(): void {
     this.location.back();
   }

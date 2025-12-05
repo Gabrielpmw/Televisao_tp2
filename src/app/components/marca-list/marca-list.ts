@@ -1,12 +1,15 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { Marca } from '../../model/marca.model'; // 1. Model correto
 import { HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog'; // Import do Dialog
+import { Observable, Subject, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+
+import { Marca } from '../../model/marca.model';
 import { MarcaService } from '../../services/marca-service.service';
+import { CaixaDialogo, DialogData } from '../caixa-dialogo/caixa-dialogo';
 
 @Component({
   selector: 'app-marca-list',
@@ -14,20 +17,25 @@ import { MarcaService } from '../../services/marca-service.service';
   imports: [
     CommonModule,
     RouterModule,
-    FormsModule
+    FormsModule,
+    CaixaDialogo // Importante para o standalone, embora o Dialog abra dinamicamente
   ],
   templateUrl: './marca-list.html',
-  styleUrl: './marca-list.css' 
+  styleUrl: './marca-list.css'
 })
-export class MarcaListComponent implements OnInit {
+export class MarcaListComponent implements OnInit, OnDestroy {
 
-  marcas: Marca[] = []; 
-
+  marcas: Marca[] = [];
   termoBusca: string = '';
 
-  modalVisivel: boolean = false;
-  marcaParaExcluir: number | null = null; 
+  // Controle da Busca Automática (RxJS)
+  private buscaSubject = new Subject<string>();
+  private buscaSubscription!: Subscription;
 
+  // Controle de Filtros (Ativos vs Lixeira)
+  filtroStatus: 'ativos' | 'inativos' = 'ativos';
+
+  // Paginação
   paginaAtual: number = 1;
   itensPorPagina: number = 10;
   totalRegistros: number = 0;
@@ -35,58 +43,80 @@ export class MarcaListComponent implements OnInit {
   opcoesItensPorPagina: number[] = [10, 25, 50, 100];
 
   constructor(
-    private marcaService: MarcaService, 
-    private router: Router
+    private marcaService: MarcaService,
+    private router: Router,
+    private dialog: MatDialog // Injeção do MatDialog
   ) { }
 
   ngOnInit(): void {
-    this.carregarMarcas(); 
+    this.carregarMarcas();
+    this.configurarBuscaAutomatica();
   }
 
+  ngOnDestroy(): void {
+    if (this.buscaSubscription) {
+      this.buscaSubscription.unsubscribe();
+    }
+  }
+
+  // --- Lógica de Busca Reativa ---
+  configurarBuscaAutomatica(): void {
+    this.buscaSubscription = this.buscaSubject.pipe(
+      debounceTime(500), // Espera 500ms parando de digitar
+      distinctUntilChanged() // Só busca se o texto mudou
+    ).subscribe((termo: string) => {
+      this.termoBusca = termo;
+      this.paginaAtual = 1;
+      this.carregarMarcas();
+    });
+  }
+
+  onBuscaInput(termo: string): void {
+    this.buscaSubject.next(termo);
+  }
+
+  // --- Lógica de Alternância (Ativos/Lixeira) ---
+  alternarStatusVisualizacao(status: 'ativos' | 'inativos'): void {
+    if (this.filtroStatus !== status) {
+      this.filtroStatus = status;
+      this.paginaAtual = 1;
+      this.termoBusca = ''; // Limpa a busca ao trocar de contexto
+      this.carregarMarcas();
+    }
+  }
+
+  // --- Carregamento de Dados ---
   carregarMarcas(): void {
     const page = this.paginaAtual - 1;
     const pageSize = this.itensPorPagina;
 
     let observable: Observable<HttpResponse<Marca[]>>;
 
-    if (this.termoBusca.trim()) {
+    // Se tiver busca, usa o endpoint de busca (Geralmente busca em ativos)
+    if (this.termoBusca && this.termoBusca.trim()) {
       observable = this.marcaService.findByNome(this.termoBusca, page, pageSize);
     } else {
-      observable = this.marcaService.getAll(page, pageSize);
+      // Se não, decide qual lista carregar baseada no filtro
+      if (this.filtroStatus === 'ativos') {
+        observable = this.marcaService.getAll(page, pageSize);
+      } else {
+        observable = this.marcaService.getInativos(page, pageSize);
+      }
     }
 
     observable.subscribe({
       next: (response: HttpResponse<Marca[]>) => {
-        this.marcas = response.body || []; 
-
-        const totalCountHeader = response.headers.get('X-Total-Count');
-        this.totalRegistros = totalCountHeader ? +totalCountHeader : 0;
-
+        this.marcas = response.body || [];
+        this.totalRegistros = +(response.headers.get('X-Total-Count') || 0);
         this.totalPaginas = Math.ceil(this.totalRegistros / this.itensPorPagina);
-
-        if (this.termoBusca.trim() && this.totalRegistros === 0) {
-          console.warn("A busca retornou X-Total-Count = 0.");
-        }
       },
       error: (err: any) => {
-        console.error('Erro ao carregar marcas:', err); 
+        console.error('Erro ao carregar marcas:', err);
       }
     });
   }
 
-
-
-  aplicarBusca(): void {
-    this.paginaAtual = 1;
-    this.carregarMarcas();
-  }
-
-  limparBusca(): void {
-    this.termoBusca = '';
-    this.paginaAtual = 1;
-    this.carregarMarcas();
-  }
-
+  // --- Paginação ---
   onItensPorPaginaChange(): void {
     this.paginaAtual = 1;
     this.carregarMarcas();
@@ -107,33 +137,57 @@ export class MarcaListComponent implements OnInit {
     this.irParaPagina(this.paginaAtual + 1);
   }
 
+  // --- Navegação ---
   editarMarca(id: number): void {
-    this.router.navigate(['/marcas/edit', id]);
+    this.router.navigate(['/perfil-admin/marcas/edit', id]); // Verifique se a rota é essa
   }
 
+  // --- Lógica do Modal com MatDialog ---
 
-  abrirModalExclusao(id: number): void {
-    this.marcaParaExcluir = id;
-    this.modalVisivel = true;
+  /**
+   * Abre o modal de confirmação.
+   * @param id ID da marca
+   * @param acao 'desativar' (lixeira) ou 'ativar' (restaurar)
+   */
+  abrirModalConfirmacao(id: number, acao: 'desativar' | 'ativar'): void {
+    const dadosDialogo: DialogData = {
+      titulo: acao === 'desativar' ? 'Confirmar Exclusão' : 'Confirmar Reativação',
+      mensagem: acao === 'desativar' 
+        ? 'Tem certeza que deseja mover esta marca para a lixeira?' 
+        : 'Tem certeza que deseja reativar esta marca?',
+      textoBotaoConfirmar: 'Sim',
+      textoBotaoCancelar: 'Cancelar',
+      corBotaoConfirmar: acao === 'desativar' ? 'warn' : 'primary'
+    };
+
+    const dialogRef = this.dialog.open(CaixaDialogo, {
+      width: '400px',
+      data: dadosDialogo
+    });
+
+    dialogRef.afterClosed().subscribe((resultado: boolean) => {
+      if (resultado === true) {
+        this.executarAcao(id, acao);
+      }
+    });
   }
 
-  fecharModal(): void {
-    this.modalVisivel = false;
-    this.marcaParaExcluir = null;
-  }
+  private executarAcao(id: number, acao: 'desativar' | 'ativar'): void {
+    let observable: Observable<void>;
 
-  confirmarExclusao(): void {
-    if (this.marcaParaExcluir) {
-      this.marcaService.delete(this.marcaParaExcluir).subscribe({
-        next: () => {
-          this.fecharModal();
-          this.carregarMarcas(); 
-        },
-        error: (err: any) => {
-          console.error('Erro ao excluir marca:', err);
-          this.fecharModal();
-        }
-      });
+    if (acao === 'desativar') {
+      observable = this.marcaService.delete(id);
+    } else {
+      observable = this.marcaService.ativar(id);
     }
+
+    observable.subscribe({
+      next: () => {
+        this.carregarMarcas(); // Recarrega a lista
+      },
+      error: (err) => {
+        console.error(`Erro ao ${acao} marca:`, err);
+      }
+    });
   }
 }

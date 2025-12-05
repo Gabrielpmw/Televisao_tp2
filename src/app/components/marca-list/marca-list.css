@@ -24,12 +24,22 @@ body {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
+  /* Necessário para responsividade dos novos botões */
+  flex-wrap: wrap; 
+  gap: 1rem;
 }
 
 .header h1 {
   font-size: 2rem;
   font-weight: 600;
   color: #ffffff;
+}
+
+/* NOVO: Agrupa os botões de ação no topo */
+.header-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
 }
 
 .form-header {
@@ -50,9 +60,13 @@ body {
 .btn-back,
 .btn-submit,
 .btn-cancel,
-.btn-delete {
+.btn-delete,
+.btn-toggle,   /* Adicionado */
+.btn-primary,  /* Adicionado */
+.btn-secondary /* Adicionado */ {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
   padding: 0.75rem 1.5rem;
   border: none;
@@ -61,23 +75,41 @@ body {
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
+  text-decoration: none;
 }
 
-.btn-add {
+.btn-add,
+.btn-primary { /* Unificado para azul */
   background-color: #3b82f6;
   color: white;
 }
 
-.btn-add:hover {
+.btn-add:hover,
+.btn-primary:hover {
   background-color: #2563eb;
 }
 
-.btn-back {
+/* NOVO: Estilo Outline para botão desativado/toggle */
+.btn-secondary {
+  background-color: transparent;
+  border: 1px solid #374151;
+  color: #9ca3af;
+}
+
+.btn-secondary:hover {
+  background-color: #2d2d2d;
+  color: #e5e5e5;
+  border-color: #4b5563;
+}
+
+.btn-back,
+.btn-cancel {
   background-color: #374151;
   color: white;
 }
 
-.btn-back:hover {
+.btn-back:hover,
+.btn-cancel:hover {
   background-color: #4b5563;
 }
 
@@ -88,15 +120,6 @@ body {
 
 .btn-submit:hover {
   background-color: #059669;
-}
-
-.btn-cancel {
-  background-color: #374151;
-  color: white;
-}
-
-.btn-cancel:hover {
-  background-color: #4b5563;
 }
 
 .btn-delete {
@@ -116,11 +139,6 @@ body {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
-/* NOTA: O HTML do fornecedor usa a classe "fabricante-table".
-  Se você renomear a classe no HTML para "fornecedor-table", 
-  lembre-se de renomear as 7 ocorrências de ".fabricante-table" 
-  abaixo para ".fornecedor-table".
-*/
 .fabricante-table {
   width: 100%;
   border-collapse: collapse;
@@ -179,7 +197,7 @@ body {
   color: #ef4444;
 }
 
-/* Action Buttons */
+/* Action Buttons (Ícones da tabela) */
 .action-buttons {
   display: flex;
   gap: 0.5rem;
@@ -207,18 +225,21 @@ body {
 }
 
 .btn-edit svg {
-  stroke: #3b82f6;
+  stroke: #3b82f6; /* Azul */
 }
 
+/* Ajustado para pegar tanto .btn-delete quanto .btn-delete-icon */
+.btn-delete svg, 
 .btn-delete-icon svg {
-  stroke: #ef4444;
+  stroke: #ef4444; /* Vermelho */
+}
+
+/* NOVO: Cor verde para o botão de restaurar */
+.btn-restore svg {
+  stroke: #10b981;
 }
 
 /* Form */
-/* NOTA: Esta classe ".fabricante-form" será usada 
-  nos componentes "fornecedor-form.html" (new/edit).
-  Se você renomeá-la lá, renomeie aqui também.
-*/
 .fabricante-form {
   background-color: #1a1a1a;
   padding: 2rem;
@@ -268,49 +289,7 @@ body {
   margin-top: 2rem;
 }
 
-/* Modal */
-.modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
-  z-index: 1000;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal.active {
-  display: flex;
-}
-
-.modal-content {
-  background-color: #1a1a1a;
-  padding: 2rem;
-  border-radius: 8px;
-  max-width: 400px;
-  width: 90%;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-}
-
-.modal-content h2 {
-  margin-bottom: 1rem;
-  color: #ffffff;
-  font-size: 1.5rem;
-}
-
-.modal-content p {
-  margin-bottom: 1.5rem;
-  color: #d1d5db;
-}
-
-.modal-actions {
-  display: flex;
-  gap: 1rem;
-  justify-content: flex-end;
-}
+/* --- O MODAL MANUAL FOI REMOVIDO AQUI (Não é mais necessário) --- */
 
 /* Empty State */
 .empty-state {
@@ -323,66 +302,39 @@ body {
   font-size: 1.1rem;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .container {
-    padding: 1rem;
-  }
-
-  .header,
-  .form-header {
-    flex-direction: column;
-    gap: 1rem;
-    align-items: flex-start;
-  }
-
-  .table-container {
-    overflow-x: auto;
-  }
-
-  .fabricante-table {
-    min-width: 800px;
-  }
-
-  .fabricante-form {
-    padding: 1.5rem;
-  }
-}
-
 /* Search Bar */
 .search-container {
   margin-bottom: 2rem;
-  /* Adiciona um espaço antes da tabela, igual ao header */
 }
 
 .search-input {
   width: 100%;
   padding: 0.75rem 1rem;
-  /* Um pouco mais de padding lateral para um visual de busca */
   background-color: #0a0a0a;
-  /* Fundo escuro igual ao do form */
   border: 1px solid #2d2d2d;
-  /* Borda sutil igual ao do form */
   border-radius: 6px;
-  /* Borda arredondada igual ao do form */
   color: #e5e5e5;
-  /* Cor do texto */
   font-size: 0.95rem;
-  /* Tamanho da fonte igual ao do form */
   transition: border-color 0.2s;
   box-sizing: border-box;
-  /* Garante que padding não afete o width 100% */
 }
 
 .search-input:focus {
   outline: none;
   border-color: #3b82f6;
-  /* Destaque azul ao focar, igual ao do form */
 }
 
 .search-input::placeholder {
   color: #6b7280;
-  /* Cor do placeholder igual ao do form */
+}
+
+/* NOVO: Estilo para input desabilitado (quando na lixeira) */
+.search-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: #151515;
+  color: #6b7280;
+  border-color: #2d2d2d;
 }
 
 /* Pagination */
@@ -391,11 +343,8 @@ body {
   justify-content: space-between;
   align-items: center;
   margin-top: 1.5rem;
-  /* Espaço acima dos controles */
   padding: 0 0.5rem;
-  /* Alinhamento leve com a tabela */
   color: #9ca3af;
-  /* Cor sutil para o texto */
 }
 
 .page-info {
@@ -408,32 +357,26 @@ body {
 }
 
 .page-button {
-  /* Reutilizando estilos dos botões do form */
   display: inline-flex;
   align-items: center;
   padding: 0.6rem 1.2rem;
   border: 1px solid #374151;
-  /* Borda sutil */
   border-radius: 6px;
   font-size: 0.95rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
   background-color: #1a1a1a;
-  /* Fundo do card */
   color: #e5e5e5;
-  /* Texto principal */
 }
 
 .page-button:hover:not(:disabled) {
   background-color: #2d2d2d;
-  /* Hover sutil */
   border-color: #4b5563;
 }
 
 .page-button:disabled {
   color: #4b5563;
-  /* Cor de texto desabilitado */
   border-color: #2d2d2d;
   background-color: #1a1a1a;
   cursor: not-allowed;
@@ -451,14 +394,13 @@ body {
 }
 
 .page-size-selector select {
-  /* Reutilizando estilos do form-group */
-  padding: 0.5rem;
-  /* Um pouco menor para se alinhar */
+  padding: 0.4rem 1rem 0.4rem 0.5rem; /* Ajustado */
   background-color: #0a0a0a;
   border: 1px solid #2d2d2d;
   border-radius: 6px;
   color: #e5e5e5;
   font-size: 0.95rem;
+  cursor: pointer;
 }
 
 .page-size-selector select:focus {
@@ -466,38 +408,40 @@ body {
   border-color: #3b82f6;
 }
 
-/* Search Bar */
-.search-container {
-  margin-bottom: 2rem;
-  /* Adiciona um espaço antes da tabela, igual ao header */
-}
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
 
-.search-input {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  /* Um pouco mais de padding lateral para um visual de busca */
-  background-color: #0a0a0a;
-  /* Fundo escuro igual ao do form */
-  border: 1px solid #2d2d2d;
-  /* Borda sutil igual ao do form */
-  border-radius: 6px;
-  /* Borda arredondada igual ao do form */
-  color: #e5e5e5;
-  /* Cor do texto */
-  font-size: 0.95rem;
-  /* Tamanho da fonte igual ao do form */
-  transition: border-color 0.2s;
-  box-sizing: border-box;
-  /* Garante que padding não afete o width 100% */
-}
+  .header,
+  .form-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  
+  /* Ajuste para mobile dos novos botões */
+  .header-actions {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.75rem;
+  }
 
-.search-input:focus {
-  outline: none;
-  border-color: #3b82f6;
-  /* Destaque azul ao focar, igual ao do form */
-}
+  .btn-toggle,
+  .btn-add {
+    width: 100%;
+  }
 
-.search-input::placeholder {
-  color: #6b7280;
-  /* Cor do placeholder igual ao do form */
+  .table-container {
+    overflow-x: auto;
+  }
+
+  .fabricante-table {
+    min-width: 800px;
+  }
+
+  .fabricante-form {
+    padding: 1.5rem;
+  }
 }
