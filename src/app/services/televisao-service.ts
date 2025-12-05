@@ -21,7 +21,7 @@ export interface ModeloResponse {
 
 // Interface auxiliar para tipar os filtros no componente
 export interface FiltrosTelevisao {
-  sort?: string;        // Coloquei como opcional (?)
+  sort?: string;        // Coloquei como opcional (?)
   marcas?: string[];
   maxPolegada?: number; // Removido minPolegada
   tipos?: string[];
@@ -37,10 +37,10 @@ export class TelevisaoService {
   constructor(private http: HttpClient) { }
 
   // ==========================================================
-  // BUSCA PRINCIPAL (COM FILTROS, SORT E PAGINAÇÃO)
+  // BUSCA PRINCIPAL (COM FILTROS, SORT E PAGINAÇÃO) - Traz apenas ATIVOS
   // ==========================================================
   findAll(page: number = 0, pageSize: number = 10, filtros?: FiltrosTelevisao): Observable<TelevisaoPaginada> {
-    
+
     let params = new HttpParams()
       .set('page', page.toString())
       .set('pageSize', pageSize.toString());
@@ -66,32 +66,51 @@ export class TelevisaoService {
         });
       }
 
-      // 4. Ordenação (ISSO ESTAVA FALTANDO!)
+      // 4. Ordenação
       if (filtros.sort) {
         params = params.set('sort', filtros.sort);
       }
     }
 
-    // O Backend agora retorna o objeto JSON completo.
+    // Chama GET /televisoes (que lista os ativos)
     return this.http.get<TelevisaoPaginada>(this.apiUrl, { params });
   }
 
   // ==========================================================
-  // BUSCAR LISTA DE MARCAS PARA O FILTRO
+  // MÉTODOS DE SOFT DELETE E RESTAURAÇÃO
   // ==========================================================
-  findAllMarcas(): Observable<string[]> {
-    return this.http.get<string[]>(`${this.apiUrl}/marcas`);
+
+  // Soft Delete: Chama DELETE /televisoes/{id}/desativar
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}/desativar`);
+  }
+
+  // Restaura: Chama PATCH /televisoes/{id}/restaurar
+  restore(id: number): Observable<void> {
+    return this.http.patch<void>(`${this.apiUrl}/${id}/restaurar`, {});
+  }
+
+  // Lixeira: Chama GET /televisoes/inativas
+  findAllInativas(page: number = 0, pageSize: number = 10): Observable<TelevisaoPaginada> {
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('pageSize', pageSize.toString());
+
+    return this.http.get<TelevisaoPaginada>(`${this.apiUrl}/inativas`, { params });
   }
 
   // ==========================================================
-  // MÉTODOS EXISTENTES
+  // OUTROS MÉTODOS EXISTENTES
   // ==========================================================
+
+  findAllMarcas(): Observable<string[]> {
+    return this.http.get<string[]>(`${this.apiUrl}/marcas`);
+  }
 
   findById(id: number): Observable<Televisao> {
     return this.http.get<Televisao>(`${this.apiUrl}/${id}/buscar-por-id`);
   }
 
-  // Nota: Este método continua lendo HEADERS (legado do endpoint específico)
   findByModelo(nomeModelo: string, page: number = 0, pageSize: number = 10): Observable<TelevisaoPaginada> {
     const params = new HttpParams()
       .set('page', page.toString())
@@ -111,10 +130,6 @@ export class TelevisaoService {
 
   update(id: number, dto: TelevisaoRequest): Observable<void> {
     return this.http.put<void>(`${this.apiUrl}/${id}/atualizar`, dto);
-  }
-
-  delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}/apagar`);
   }
 
   findModeloByTelevisaoId(idTelevisao: number): Observable<ModeloResponse> {

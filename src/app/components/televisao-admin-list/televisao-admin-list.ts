@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { CommonModule, CurrencyPipe } from '@angular/common'; // Adicionando CurrencyPipe
+import { CommonModule, CurrencyPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Observable } from 'rxjs';
 
 // Importações dos serviços e modelos atualizados
-import { Televisao, TelevisaoRequest } from '../../model/televisao.model'; 
-import { TelevisaoService, TelevisaoPaginada, FiltrosTelevisao } from '../../services/televisao-service'; 
+import { Televisao, TelevisaoRequest } from '../../model/televisao.model';
+import { TelevisaoService, TelevisaoPaginada, FiltrosTelevisao } from '../../services/televisao-service';
 
 @Component({
   selector: 'app-televisao-admin-list',
@@ -15,7 +15,7 @@ import { TelevisaoService, TelevisaoPaginada, FiltrosTelevisao } from '../../ser
     CommonModule,
     RouterModule,
     FormsModule,
-    CurrencyPipe // Adiciona CurrencyPipe para o HTML
+    CurrencyPipe
   ],
   templateUrl: './televisao-admin-list.html',
   styleUrls: ['./televisao-admin-list.css']
@@ -23,24 +23,41 @@ import { TelevisaoService, TelevisaoPaginada, FiltrosTelevisao } from '../../ser
 export class TelevisaoAdminList implements OnInit {
 
   televisoes: Televisao[] = [];
-  termoBusca: string = ''; // Usaremos isso no filtro por modelo
+  termoBusca: string = '';
 
   modalVisivel: boolean = false;
   televisaoParaExcluir: number | null = null;
 
-  paginaAtual: number = 1; 
+  // NOVO: Controle de Filtros (Ativos vs Lixeira)
+  filtroStatus: 'ativos' | 'inativos' = 'ativos';
+
+  // NOVO: Para indicar se é uma exclusão lógica (desativação) ou ativação
+  acaoModal: 'desativar' | 'ativar' = 'desativar';
+
+  paginaAtual: number = 1;
   itensPorPagina: number = 10;
-  totalRegistros: number = 0; 
-  totalPaginas: number = 0;   
+  totalRegistros: number = 0;
+  totalPaginas: number = 0;
   opcoesItensPorPagina: number[] = [10, 25, 50, 100];
 
   constructor(
     private televisaoService: TelevisaoService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.carregarTelevisoes();
+  }
+
+  // --- Lógica de Alternância (Ativos/Lixeira) ---
+  // Adaptação do seu modelo-list.ts
+  alternarStatusVisualizacao(status: 'ativos' | 'inativos'): void {
+    if (this.filtroStatus !== status) {
+      this.filtroStatus = status;
+      this.paginaAtual = 1;
+      this.termoBusca = ''; // Limpa a busca ao trocar de aba
+      this.carregarTelevisoes();
+    }
   }
 
   carregarTelevisoes(): void {
@@ -49,20 +66,31 @@ export class TelevisaoAdminList implements OnInit {
 
     let observable: Observable<TelevisaoPaginada>;
 
-    // Lógica de busca por modelo ou busca geral
-    if (this.termoBusca.trim()) {
-        observable = this.televisaoService.findByModelo(this.termoBusca, page, pageSize);
-    } else {
-        observable = this.televisaoService.findAll(page, pageSize);
+    // 1. Busca por Modelo (A busca por modelo só deve ocorrer na lista ATIVA)
+    if (this.termoBusca.trim() && this.filtroStatus === 'ativos') {
+      observable = this.televisaoService.findByModelo(this.termoBusca, page, pageSize);
+    }
+    // 2. Carrega Lixeira (Inativas)
+    else if (this.filtroStatus === 'inativos') {
+      observable = this.televisaoService.findAllInativas(page, pageSize);
+    }
+    // 3. Carrega Lista Ativa (Padrão)
+    else {
+      observable = this.televisaoService.findAll(page, pageSize);
     }
 
     observable.subscribe({
       next: (response: TelevisaoPaginada) => {
-        // Mapeia a resposta paginada do serviço
         this.televisoes = response.televisoes || [];
         this.totalRegistros = response.totalCount;
 
         this.totalPaginas = Math.ceil(this.totalRegistros / this.itensPorPagina);
+
+        // Se deletou o último item da página e ela ficou vazia, volta uma
+        if (this.televisoes.length === 0 && this.paginaAtual > 1) {
+          this.paginaAtual--;
+          this.carregarTelevisoes();
+        }
       },
       error: (err: any) => {
         console.error('Erro ao carregar televisões:', err);
@@ -70,10 +98,13 @@ export class TelevisaoAdminList implements OnInit {
     });
   }
 
-  // --- MÉTODOS DE PAGINAÇÃO E BUSCA ---
+  // --- MÉTODOS DE PAGINAÇÃO E BUSCA (SEM ALTERAÇÃO) ---
   aplicarBusca(): void {
     this.paginaAtual = 1;
-    this.carregarTelevisoes();
+    // Garante que a busca só funciona na aba "ativos"
+    if (this.filtroStatus === 'ativos') {
+      this.carregarTelevisoes();
+    }
   }
 
   limparBusca(): void {
@@ -83,7 +114,7 @@ export class TelevisaoAdminList implements OnInit {
   }
 
   onItensPorPaginaChange(): void {
-    this.paginaAtual = 1; 
+    this.paginaAtual = 1;
     this.carregarTelevisoes();
   }
 
@@ -102,14 +133,12 @@ export class TelevisaoAdminList implements OnInit {
     this.irParaPagina(this.paginaAtual + 1);
   }
 
-  // --- AÇÕES DE CRUD ---
-  editarTelevisao(id: number): void {
-    // Rota correta para o ADM (aninhada em /perfil-admin)
-    this.router.navigate(['/perfil-admin/televisoes/edit', id]); 
-  }
+  // --- AÇÕES DE SOFT DELETE / RESTAURAÇÃO ---
 
-  abrirModalExclusao(id: number): void {
+  // MÉTODO UNIFICADO PARA ABRIR O MODAL
+  abrirModalConfirmacao(id: number, acao: 'desativar' | 'ativar'): void {
     this.televisaoParaExcluir = id;
+    this.acaoModal = acao; // Define a ação (desativar ou ativar/restaurar)
     this.modalVisivel = true;
   }
 
@@ -118,18 +147,36 @@ export class TelevisaoAdminList implements OnInit {
     this.televisaoParaExcluir = null;
   }
 
+  // MÉTODO UNIFICADO PARA CONFIRMAR AÇÃO
   confirmarExclusao(): void {
     if (this.televisaoParaExcluir) {
-      this.televisaoService.delete(this.televisaoParaExcluir).subscribe({
+
+      let observable: Observable<void>;
+
+      // Decide qual método chamar (delete = desativar, restore = ativar)
+      if (this.acaoModal === 'desativar') {
+        observable = this.televisaoService.delete(this.televisaoParaExcluir); // Rota /desativar
+      } else { // acaoModal === 'ativar' (Restaurar)
+        observable = this.televisaoService.restore(this.televisaoParaExcluir); // Rota /restaurar
+      }
+
+      observable.subscribe({
         next: () => {
+          console.log(`Televisão ID ${this.televisaoParaExcluir} ${this.acaoModal}da com sucesso.`);
           this.fecharModal();
-          this.carregarTelevisoes(); 
+          // Recarrega a lista atual (ativos ou inativos)
+          this.carregarTelevisoes();
         },
         error: (err) => {
-             console.error('Erro ao excluir televisão:', err);
-             this.fecharModal();
+          console.error(`Erro ao ${this.acaoModal} televisão:`, err);
+          this.fecharModal();
         }
       });
     }
+  }
+
+  // --- OUTRAS AÇÕES DE CRUD ---
+  editarTelevisao(id: number): void {
+    this.router.navigate(['/perfil-admin/televisoes/edit', id]);
   }
 }

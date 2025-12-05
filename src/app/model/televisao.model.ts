@@ -27,6 +27,7 @@ export class Televisao {
   valor !: number;
   estoque !: number;
   nomeImagem !: string;
+  ativo !: boolean;
 
   idModelo !: number;
   idMarca !: number;
