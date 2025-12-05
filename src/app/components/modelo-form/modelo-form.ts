@@ -1,33 +1,34 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule, Location } from '@angular/common'; // Inclui Location
-import { Observable } from 'rxjs';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { CommonModule, Location } from '@angular/common'; 
 
-// Importe seus Modelos e Serviços
-import { Marca, MarcaRequest } from '../../model/marca.model';
-import { ModeloResponse, Modelo } from '../../model/modelo.model'; 
+// Ajuste os caminhos dos imports conforme sua estrutura
+import { Modelo, ModeloResponse } from '../../model/modelo.model';
 import { ModeloService } from '../../services/modelo-service.service';
-import { CaracteristicasGerais } from '../../model/caracteristicas-gerais.model';
-import { CaracteristicasGeraisService } from '../../services/caracteristica-service.service'; 
+import { Marca } from '../../model/marca.model';
 import { MarcaService } from '../../services/marca-service.service';
+import { CaracteristicasGerais } from '../../model/caracteristicas-gerais.model';
+import { CaracteristicasGeraisService } from '../../services/caracteristica-service.service';
 
 @Component({
   selector: 'app-modelo-form',
   standalone: true,
   imports: [CommonModule, RouterModule, ReactiveFormsModule],
-  templateUrl: './modelo-form.html', 
-  styleUrls: ['./modelo-form.css'] 
+  templateUrl: './modelo-form.html',
+  styleUrl: './modelo-form.css' // Corrigido para styleUrls (plural) ou styleUrl (singular no Angular 17+)
 })
 export class ModeloFormComponent implements OnInit {
   
+  // Injeção de dependências (estilo moderno do Angular)
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
-  private location = inject(Location); // Injeta o serviço Location
+  private location = inject(Location);
+  
   private modeloService = inject(ModeloService);
   private marcaService = inject(MarcaService);
-  private caracteristicasGeraisService = inject(CaracteristicasGeraisService);
+  private caracteristicasService = inject(CaracteristicasGeraisService);
 
   modeloForm: FormGroup;
   formTitle: string = 'Novo Modelo';
@@ -41,14 +42,15 @@ export class ModeloFormComponent implements OnInit {
     this.modeloForm = this.fb.group({
       modelo: ['', Validators.required],
       mesesGarantia: [null, [Validators.required, Validators.min(0)]],
-      // Mantendo o padrão de data do seu HTML (YYYY-MM-DD)
-      anoLancamento: ['', [Validators.required, Validators.pattern(/^\d{4}-\d{2}-\d{2}$/)]], 
+      // Validação básica para garantir que venha algo. O type="date" no HTML cuida do formato.
+      anoLancamento: ['', [Validators.required]], 
       idMarca: [null, Validators.required],
       idCaracteristicas: [null, Validators.required],
     });
   }
 
   ngOnInit(): void {
+    // Carrega as listas para os Selects
     this.carregarMarcas();
     this.carregarCaracteristicas();
 
@@ -59,10 +61,10 @@ export class ModeloFormComponent implements OnInit {
       this.modeloId = +idParam;
       this.formTitle = 'Editar Modelo';
 
-      this.modeloService.getById(this.modeloId).subscribe(modelo => {
-        this.preencherFormulario(modelo);
+      this.modeloService.getById(this.modeloId).subscribe({
+        next: (modelo) => this.preencherFormulario(modelo),
+        error: (err) => console.error('Erro ao carregar modelo para edição', err)
       });
-
     } else {
       this.isEditMode = false;
       this.formTitle = 'Novo Modelo';
@@ -70,24 +72,32 @@ export class ModeloFormComponent implements OnInit {
   }
 
   carregarMarcas(): void {
-    this.marcaService.getAllForDropdown().subscribe(data => {
-      this.marcas = data;
+    this.marcaService.getAllForDropdown().subscribe({
+      next: (data) => this.marcas = data,
+      error: (err) => console.error('Erro ao carregar marcas', err)
     });
   }
 
   carregarCaracteristicas(): void {
-    this.caracteristicasGeraisService.getAllForDropdown().subscribe(data => {
-      this.caracteristicas = data;
+    this.caracteristicasService.getAllForDropdown().subscribe({
+      next: (data) => this.caracteristicas = data,
+      error: (err) => console.error('Erro ao carregar características', err)
     });
   }
 
   preencherFormulario(modelo: ModeloResponse): void {
+    // LÓGICA IMPORTANTE: 
+    // O backend pode retornar o objeto completo (ex: marca: {id: 1, nome: 'LG'})
+    // Mas o formulário espera apenas o ID (idMarca: 1).
+    
     this.modeloForm.patchValue({
       modelo: modelo.modelo,
       mesesGarantia: modelo.mesesGarantia,
       anoLancamento: modelo.anoLancamento,
-      idCaracteristicas: modelo.caracteristicasResponseDTO?.id || null,
-      idMarca: modelo.idMarca || null
+      
+      // Tenta pegar o ID do objeto aninhado. Se não existir, tenta pegar o campo direto.
+      idMarca: modelo.marca?.id || modelo.idMarca, 
+      idCaracteristicas: modelo.caracteristicasResponseDTO?.id
     });
   }
 
@@ -97,37 +107,28 @@ export class ModeloFormComponent implements OnInit {
       return;
     }
 
-    // A conversão deve ser para o ModeloRequest se o DTO for diferente do Modelo (request)
     const request: Modelo = this.modeloForm.value;
 
     if (this.isEditMode && this.modeloId) {
       this.modeloService.update(this.modeloId, request).subscribe({
         next: () => {
-          console.log('Modelo atualizado com sucesso!');
-          // CORREÇÃO 1: Após salvar, navega para a rota ADM da lista
+          // Navega de volta para a lista ADMIN
           this.router.navigate(['/perfil-admin/modelos']);
         },
-        error: (err: any) => {
-          console.error('Erro ao ATUALIZAR modelo', err);
-        }
+        error: (err) => console.error('Erro ao ATUALIZAR modelo', err)
       });
     } else {
       this.modeloService.create(request).subscribe({
         next: () => {
-          console.log('Modelo criado com sucesso!');
-          // CORREÇÃO 1: Após criar, navega para a rota ADM da lista
+          // Navega de volta para a lista ADMIN
           this.router.navigate(['/perfil-admin/modelos']);
         },
-        error: (err: any) => {
-          console.error('Erro ao CRIAR modelo', err);
-        }
+        error: (err) => console.error('Erro ao CRIAR modelo', err)
       });
     }
   }
 
-  // --- CORREÇÃO 2: MÉTODO CANCELAR USA LOCATION.BACK() ---
   cancelar(): void {
-    // Volta para a página anterior no histórico, que deve ser a lista de Modelos.
     this.location.back(); 
   }
 }

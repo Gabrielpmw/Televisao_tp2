@@ -2,7 +2,7 @@
 export interface Modelo {
   modelo: string;
   mesesGarantia: number;
-  anoLancamento: string; 
+  anoLancamento: string;
   idMarca: number;
   idCaracteristicas: number;
 }
@@ -13,7 +13,8 @@ export interface ModeloResponse {
   modelo: string;
   mesesGarantia: number;
   anoLancamento: string;
-  
+  ativo?: boolean | null;
+
 
   marca: {
     id: number;
@@ -25,5 +26,5 @@ export interface ModeloResponse {
     nome: string;
   };
 
-  idMarca: number; 
+  idMarca: number;
 }
