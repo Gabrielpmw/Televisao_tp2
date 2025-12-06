@@ -1,0 +1,124 @@
+/* Container principal para o conteúdo */
+.dialog-body {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Estilo do título e botão fechar */
+.dialog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    border-bottom: 1px solid #eee;
+}
+
+.dialog-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.close-button {
+    color: #666;
+}
+
+/* Imagem */
+.product-visual {
+    text-align: center;
+    background: #f8f8f8;
+    border-radius: 8px;
+    padding: 15px;
+}
+
+.product-image-large {
+    max-width: 80%;
+    max-height: 200px;
+    object-fit: contain;
+}
+
+/* Grid de Informações Técnicas */
+.product-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px 25px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.label {
+    font-size: 0.8rem;
+    color: #888;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 3px;
+}
+
+.value {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #333;
+}
+
+/* Descrição */
+.product-description p {
+    margin-top: 5px;
+    font-size: 0.9rem;
+    color: #555;
+    line-height: 1.5;
+}
+
+/* Preço e Estoque */
+.product-price-stock {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+}
+
+.price-box {
+    display: flex;
+    flex-direction: column;
+}
+
+.price-value {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #1351b4;
+}
+
+.stock-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.stock-value {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #10b981; /* Verde */
+}
+
+/* Rodapé */
+.dialog-footer {
+    padding: 16px 24px;
+}
+
+.btn-secondary {
+    background: transparent;
+    color: #555;
+    border: 1px solid #ccc;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+}

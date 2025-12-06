@@ -1,3 +1,5 @@
+// carrinho.ts
+
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -9,7 +11,7 @@ import { PedidoService } from '../../services/pedido.service';
 import { EnderecoService } from '../../services/endereco.service';
 import { TelevisaoService } from '../../services/televisao-service';
 // Models
-import { ItemCarrinho, CartaoRequestDTO } from '../../model/pedido.model'; // PedidoRequestDTO foi movido para uso implícito (tipo any) para simplificar
+import { ItemCarrinho, CartaoRequestDTO } from '../../model/pedido.model';
 import { EnderecoResponseDTO } from '../../model/Endereco.model';
 
 @Component({
@@ -98,8 +100,11 @@ export class Carrinho implements OnInit {
   // CARRINHO
   // ----------------------------
   aumentarQtd(item: ItemCarrinho) {
-    if (item.quantidade < 10) {
+    // 🎯 CORREÇÃO NO TS: Usando item.estoque como limite
+    if (item.quantidade < item.estoque) {
       this.carrinhoService.atualizarQuantidade(item.id, item.quantidade + 1);
+    } else {
+      alert(`Limite de estoque atingido para este item. Estoque disponível: ${item.estoque}`);
     }
   }
 
@@ -155,6 +160,10 @@ export class Carrinho implements OnInit {
       return;
     }
 
+    // VERIFICAÇÃO FINAL DE ESTOQUE (opcional, mas recomendado)
+    // Antes de processar, você pode querer garantir que item.quantidade <= item.estoque
+    // Se o item.estoque for preenchido corretamente, a lógica no HTML e TS já resolvem isso.
+
     if (this.formaPagamento === 'card') {
       this.modalCardVisible = true;
       return;
@@ -178,25 +187,22 @@ export class Carrinho implements OnInit {
   }
 
   processarPedido() {
-    
-    const pedidoDTO: any = { 
+
+    const pedidoDTO: any = {
       idEndereco: this.enderecoSelecionado!,
       itens: this.itens.map(i => ({
         idTelevisao: i.id,
         quatidade: i.quantidade
       })),
-      
-      // 💡 CORREÇÃO AQUI: Enviamos os dois campos que o DTO do Java espera (Double)
-      valorTotal: this.getTotal(), 
-      valorFrete: this.frete 
+
+      valorTotal: this.getTotal(),
+      valorFrete: this.frete
     };
 
     this.pedidoService.criarPedido(pedidoDTO).subscribe({
       next: (resp) => {
         this.idPedidoCriado = resp.id;
 
-        // Limpeza do carrinho movida para o fecharSucesso()
-        
         switch (this.formaPagamento) {
           case 'pix': this.gerarPix(resp.id); break;
           case 'boleto': this.gerarBoleto(resp.id); break;
@@ -282,9 +288,8 @@ export class Carrinho implements OnInit {
   // FINALIZAÇÃO
   // ----------------------------
   fecharSucesso() {
-    // Limpa o carrinho SÓ AGORA
-    this.carrinhoService.limparCarrinho(); 
-    
+    this.carrinhoService.limparCarrinho();
+
     this.modalSuccessVisible = false;
     this.router.navigate(['/perfil/pedidos']);
   }

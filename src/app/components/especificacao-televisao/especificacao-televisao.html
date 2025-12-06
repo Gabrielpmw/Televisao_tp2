@@ -1,0 +1,72 @@
+<div mat-dialog-title class="dialog-header">
+    <h2 class="dialog-title">Especificações do Produto</h2>
+</div>
+
+<div mat-dialog-content class="dialog-body">
+
+    <!-- IMAGEM DO PRODUTO -->
+    <div class="product-visual">
+        <img 
+            [src]="getImagemUrl()" 
+            alt="{{ tv.modelo }}" 
+            class="product-image-large"
+        >
+    </div>
+
+    <!-- GRID DE INFORMAÇÕES -->
+    <div class="product-info-grid">
+
+        <div class="info-item">
+            <span class="label">MODELO</span>
+            <span class="value">{{ tv.modelo }}</span>
+        </div>
+
+        <div class="info-item">
+            <span class="label">MARCA</span>
+            <span class="value">{{ nomeFabricante }}</span>
+        </div>
+
+        <div class="info-item">
+            <span class="label">RESOLUÇÃO</span>
+            <span class="value">{{ tv.resolucao.nome }} ({{ tv.resolucao.pixels }})</span>
+        </div>
+
+        <div class="info-item">
+            <span class="label">TIPO DA TELA</span>
+            <span class="value">{{ tv.tipoTela.nome }}</span>
+        </div>
+
+        <div class="info-item">
+            <span class="label">POLEGADAS</span>
+            <span class="value">{{ tv.dimensao.polegada }}"</span>
+        </div>
+
+        <div class="info-item">
+            <span class="label">DIMENSÕES (A x L)</span>
+            <span class="value">{{ tv.dimensao.altura }} cm x {{ tv.dimensao.comprimento }} cm</span>
+        </div>
+
+    </div>
+
+    <!-- DESCRIÇÃO -->
+    <div class="product-description">
+        <span class="label">DESCRIÇÃO</span>
+        <p>{{ tv.descricao }}</p>
+    </div>
+
+    <!-- PREÇO E ESTOQUE -->
+    <div class="product-price-stock">
+        <div class="price-box">
+            <span class="label">VALOR</span>
+            <span class="price-value">
+                {{ tv.valor | currency:'BRL':'symbol':'1.2-2' }}
+            </span>
+        </div>
+
+        <div class="stock-box">
+            <span class="label">ESTOQUE</span>
+            <span class="stock-value">{{ tv.estoque }} unidades em estoque</span>
+        </div>
+    </div>
+
+</div>

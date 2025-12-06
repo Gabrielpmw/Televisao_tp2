@@ -1,50 +1,46 @@
 <div class="product-card" *ngIf="televisao">
-  
-  <div class="product-image-container">
-    
-    <img 
-      [src]="getImagemUrl()" 
-      [alt]="televisao.marca + ' ' + televisao.modelo" 
-      class="product-image"
-      onerror="this.src='/assets/images/placeholder.png'"
-    >
-  </div>
+   
+    <div class="product-image-container" (click)="openSpecificationsModal(televisao)">    
+        <img       [src]="getImagemUrl()"       [alt]="televisao.marca + ' ' + televisao.modelo"      
+      class="product-image"    >
+      </div>
 
-  <div class="product-content">
-    
-    <h3 class="product-title">{{ televisao.marca }} {{ televisao.modelo }}</h3>
-    <span class="product-brand">{{ televisao.marca }}</span>
+    <div class="product-content">
+       
+        <h3 class="product-title">{{ televisao.marca }} {{ televisao.modelo }}</h3>
+        <span class="product-brand">{{ televisao.marca }}</span>
 
-    <div class="product-price">
-      {{ televisao.valor | currency:'BRL' }}
-    </div>
-    
-    <div class="product-stock" 
-         [class.stock-high]="(televisao.estoque || 0) > 10"
-         [class.stock-medium]="(televisao.estoque || 0) <= 10 && (televisao.estoque || 0) > 5"
-         [class.stock-low]="(televisao.estoque || 0) <= 5">
-      
-       @if((televisao.estoque || 0) > 0) {
-         {{ televisao.estoque }} unidades em estoque
-       } @else {
-         Produto indisponível
-       }
-    </div>
+        <div class="product-price">
+            {{ televisao.valor | currency:'BRL' }}
+          </div>
+       
+        <div class="product-stock"          [class.stock-high]="(televisao.estoque || 0) > 10"        
+       [class.stock-medium]="(televisao.estoque || 0) <= 10 && (televisao.estoque || 0) > 5"        
+       [class.stock-low]="(televisao.estoque || 0) <= 5">
+           
+             @if((televisao.estoque || 0) > 0) {
+               {{ televisao.estoque }} unidades em estoque
+             } @else {
+               Produto indisponível
+             }
+          </div>
 
-    <div class="product-actions">
-      <button class="btn-buy" 
-              (click)="onBuyNow()"
-              [disabled]="(televisao.estoque || 0) === 0">
-        Comprar agora
-      </button>
-      
-      <button class="btn-cart" 
-              (click)="onAddToCart()"
-              [disabled]="(televisao.estoque || 0) === 0">
-        <svg class="cart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
-        Adicionar ao carrinho
-      </button>
-    </div>
+        <div class="product-actions">
+            <button class="btn-buy"               (click)="onBuyNow()"              
+        [disabled]="(televisao.estoque || 0) === 0">
+                Comprar agora
+              </button>
+           
+            <button class="btn-cart"               (click)="onAddToCart()"              
+        [disabled]="(televisao.estoque || 0) === 0">
+                <svg class="cart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="9" cy="21" r="1"></circle>
+          <circle cx="20" cy="21" r="1"></circle>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+        </svg>
+                Adicionar ao carrinho
+              </button>
+          </div>
 
-  </div>
+      </div>
 </div>

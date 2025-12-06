@@ -1,21 +1,26 @@
+// televisao-card-component.ts
+
 import { Component, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router'; 
+import { Router } from '@angular/router';
 
 // 1. IMPORTAÇÕES DO ANGULAR MATERIAL E AUTH
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog'; // 🎯 NOVO: MatDialog e MatDialogModule
 import { AuthService } from '../../services/auth-service.service';
 
 import { Televisao } from '../../model/televisao.model';
-import { TelevisaoService } from '../../services/televisao-service'; 
-import { CarrinhoService } from '../../services/carrinho.service'; 
+import { TelevisaoService } from '../../services/televisao-service';
+import { CarrinhoService } from '../../services/carrinho.service';
+import { EspecificacaoTelevisao } from '../especificacao-televisao/especificacao-televisao';
 
 @Component({
   selector: 'app-televisao-card',
   standalone: true,
   imports: [
     CommonModule,
-    MatSnackBarModule // <--- MÓDULO DO SNACK BAR ADICIONADO
+    MatSnackBarModule,
+    MatDialogModule // 🎯 Adicionado para usar o MatDialog
   ],
   templateUrl: './televisao-card-component.html',
   styleUrls: ['./televisao-card-component.css']
@@ -24,32 +29,45 @@ export class TelevisaoCardComponent {
 
   @Input() televisao!: Televisao;
 
-  public defaultImageUrl: string = '/tv.jpg'; 
+  public defaultImageUrl: string = '/tv.jpg';
 
   private carrinhoService = inject(CarrinhoService);
   private router = inject(Router);
-  
+
   // 2. NOVAS INJEÇÕES
   private snackBar = inject(MatSnackBar);
   private authService = inject(AuthService);
+  private dialog = inject(MatDialog); // 🎯 Injeção do MatDialog
 
-  constructor(private televisaoService: TelevisaoService) { } 
+  constructor(private televisaoService: TelevisaoService) { }
 
   // 3. MÉTODO AUXILIAR PARA O SNACK BAR DE ERRO
   openAdminBlockedSnackBar(message: string): void {
     this.snackBar.open(message, 'FECHAR', {
-      duration: 5000, 
-      horizontalPosition: 'center', 
+      duration: 5000,
+      horizontalPosition: 'center',
       verticalPosition: 'top', // Aparece no topo para chamar atenção
       panelClass: ['snackbar-admin-error'] // Classe CSS personalizada
     });
   }
 
+  // ------------------------------------
+  // 🎯 MÉTODO PARA ABRIR O MODAL DE ESPECIFICAÇÕES
+  // ------------------------------------
+  openSpecificationsModal(tv: Televisao): void {
+    this.dialog.open(EspecificacaoTelevisao, {
+      width: '600px', // Defina o tamanho ideal para o seu modal
+      data: tv,       // Passa o objeto completo da TV para o modal
+      panelClass: 'custom-especificacao-modal' // Classe opcional para estilização CSS
+    });
+  }
+  // ------------------------------------
+
   getImagemUrl(): string {
-    if (this.televisao.nomeImagem) { 
+    if (this.televisao.nomeImagem) {
       return this.televisaoService.getUrlImagem(this.televisao.nomeImagem);
     }
-    return this.defaultImageUrl; 
+    return this.defaultImageUrl;
   }
 
   // --- MÉTODOS DE COMPRA (COM BLOQUEIO DE ADMIN) ---
@@ -67,7 +85,7 @@ export class TelevisaoCardComponent {
     }
 
     this.carrinhoService.adicionar(this.televisao);
-    
+
     // Feedback positivo para o cliente
     this.snackBar.open('Adicionado ao carrinho!', 'VER', {
       duration: 3000,
@@ -75,7 +93,7 @@ export class TelevisaoCardComponent {
       verticalPosition: 'bottom',
       panelClass: ['snackbar-success'] // Opcional, se tiver estilo de sucesso
     }).onAction().subscribe(() => {
-        this.router.navigate(['/carrinho']);
+      this.router.navigate(['/carrinho']);
     });
   }
 

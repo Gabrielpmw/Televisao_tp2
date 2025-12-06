@@ -1,3 +1,5 @@
+// carrinho.service.ts
+
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { ItemCarrinho } from '../model/pedido.model';
@@ -11,8 +13,6 @@ export class CarrinhoService {
   private carrinhoSubject = new BehaviorSubject<ItemCarrinho[]>([]);
   carrinho$ = this.carrinhoSubject.asObservable();
 
-  // --- CONTROLE DE SESSÃO ---
-  // Define o prefixo da chave. Começa como 'visitante', muda para 'usuario_ID' ao logar.
   private usuarioIdPrefix: string = 'visitante';
 
   constructor() {
@@ -20,56 +20,46 @@ export class CarrinhoService {
   }
 
   // ==========================================
-  //  GESTÃO DE USUÁRIO (Novo)
+  //  GESTÃO DE USUÁRIO (Novo)
   // ==========================================
-
-  // Chamado pelo AuthService no Login
   identificarUsuario(idUsuario: number) {
     this.usuarioIdPrefix = `usuario_${idUsuario}`;
-    this.carregarDoLocalStorage(); // Carrega o carrinho salvo deste usuário específico
+    this.carregarDoLocalStorage();
   }
 
-  // Chamado pelo AuthService no Logout
   limparSessao() {
     this.usuarioIdPrefix = 'visitante';
-    // Opção A: Zera o carrinho visualmente
-    this.carrinhoSubject.next([]); 
-    // Opção B: Se quiser carregar o carrinho de visitante, use: this.carregarDoLocalStorage();
+    this.carrinhoSubject.next([]);
   }
 
   // ==========================================
-  //  MÉTODOS DE AÇÃO
+  //  MÉTODOS DE AÇÃO
   // ==========================================
 
- adicionar(tv: Televisao) {
-  const itensAtuais = this.carrinhoSubject.value;
+  adicionar(tv: Televisao) {
+    const itensAtuais = this.carrinhoSubject.value;
 
-  // Verifica se o item já está no carrinho
-  const itemExistente = itensAtuais.find(item => item.id === tv.idTelevisao);
+    const itemExistente = itensAtuais.find(item => item.id === tv.idTelevisao);
 
-  if (itemExistente) {
-    // Se já existir, apenas aumenta a quantidade
-    itemExistente.quantidade++;
-  } else {
+    if (itemExistente) {
+      // Se já existir, a validação de estoque ocorrerá no componente Carrinho
+      itemExistente.quantidade++;
+    } else {
 
-    // Cria novo item no carrinho
-    const novoItem: ItemCarrinho = {
-      id: tv.idTelevisao,
-      nome: `${tv.marca} ${tv.modelo}`,
+      const novoItem: ItemCarrinho = {
+        id: tv.idTelevisao,
+        nome: `${tv.marca} ${tv.modelo}`,
+        preco: tv.valor,
+        imagem: tv.nomeImagem,
+        quantidade: 1,
+        estoque: tv.estoque // 🎯 CORREÇÃO: Salva o estoque da TV no item do carrinho
+      };
 
-      // IMPORTANTE: mapeamento correto da classe Televisao
-      preco: tv.valor,
-      imagem: tv.nomeImagem, // 🔥 ESSENCIAL para aparecer imagem no carrinho
+      itensAtuais.push(novoItem);
+    }
 
-      quantidade: 1
-    };
-
-    itensAtuais.push(novoItem);
+    this.atualizarEstado(itensAtuais);
   }
-
-  // Atualiza o estado global do carrinho
-  this.atualizarEstado(itensAtuais);
-}
 
   remover(idItem: number) {
     let itens = this.carrinhoSubject.value;
@@ -105,10 +95,9 @@ export class CarrinhoService {
   }
 
   // ==========================================
-  //  PERSISTÊNCIA DINÂMICA
+  //  PERSISTÊNCIA DINÂMICA
   // ==========================================
 
-  // Gera uma chave única: "carrinho_teletela_visitante" ou "carrinho_teletela_usuario_10"
   private getStorageKey(): string {
     return `carrinho_teletela_${this.usuarioIdPrefix}`;
   }
@@ -125,7 +114,7 @@ export class CarrinhoService {
   private carregarDoLocalStorage() {
     const key = this.getStorageKey();
     const dados = localStorage.getItem(key);
-    
+
     if (dados) {
       try {
         this.carrinhoSubject.next(JSON.parse(dados));
@@ -134,7 +123,6 @@ export class CarrinhoService {
         this.carrinhoSubject.next([]);
       }
     } else {
-      // Se não tem nada salvo para este usuário, começa vazio
       this.carrinhoSubject.next([]);
     }
   }

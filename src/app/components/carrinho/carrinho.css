@@ -47,7 +47,7 @@
   text-align: center;
   background: white;
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   border: 1px dashed #ccc;
 }
 
@@ -103,6 +103,8 @@
   display: flex;
   gap: 1.5rem;
   align-items: center;
+  position: relative;
+  /* Mantido para o .remove-btn funcionar */
 }
 
 .product-image {
@@ -232,7 +234,7 @@
 .chevron {
   width: 20px;
   height: 20px;
- stroke-width: 2;
+  stroke-width: 2;
   transition: transform 0.3s;
 }
 
@@ -251,8 +253,15 @@
 }
 
 @keyframes slideDown {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* --- LISTA DE ENDEREÇOS --- */
@@ -466,13 +475,20 @@
   max-width: 500px;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
   animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 @keyframes modalPop {
-  from { transform: scale(0.8); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .modal-header {
@@ -524,7 +540,8 @@
 
 /* --- ELEMENTOS DOS MODAIS --- */
 
-.pix-info, .boleto-info {
+.pix-info,
+.boleto-info {
   text-align: center;
 }
 
@@ -537,12 +554,14 @@
   display: block;
 }
 
-.pix-instructions, .boleto-instructions {
+.pix-instructions,
+.boleto-instructions {
   margin-bottom: 1rem;
   color: #666;
 }
 
-.pix-code, .boleto-code {
+.pix-code,
+.boleto-code {
   background: #f5f5f5;
   padding: 1rem;
   border-radius: 8px;
@@ -568,7 +587,8 @@
   color: #fff;
 }
 
-.pix-value, .boleto-value {
+.pix-value,
+.boleto-value {
   font-size: 1.25rem;
   font-weight: 600;
   color: #1351b4;
@@ -598,7 +618,7 @@
   color: #333;
 }
 
-.form-group input, 
+.form-group input,
 .form-group select {
   width: 100%;
   padding: 0.75rem;
@@ -665,7 +685,8 @@
   width: 80px;
   height: 80px;
   margin: 0 auto 1.5rem;
-  background: #10b981; /* Verde Sucesso */
+  background: #10b981;
+  /* Verde Sucesso */
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -683,7 +704,7 @@
   .content-wrapper {
     grid-template-columns: 1fr;
   }
-  
+
   .summary-section {
     position: static;
   }
@@ -693,45 +714,43 @@
   .main-content {
     padding: 1rem;
   }
-  
+
   .product-card {
     flex-direction: column;
     text-align: center;
   }
-  
+
   .product-footer {
     flex-direction: column;
     gap: 10px;
     width: 100%;
   }
-  
+
   .quantity-selector {
     justify-content: center;
   }
-  
+
   .form-row {
     grid-template-columns: 1fr;
   }
 }
 
-.product-card {
-  position: relative; /* OBRIGATÓRIO */
-}
-
+/* --- REMOVER BOTÃO --- */
 .remove-btn {
   position: absolute;
   top: 10px;
   right: 10px;
 
-  width: 32px;       /* Aumentei */
-  height: 32px;      /* Aumentei */
+  width: 32px;
+  height: 32px;
 
   background: #ffffff;
   border: 1px solid #ccc;
   cursor: pointer;
 
-  padding: 6px;
-  border-radius: 8px;  /* Mais arredondado */
+  padding: 0;
+  /* Ajustado para melhor centralização do caractere */
+  border-radius: 8px;
 
   display: flex;
   align-items: center;
@@ -740,20 +759,16 @@
   z-index: 5;
 
   transition: background 0.2s, transform 0.1s, border 0.2s;
+
+  font-size: 1.2rem;
+  /* Estilo para o caractere 🗑 */
+  color: #d32f2f;
 }
 
 .remove-btn:hover {
   background: #ffe5e5;
   border-color: #e57373;
+  color: #b71c1c;
 }
 
-.remove-btn svg {
-  width: 24px;       /* Ícone maior */
-  height: 24px;      /* Ícone maior */
-  stroke: #d32f2f;
-  transition: stroke 0.2s;
-}
-
-.remove-btn:hover svg {
-  stroke: #b71c1c;
-}
+/* Removido o estilo SVG, que causava redundância/confusão se você usa o caractere 🗑 */

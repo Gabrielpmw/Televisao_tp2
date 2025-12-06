@@ -75,5 +75,6 @@ export interface ItemCarrinho {
   nome: string;        // Ex: "Samsung Crystal 4K"
   preco: number;       // Para calcular o subtotal na tela
   quantidade: number;
-  imagem: string;      // Para mostrar a foto no carrinho
+  imagem: string;   
+  estoque: number;     // 👈 NOVO CAMPO: O estoque atual da TV no momento da adição/atualização   // Para mostrar a foto no carrinho
 }
